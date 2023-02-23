@@ -1,0 +1,131 @@
+buildscript {
+    ext {}
+    dependencies {
+        classpath(group: 'com.exclamationlabs.connid', name: 'connector-base-config-plugin', version: "${config_plugin_version}-+")
+    }
+    repositories {
+        maven {
+            url "https://us-east1-maven.pkg.dev/provision-general-operations/provision-public"
+        }
+    }
+}
+
+plugins {
+    id 'java'
+    id 'java-library'
+    id 'maven-publish'
+    id 'com.google.cloud.artifactregistry.gradle-plugin' version '2.2.0'
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://nexus.evolveum.com/nexus/content/repositories/releases/"
+    }
+    maven {
+        url "https://us-east1-maven.pkg.dev/provision-general-operations/provision-public"
+    }
+}
+
+apply plugin: 'com.exclamationlabs.connid.base.config.plugin'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+def build_version = System.getenv('BUILD_NUMBER') == null ? "${local_build_version}" : System.getenv('BUILD_NUMBER')
+project.version="${project_version}-${build_version}"
+
+group = 'com.exclamationlabs.connid'
+
+def versionNumber = "${project_version}"
+
+dependencies {
+
+    // Required for MidPoint runtime
+    runtimeOnly 'org.codehaus.groovy:groovy:2.5.2'
+    runtimeOnly 'com.evolveum.polygon:connector-common:1.5.0.0'
+
+    // HTTP/RESTful support
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.10'
+
+    implementation "com.exclamationlabs.connid:connector-base:${base_connector_version}-+"
+
+    testImplementation "com.exclamationlabs.connid:connector-base-test-support:${test_connector_version}-+"
+
+    testImplementation 'net.tirasa.connid:connector-framework-internal:1.5.0.0'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', 'generatedConfig']
+        }
+    }
+}
+
+task copyDependencyJars(type: Copy) {
+    from configurations.runtimeClasspath.collect {
+        if(it.isFile() && it.getCanonicalFile().getCanonicalPath().endsWith('.jar') &&
+                (!it.getCanonicalFile().getCanonicalPath().contains("connector-framework"))) {
+            it
+        }
+    }
+    into file("custom/lib")
+}
+
+task baseClean(type: Delete) {
+    delete 'custom'
+    delete 'generatedConfig'
+}
+
+
+def fatClassifierName = 'fat'
+def thinClassifierName = 'thin'
+
+task fatJar(type: Jar) {
+
+    archiveClassifier = fatClassifierName
+    archiveName("${project.name}-${project.version}-${fatClassifierName}.jar")
+    from 'custom', 'build/classes/java/main', 'src/main/resources'
+
+    manifest {
+        attributes("ConnectorBundle-FrameworkVersion": "1.4.3.11",
+                "ConnectorBundle-Version": versionNumber,
+                "ConnectorBundle-Name": project.name)
+    }
+}
+
+task thinJar(type: Jar) {
+
+    archiveClassifier = thinClassifierName
+    archiveName("${project.name}-${project.version}-${thinClassifierName}.jar")
+    from 'build/classes/java/main'
+
+}
+
+thinJar.dependsOn('compileJava')
+
+fatJar.dependsOn('compileJava', 'copyDependencyJars')
+compileJava.dependsOn('generateConfiguration')
+
+clean.dependsOn('baseClean')
+
+
+publishing {
+    publications {
+        connector_impl(MavenPublication) {
+            artifact fatJar
+            artifact thinJar
+        }
+    }
+    repositories {
+        maven {
+            url "artifactregistry://us-east1-maven.pkg.dev/provision-general-operations/provision-public/"
+        }
+    }
+}
+
+test {
+    useJUnitPlatform() {}
+}

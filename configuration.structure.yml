@@ -1,0 +1,37 @@
+---
+name: 'Grafana'
+configurationClass:
+  name: 'GrafanaConfiguration'
+  package: 'com.exclamationlabs.connid.base.grafana.configuration'
+rest: true # io-error-retries
+service: true # service-url
+results: true
+security:
+  httpBasicAuth: true
+custom:
+  items:
+    required:
+      lokiURL:
+        type: string
+        display: 'lokiURL.display'
+        help: 'lokiURL.help'
+      lokiUser:
+        type: string
+        display: 'lokiUser.display'
+        help: 'lokiUser.help'
+      lokiPassword:
+        type: string
+        display: 'lokiPassword.display'
+        help: 'lokiPassword.help'
+      defaultOrgRole:
+        type: string
+        display: 'defaultOrgRole.display'
+        help: 'defaultOrgRole.help'
+      updateDashBoards:
+        type: boolean
+        display: 'updateDashBoards.display'
+        help: 'updateDashBoards.help'
+helpText:
+  serviceUrl:
+    display: 'serviceUrl.display'
+    help: 'serviceUrl.help'

@@ -1,0 +1,9 @@
+/.idea
+/.gradle
+/custom
+/test-config.json
+/target
+/build
+.DS_Store
+/out
+/generatedConfig
