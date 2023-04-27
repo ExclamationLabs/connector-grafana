@@ -3,20 +3,26 @@ package com.exclamationlabs.connid.base.grafana.model;
 import com.exclamationlabs.connid.base.connector.model.IdentityModel;
 import com.google.gson.annotations.SerializedName;
 
+import java.beans.Transient;
+import java.util.List;
+
 public class GrafanaUser implements IdentityModel
 {
     private String avatarUrl;
     private String email;
+    private Integer id;
     private String isDisabled;
     private String lastSeenAt;
     private String lastSeenAtAge;
     private String login;
     private String name;
-    private int orgId;
+    private Integer orgId;
+    private transient List<String> organizations;
+    private transient List<String> orgsAdd;
+    private transient List<String> orgsRemove;
     private String password;
     private String role;
-    private int userId;
-    private int id;
+    private Integer userId;
 
     public String getAvatarUrl()
     {
@@ -28,10 +34,10 @@ public class GrafanaUser implements IdentityModel
         return email;
     }
 
-    public int getId()
+    public Integer getId()
     {
-        int theId;
-        if ( id  > 0 )
+        Integer theId;
+        if ( id  != null )
         {
             theId = id;
         }
@@ -88,9 +94,24 @@ public class GrafanaUser implements IdentityModel
         return name;
     }
 
-    public int getOrgId()
+    public Integer getOrgId()
     {
         return orgId;
+    }
+
+    public List<String> getOrganizations()
+    {
+        return organizations;
+    }
+
+    public List<String> getOrgsAdd()
+    {
+        return orgsAdd;
+    }
+
+    public List<String> getOrgsRemove()
+    {
+        return orgsRemove;
     }
 
     public String getPassword()
@@ -103,10 +124,10 @@ public class GrafanaUser implements IdentityModel
         return role;
     }
 
-    public int getUserId()
+    public Integer getUserId()
     {
-        int theId;
-        if ( userId  > 0 )
+        Integer theId;
+        if ( userId  != null  )
         {
             theId = userId;
         }
@@ -127,7 +148,7 @@ public class GrafanaUser implements IdentityModel
         this.email = email;
     }
 
-    public void setId(int id)
+    public void setId(Integer id)
     {
         this.id = id;
     }
@@ -157,9 +178,24 @@ public class GrafanaUser implements IdentityModel
         this.name = name;
     }
 
-    public void setOrgId(int orgId)
+    public void setOrgId(Integer orgId)
     {
         this.orgId = orgId;
+    }
+
+    public void setOrganizations(List<String> organizations)
+    {
+        this.organizations = organizations;
+    }
+
+    public void setOrgsAdd(List<String> orgsAdd)
+    {
+        this.orgsAdd = orgsAdd;
+    }
+
+    public void setOrgsRemove(List<String> orgsRemove)
+    {
+        this.orgsRemove = orgsRemove;
     }
 
     public void setPassword(String password)
@@ -172,7 +208,7 @@ public class GrafanaUser implements IdentityModel
         this.role = role;
     }
 
-    public void setUserId(int userId)
+    public void setUserId(Integer userId)
     {
         this.userId = userId;
     }

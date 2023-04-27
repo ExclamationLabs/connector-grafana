@@ -5,7 +5,7 @@ import com.exclamationlabs.connid.base.connector.model.IdentityModel;
 public class GrafanaOrg implements IdentityModel
 {
     private GrafanaOrgAddress address;
-    private int id;
+    private Integer id;
     private String name;
 
     public GrafanaOrgAddress getAddress()
@@ -13,7 +13,7 @@ public class GrafanaOrg implements IdentityModel
         return address;
     }
 
-    public int getId()
+    public Integer getId()
     {
         return id;
     }
@@ -30,7 +30,7 @@ public class GrafanaOrg implements IdentityModel
         return getName();
     }
 
-    public java.lang.String getName()
+    public String getName()
     {
         return name;
     }
@@ -40,7 +40,7 @@ public class GrafanaOrg implements IdentityModel
         this.address = address;
     }
 
-    public void setId (int id)
+    public void setId (Integer id)
     {
         this.id = id;
     }

@@ -58,12 +58,18 @@ public class GrafanaFaultProcessor implements RestFaultProcessor
         if (faultData != null && faultData.getMessage() != null && (!faultData.getMessage().isEmpty()))
         {
             String message = faultData.getMessage();
-            if ( message.equalsIgnoreCase("user not found"))
+            if ( message.equalsIgnoreCase("user not found") ||
+                 message.equalsIgnoreCase("data source not found") ||
+                 message.equalsIgnoreCase("organization not found") ||
+                 message.equalsIgnoreCase("Permission denied") ||
+                 message.equalsIgnoreCase("Not Found"))
             {
+                LOG.info(message);
                 return;
             }
             else
             {
+                LOG.error(message);
                 throw new ConnectorException("Unknown fault received from Grafana.  Message: " + faultData.getMessage());
             }
         }

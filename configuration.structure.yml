@@ -11,27 +11,40 @@ security:
 custom:
   items:
     required:
+      defaultOrgRole:
+        type: string
+        order: 100
+        default: 'Viewer'
+        display: 'defaultOrgRole.display'
+        help: 'defaultOrgRole.help'
       lokiURL:
         type: string
+        order: 110
         display: 'lokiURL.display'
         help: 'lokiURL.help'
       lokiUser:
         type: string
+        order: 120
         display: 'lokiUser.display'
         help: 'lokiUser.help'
       lokiPassword:
         type: string
+        order: 130
         display: 'lokiPassword.display'
         help: 'lokiPassword.help'
-      defaultOrgRole:
-        type: string
-        display: 'defaultOrgRole.display'
-        help: 'defaultOrgRole.help'
+      separateOrgAssociation:
+        type: boolean
+        order: 140
+        display: 'separateOrgAssociation.display'
+        help: 'separateOrgAssociation.help'
       updateDashBoards:
         type: boolean
+        order: 150
         display: 'updateDashBoards.display'
         help: 'updateDashBoards.help'
 helpText:
   serviceUrl:
+    order: 10
     display: 'serviceUrl.display'
     help: 'serviceUrl.help'
+

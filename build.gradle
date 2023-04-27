@@ -12,6 +12,7 @@ buildscript {
 
 plugins {
     id 'java'
+    id 'idea'
     id 'java-library'
     id 'maven-publish'
     id 'com.google.cloud.artifactregistry.gradle-plugin' version '2.2.0'
@@ -43,7 +44,7 @@ dependencies {
 
     // Required for MidPoint runtime
     runtimeOnly 'org.codehaus.groovy:groovy:2.5.2'
-    runtimeOnly 'com.evolveum.polygon:connector-common:1.5.0.0'
+    runtimeOnly 'com.evolveum.polygon:connector-common:1.5.1.0'
 
     // HTTP/RESTful support
     implementation 'com.google.code.gson:gson:2.8.6'
@@ -53,7 +54,7 @@ dependencies {
 
     testImplementation "com.exclamationlabs.connid:connector-base-test-support:${test_connector_version}-+"
 
-    testImplementation 'net.tirasa.connid:connector-framework-internal:1.5.0.0'
+    testImplementation 'net.tirasa.connid:connector-framework-internal:1.5.1.0'
 }
 
 sourceSets {
@@ -79,7 +80,12 @@ task baseClean(type: Delete) {
     delete 'generatedConfig'
 }
 
-
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
 def fatClassifierName = 'fat'
 def thinClassifierName = 'thin'
 

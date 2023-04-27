@@ -17,41 +17,49 @@ import java.util.Map;
 import java.util.Set;
 import java.net.URI;
 
+/**
+ * Invocator for the Organization Object Type. This invocator supports CRUD operations
+ */
 public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, GrafanaOrg>
 {
     private static final Log LOG = Log.getLog(GrafanaOrgInvocator.class);
 
-    public static String encodeURIPath( String path)
-    {
-        try
-        {
-            URI uri = new URI("http", "localhost", path, "", "");
-            path = uri.getRawPath();
-        }
-        catch ( URISyntaxException exception)
-        {
-            LOG.error(exception.getMessage(), exception);
-        }
-        return path;
-    }
     @Override
     public String create(GrafanaDriver driver, GrafanaOrg org) throws ConnectorException
     {
         RestResponseData<GrafanaStandardResponse> response;
         GrafanaStandardResponse createInfo;
-        response = driver.executePostRequest("/api/orgs",
-                                                GrafanaStandardResponse.class,
-                                                org,
-                                                driver.getAdminHeaders());
-        createInfo = response.getResponseObject();
-        if ( createInfo == null || createInfo.getOrgId() == null || createInfo.getOrgId().trim().length() == 0 )
+        String orgId = null;
+        LOG.warn("Creating organization {0} with id {1}", org.getName(), org.getId());
+
+        if ( org == null || org.getName() == null || org.getName().trim().length() == 0 )
         {
-            String message = "HTTP status " + response.getResponseStatusCode() +
-                    ". Failed to create Global Grafana Org: " + org.getName() ;
-            LOG.warn( message);
-            throw new ConnectorException(message);
+            throw new ConnectorException("Cannot create an org whose name is not specified");
         }
-        return createInfo.getOrgId();
+        // Check First if the Org Exists
+        GrafanaOrg existing = getOneByName(driver, org.getName());
+        if ( existing != null && existing.getName() != null && existing.getName().trim().equalsIgnoreCase(org.getName().trim()))
+        {
+            LOG.error("Attempting to Create an Org named {0} that already Exists", existing.getName());
+            orgId = existing.getId().toString();
+        }
+        else
+        {
+            response = driver.executePostRequest("/orgs",
+                    GrafanaStandardResponse.class,
+                    org,
+                    driver.getAdminHeaders());
+            createInfo = response.getResponseObject();
+            orgId = createInfo.getOrgId();
+            if (createInfo == null || createInfo.getOrgId() == null || createInfo.getOrgId().trim().length() == 0)
+            {
+                String message = "HTTP status " + response.getResponseStatusCode() +
+                        ". Failed to create Global Grafana Org: " + org.getName();
+                LOG.error(message);
+                throw new ConnectorException(message);
+            }
+        }
+        return orgId;
     }
 
     /**
@@ -66,7 +74,8 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
 
         GrafanaStandardResponse response;
         RestResponseData<GrafanaStandardResponse> data;
-        data = driver.executeDeleteRequest("/api/orgs/" + orgId,
+        LOG.warn("Deleting Grafana Organization {0}", orgId );
+        data = driver.executeDeleteRequest("/orgs/" + orgId,
                                             GrafanaStandardResponse.class,
                                             driver.getAdminHeaders());
         response = data.getResponseObject();
@@ -74,20 +83,27 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
 
         if ( message != null  )
         {
-            LOG.info("Grafana Organization " + orgId + ": " +  message);
+            LOG.warn("Grafana Organization " + orgId + ": " +  message);
         }
     }
 
     @Override
-    public Set<GrafanaOrg> getAll(GrafanaDriver driver, ResultsFilter resultsFilter, ResultsPaginator paginator, Integer integer) throws ConnectorException
+    public Set<GrafanaOrg> getAll(GrafanaDriver driver, ResultsFilter resultsFilter, ResultsPaginator paginator, Integer maxResultsRecords) throws ConnectorException
     {
         String queryParameters = "";
+        LOG.warn("Lookup Organizations");
         if (paginator.hasPagination())
         {
-            queryParameters = "?perpage=" + paginator.getPageSize() + "&page=" + paginator.getCurrentPageNumber();
+            int startpage = paginator.getCurrentPageNumber();
+            if ( startpage > 0 )
+            {
+                startpage = startpage - 1;
+            }
+            queryParameters = "?perpage=" + paginator.getPageSize() + "&page=" + startpage;
+            LOG.warn("Get {0} Grafana Organizations on page {1}", paginator.getPageSize(), paginator.getCurrentPageNumber());
         }
         GrafanaOrg[] orgs;
-        RestResponseData<GrafanaOrg[]> rd = driver.executeGetRequest("/api/orgs" + queryParameters,
+        RestResponseData<GrafanaOrg[]> rd = driver.executeGetRequest("/orgs" + queryParameters,
                                                                     GrafanaOrg[].class,
                                                                     driver.getAdminHeaders());
         orgs = rd.getResponseObject();
@@ -109,19 +125,38 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
     public GrafanaOrg getOne(GrafanaDriver driver, String id, Map<String, Object> options) throws ConnectorException
     {
         GrafanaOrg org = null;
+
         if ( id != null && id.trim().length() > 0 )
         {
-            if (StringUtils.isNumeric(id.trim()))
+            int orgId = GrafanaUserInvocator.decomposeOrgId(id);
+            if ( StringUtils.isNumeric(id.trim()) )
             {
+                LOG.warn("Lookup Org with ID {0} ", id);
                 RestResponseData<GrafanaOrg> rd;
-                rd = driver.executeGetRequest("/api/orgs/" + id.trim(),
+                rd = driver.executeGetRequest("/orgs/" + id.trim(),
                                                 GrafanaOrg.class,
                                                 driver.getAdminHeaders());
                 org = rd.getResponseObject();
             }
+            else if (  orgId > 0 )
+            {
+                LOG.warn("Lookup Org with ID {0} ", id);
+                RestResponseData<GrafanaOrg> rd;
+                rd = driver.executeGetRequest("/orgs/" + orgId,
+                        GrafanaOrg.class,
+                        driver.getAdminHeaders());
+                org = rd.getResponseObject();
+            }
             else
             {
-                org = getOneByName(driver, id);
+                LOG.warn("Lookup Org with Name {0} ", id);
+                String path = "/orgs/name/" + id.trim();
+                path = driver.encodeURIPath(path);
+                RestResponseData<GrafanaOrg> rd = driver.executeGetRequest(
+                        path,
+                        GrafanaOrg.class,
+                        driver.getAdminHeaders());
+                org = rd.getResponseObject();
             }
         }
         return org;
@@ -130,16 +165,29 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
     @Override
     public GrafanaOrg getOneByName(GrafanaDriver driver, String name) throws ConnectorException
     {
-        GrafanaOrg org;
+        GrafanaOrg org = null;
         if ( name != null && name.trim().length() > 0 )
         {
-            String path = "/api/orgs/name/" + name.trim();
-            path = encodeURIPath(path);
-            RestResponseData<GrafanaOrg> rd = driver.executeGetRequest(
-                    path,
-                    GrafanaOrg.class,
-                    driver.getAdminHeaders());
-            org = rd.getResponseObject();
+            if ( !StringUtils.isNumeric(name))
+            {
+                LOG.warn("Lookup Org with Name {0} ", name);
+                String path = "/orgs/name/" + name.trim();
+                path = driver.encodeURIPath(path);
+                RestResponseData<GrafanaOrg> rd = driver.executeGetRequest(
+                        path,
+                        GrafanaOrg.class,
+                        driver.getAdminHeaders());
+                org = rd.getResponseObject();
+            }
+            else
+            {
+                LOG.warn("Lookup Org with ID {0} ", name);
+                RestResponseData<GrafanaOrg> rd;
+                rd = driver.executeGetRequest("/orgs/" + name.trim(),
+                        GrafanaOrg.class,
+                        driver.getAdminHeaders());
+                org = rd.getResponseObject();
+            }
         }
         else
         {
@@ -160,16 +208,17 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
     {
         GrafanaStandardResponse response;
         RestResponseData<GrafanaStandardResponse> responseData;
+        LOG.warn("Updating Grafana Org {0} with name {1}", orgId, org.getName());
         if ( StringUtils.isNumeric(orgId) )
         {
             responseData = driver.executePutRequest(
-                    "/api/orgs/" + orgId,
+                    "/orgs/" + orgId,
                     GrafanaStandardResponse.class,
                     org,
                     driver.getAdminHeaders());
 
             response = responseData.getResponseObject();
-            LOG.info("Updated Grafana Org {0} with name {1}", orgId, org.getName());
+            LOG.warn("Updated Grafana Org {0} with name {1}", orgId, org.getName());
         }
     }
 }

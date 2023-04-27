@@ -8,6 +8,7 @@ import com.exclamationlabs.connid.base.grafana.model.GrafanaAddUserToOrg;
 import com.exclamationlabs.connid.base.grafana.model.GrafanaUser;
 import com.exclamationlabs.connid.base.grafana.model.GrafanaUserOrg;
 import com.exclamationlabs.connid.base.grafana.model.response.GrafanaStandardResponse;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
@@ -42,7 +43,7 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
             login = user.getEmail();
         }
         // Determine whether the request can be executed successfully
-        if ( user.getUserId() != 0  )
+        if ( user.getUserId() != null  )
         {
             success = addUserToOrg(driver, login, role, user.getUserId(), orgId);
         }
@@ -97,16 +98,16 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
             sb.append( "\"" + role + "\", \n");
             sb.append( "\"LoginOrEmail\" : ");
             sb.append( "\"" + login + "\" \n");
-            sb.append(" }");
+            sb.append("}");
             String body = sb.toString();
-            rd = driver.executePostRequest("/api/orgs/" + orgId + "/users",
-                    GrafanaStandardResponse.class, addUser, driver.getAdminHeaders());
+            rd = driver.executePostRequest("/orgs/" + orgId + "/users",
+                    GrafanaStandardResponse.class, body, driver.getAdminHeaders());
 
             response = rd.getResponseObject();
 
             if ( rd.getResponseStatusCode() == 200 )
             {
-                LOG.info( "HTTP StatusCode {0}, login {1}, OrgId {2}, Message {3}",
+                LOG.warn( "HTTP StatusCode {0}, login {1}, OrgId {2}, Message {3}",
                         rd.getResponseStatusCode(), login, orgId, response.getMessage());
                 success = true;
             }
@@ -126,6 +127,7 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
     /**
      * Creates a New Grafana User or throws a ConnectorException.
      * If the user information contains an orgId then the user will automatically be added to that organization
+     * If the user has a list of Organizations they well be added to each specified org
      * @param driver the Grafana Driver
      * @param user The user information to be created
      * @return The user's Id
@@ -136,8 +138,32 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
     {
         RestResponseData<GrafanaStandardResponse> response;
         GrafanaStandardResponse createInfo;
+        int userId = 0;
+        String origRole = user.getRole();
+        if ( user.getOrgId() == null
+                && user.getOrganizations() != null
+                && user.getOrganizations().size() > 0
+                && !driver.getConfiguration().getSeparateOrgAssociation()  )
+        {
+            user.setOrgId(decomposeOrgId(user.getOrganizations().get(0)));
+            LOG.warn("Creating User with Org Association {0}", user.getOrgId());
+            if ( user.getRole() == null || user.getRole().trim().length() == 0 )
+            {
+                user.setRole(driver.getConfiguration().getDefaultOrgRole());
+            }
+        }
+        else
+        {
+            user.setRole(null);
+            LOG.warn("Creating user without Org Association");
+        }
 
-        response = driver.executePostRequest("/api/admin/users",
+        if ( user.getPassword()== null || user.getPassword().trim().length() == 0 )
+        {
+            user.setPassword(RandomStringUtils.randomAlphanumeric(10));
+        }
+
+        response = driver.executePostRequest("/admin/users",
                                                 GrafanaStandardResponse.class,
                                                 user,
                                                 driver.getAdminHeaders());
@@ -151,10 +177,89 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
             LOG.warn( message);
             throw new ConnectorException(message);
         }
-
+        else if (StringUtils.isNumeric(createInfo.getId().trim()))
+        {
+            userId = Integer.valueOf(createInfo.getId().trim());
+        }
+        // If the User Model includes has a list or organizations, then add them when not already associated
+        if (user.getOrganizations() != null && user.getOrganizations().size() > 0 && userId > 0 )
+        {
+            // Verify that all Orgs have been associated
+            List<GrafanaUserOrg> userOrgs = getUserOrganizations(driver, userId);
+            for ( String organization:  user.getOrganizations() )
+            {
+                int orgId = decomposeOrgId(organization);
+                if (isUserInOrg(userOrgs, orgId) == null )
+                {
+                    String role = decomposeRole(organization);
+                    if ( role == null || role.trim().length() == 0 )
+                    {
+                        if ( origRole != null && origRole.trim().length() > 0 )
+                        {
+                            role = origRole;
+                        }
+                        else
+                        {
+                            role = driver.getConfiguration().getDefaultOrgRole();
+                        }
+                    }
+                    addUserToOrg(driver, user.getLogin(), role, userId, orgId);
+                }
+            }
+        }
         return createInfo.getId();
     }
 
+    /**
+     * Strips the numeric OrgId from the Formatted Org Name
+     * @param organization The ORG formatted as "IDNUMBER_ORGNAME_ROLE"
+     * @return
+     */
+    public static int decomposeOrgId(String organization)
+    {
+        int orgId = 0;
+        if ( organization != null )
+        {
+            int idx = organization.indexOf("_");
+            if (idx > 0 && organization.length() >= idx + 1)
+            {
+                String org = organization.substring(0, idx);
+                if (StringUtils.isNumeric(org.trim()))
+                {
+                    orgId = Integer.valueOf(org.trim());
+                }
+            }
+            else if (StringUtils.isNumeric(organization.trim()))
+            {
+                orgId = Integer.valueOf(organization.trim());
+            }
+        }
+        return orgId;
+    }
+    /**
+     * Strips the numeric OrgId from the Formatted Org Name
+     * @param organization The ORG formatted as "IDNUMBER_ORGNAME_ROLE"
+     * @return
+     */
+    public static String decomposeRole(String organization)
+    {
+        String role = null;
+        if ( organization != null )
+        {
+            int idx = organization.lastIndexOf("_");
+            if (idx > 0 && organization.length() >= idx + 1)
+            {
+                String aRole = organization.substring(idx+1);
+                if ( aRole != null
+                        && (aRole.trim().equalsIgnoreCase("Viewer")
+                                || aRole.trim().equalsIgnoreCase("Admin")))
+                {
+                    role = aRole.trim();
+                }
+            }
+        }
+        return role;
+    }
     @Override
     public void delete(GrafanaDriver driver, String userId) throws ConnectorException
     {
@@ -166,18 +271,18 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
             {
                 GrafanaStandardResponse response;
                 response = driver.executeDeleteRequest(
-                        "/api/admin/users/"+ user.getIdentityIdValue(),
+                        "/admin/users/"+ user.getIdentityIdValue(),
                         GrafanaStandardResponse.class,
                         driver.getAdminHeaders()).getResponseObject();
                 String message = response.getMessage();
 
                 if ( message != null && (message.contains("delete") || message.contains("Delete") ) )
                 {
-                    LOG.info("Grafana User " + user.getName() + " deleted");
+                    LOG.warn("Grafana User " + user.getName() + " deleted");
                 }
                 else
                 {
-                    LOG.info("Request to Delete Grafana user " + userId + ": "+ message);
+                    LOG.warn("Request to Delete Grafana user " + userId + ": "+ message);
                 }
             }
             else
@@ -193,12 +298,12 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
         return;
     }
 
-    public boolean deleteUserFromOrg(GrafanaDriver driver, GrafanaUser user, String orgId)
+    public boolean deleteUserFromOrg(GrafanaDriver driver, int userId, String orgId)
     {
         boolean success = false;
         GrafanaStandardResponse response;
         RestResponseData<GrafanaStandardResponse> rd;
-        rd = driver.executeDeleteRequest("/api/orgs/" + orgId + "/users/" + user.getUserId(),
+        rd = driver.executeDeleteRequest("/orgs/" + orgId + "/users/" + userId,
                 GrafanaStandardResponse.class, driver.getAdminHeaders());
 
         response = rd.getResponseObject();
@@ -210,7 +315,7 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
         else
         {
             LOG.warn( "HTTP StatusCode {0}, UserId {1), OrgId {2}, Message {3}",
-                    rd.getResponseStatusCode(), user.getUserId(), orgId, response.getMessage());
+                    rd.getResponseStatusCode(), userId, orgId, response.getMessage());
         }
         return success;
     }
@@ -226,7 +331,7 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
         GrafanaUser[] userArray = null;
         Set<GrafanaUser> users = new HashSet<GrafanaUser>();
 
-        RestResponseData<GrafanaUser[]> rd = driver.executeGetRequest("/api/users" + queryParameters,
+        RestResponseData<GrafanaUser[]> rd = driver.executeGetRequest("/users" + queryParameters,
                                                                         GrafanaUser[].class,
                                                                         driver.getAdminHeaders());
         userArray = rd.getResponseObject();
@@ -249,13 +354,15 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
         Set<GrafanaUser> users = new HashSet<GrafanaUser>();
         if ( id != null && id.trim().length() > 0 )
         {
+            LOG.warn("Lookup user with ID {0} ", id);
             if (StringUtils.isNumeric(id.trim()))
             {
                 // Get user By Numeric ID
-                RestResponseData<GrafanaUser> rd = driver.executeGetRequest("/api/users/" + id.trim(),
+                RestResponseData<GrafanaUser> rd = driver.executeGetRequest("/users/" + id.trim(),
                         GrafanaUser.class,
                         driver.getAdminHeaders());
                 user = rd.getResponseObject();
+                populateUserOrganizations(driver, user);
             }
             else
             {
@@ -266,24 +373,7 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
         {
             throw new ConnectorException("Grafana user id, login name, or email not specified");
         }
-        // If we found the user we now need to discover what Org they reside in and the role they occupy
-        if ( user != null )
-        {
-            ArrayList<GrafanaUserOrg> orgs = getUserOrganizations(driver, user.getUserId());
-            if ( orgs != null && orgs.size() > 0 )
-            {
-                for ( GrafanaUserOrg userOrg: orgs )
-                {
-                    user.setRole(userOrg.getRole());
-                    user.setOrgId(userOrg.getOrgId());
-                    if ( userOrg.getOrgId() != 1 )
-                    {
-                        // We are assuming that the orgId 1 is a default
-                        break;
-                    }
-                }
-            }
-        }
+
         return user;
     }
 
@@ -300,12 +390,14 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
         GrafanaUser user;
         if ( name != null && name.trim().length() > 0 )
         {
+            LOG.warn("Lookup user with login or email ", name);
             // Get user By Numeric ID
             RestResponseData<GrafanaUser> rd = driver.executeGetRequest(
-                    "/api/users/lookup?loginOrEmail=" + name.trim(),
+                    "/users/lookup?loginOrEmail=" + name.trim(),
                     GrafanaUser.class,
                     driver.getAdminHeaders());
             user = rd.getResponseObject();
+            populateUserOrganizations(driver, user);
         }
         else
         {
@@ -324,7 +416,7 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
     {
         Set<GrafanaUser> users = new HashSet<GrafanaUser>();
         RestResponseData<? extends Set> rd;
-        rd = driver.executeGetRequest("/api/orgs/"+orgId+"/users", users.getClass(), driver.getAdminHeaders());
+        rd = driver.executeGetRequest("/orgs/"+orgId+"/users", users.getClass(), driver.getAdminHeaders());
         users = rd.getResponseObject();
         return users;
     }
@@ -337,9 +429,10 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
      */
     public ArrayList<GrafanaUserOrg> getUserOrganizations(GrafanaDriver driver, int userId)
     {
+
         GrafanaUserOrg[] orgs = null;
         RestResponseData<GrafanaUserOrg[]> rd;
-        rd = driver.executeGetRequest("/api/users/"+userId+"/orgs", GrafanaUserOrg[].class, driver.getAdminHeaders());
+        rd = driver.executeGetRequest("/users/"+userId+"/orgs", GrafanaUserOrg[].class, driver.getAdminHeaders());
         orgs = rd.getResponseObject();
         ArrayList<GrafanaUserOrg> list = new ArrayList<>(Arrays.asList(orgs));
         return list;
@@ -378,7 +471,7 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
      * @param orgId The orgId to be found
      * @return The Organization's Definition including the users role
      */
-    public GrafanaUserOrg isUserInOrg(ArrayList<GrafanaUserOrg> userOrgs, int orgId)
+    public GrafanaUserOrg isUserInOrg(List<GrafanaUserOrg> userOrgs, int orgId)
     {
         GrafanaUserOrg theUserOrg = null;
         if ( userOrgs != null && userOrgs.size() > 0)
@@ -396,6 +489,33 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
     }
 
     /**
+     * Add the Organizations that a user is a member of to GrafanaUser model
+     * @param driver The Grafana Driver
+     * @param user the user whose orgainization need to be known
+     */
+    public void populateUserOrganizations(GrafanaDriver driver, GrafanaUser user)
+    {
+        // once we found the user we now need to discover what Org(s) they reside in and the role they occupy
+        // in each of those Org(s)
+        if ( user != null )
+        {
+            LOG.warn("Lookup Organizations for user {0} with email {1} ", user.getLogin(), user.getEmail());
+            ArrayList<GrafanaUserOrg> orgs = getUserOrganizations(driver, user.getUserId());
+            if ( orgs != null && orgs.size() > 0 )
+            {
+                List<String> organization = new ArrayList<>();
+                for ( GrafanaUserOrg userOrg: orgs )
+                {
+                    user.setRole(userOrg.getRole());
+                    user.setOrgId(userOrg.getOrgId());
+                    // organization.add(String.format("%d_%s_%s", userOrg.getOrgId(), userOrg.getName(), userOrg.getRole()));
+                    organization.add(String.format("%d", userOrg.getOrgId()));
+                }
+                user.setOrganizations(organization);
+            }
+        }
+    }
+    /**
      * Updates a User. For example to set their orgId. This method may need to update the global user account as well
      * as the organizational user account.
      * @param driver The driver tied to this connector
@@ -411,33 +531,68 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
 
         if ( StringUtils.isNumeric(id))
         {
-            // Grafana User allows one or more of theses 3 items to be updated
-            if ( user.getName() != null
-                    || user.getEmail() != null
-                    || user.getLogin() != null )
+            // Grafana User allows one or more of these  items to be specified
+            if ( user.getEmail() == null && user.getLogin() == null )
             {
-
-                responseData = driver.executePutRequest(
-                        "/api/users/" + id,
-                        GrafanaStandardResponse.class,
-                        user,
-                        driver.getAdminHeaders());
-                response = responseData.getResponseObject();
-            }
-            else
-            {
-                LOG.warn("Bypassed User Update since neither name, login, or email was specified");
+                GrafanaUser existing = getOne(driver, id, null );
+                if ( existing != null )
+                {
+                    user.setEmail(existing.getEmail());
+                    user.setLogin(existing.getLogin());
+                }
             }
 
-            // Organization Functions use integer Ids
-            userId = Integer.parseInt(id);
-            // A delta update may not specify the userId inside the model object
-            if ( user.getOrgId() > 0  )
+
+            responseData = driver.executePutRequest(
+                    "/users/" + id,
+                    GrafanaStandardResponse.class,
+                    user,
+                    driver.getAdminHeaders());
+            response = responseData.getResponseObject();
+
+
+
+            // Retrieve the Organizations associated with the User
+            userId = Integer.valueOf(id);
+            ArrayList<GrafanaUserOrg> userOrgs = getUserOrganizations(driver, userId);
+
+            // Check for Delta update to add the User to an Org
+            if ( user.getOrgsAdd() != null && user.getOrgsAdd().size() > 0)
+            {
+                for (String organization: user.getOrgsAdd())
+                {
+                    int orgId = decomposeOrgId(organization);
+                    String role = decomposeRole(organization);
+                    if ( isUserInOrg(userOrgs, orgId) == null )
+                    {
+                        if ( role != null && role.trim().length() > 0  )
+                        {
+                            role = driver.getConfiguration().getDefaultOrgRole();
+                        }
+                        addUserToOrg(driver, user.getLogin(), role, userId, orgId );
+                    }
+                }
+            }
+
+            // Check for delta update to remove the user from an org
+            if ( user.getOrgsRemove() != null && user.getOrgsRemove().size() > 0)
+            {
+                for (String organization: user.getOrgsRemove())
+                {
+                    int orgId = decomposeOrgId(organization);
+                    if ( isUserInOrg(userOrgs, orgId) != null )
+                    {
+                        deleteUserFromOrg(driver, userId, String.valueOf(orgId));
+                    }
+                }
+            }
+            // Perhaps the user org is specified otherwise
+            if ( user.getOrgId() != null  )
             {
                 user.setUserId(userId);
                 user.setId(userId);
                 // Determine whether the user is already in the organization
-                ArrayList<GrafanaUserOrg> userOrgs = getUserOrganizations(driver, userId);
+
                 GrafanaUserOrg userOrg = isUserInOrg(userOrgs, user.getOrgId());
                 if ( userOrg == null )
                 {
