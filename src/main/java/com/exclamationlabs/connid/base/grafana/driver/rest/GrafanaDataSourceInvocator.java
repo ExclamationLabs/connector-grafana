@@ -330,7 +330,7 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
      * Retrieves all Data Sources or handles a results filter request for data sources related to an organization
      * @param driver The grafana REST driver
      * @param resultsFilter A filter which can be used to select the datasources to retrieve
-     * @param resultsPaginator Paginator information is ignored
+     * @param paginator Paginator information is ignored
      * @param maxResultRecords
      * @return Hashset of Data Sources;
      * @throws ConnectorException
