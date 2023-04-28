@@ -42,6 +42,11 @@ custom:
         order: 150
         display: 'updateDashBoards.display'
         help: 'updateDashBoards.help'
+      dashboardTemplate:
+        type: string
+        order: 160
+        display: 'dashboardTemplate.display'
+        help: 'dashboardTemplate.help'
 helpText:
   serviceUrl:
     order: 10

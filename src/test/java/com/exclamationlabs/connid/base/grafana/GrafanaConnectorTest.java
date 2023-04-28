@@ -23,13 +23,14 @@ public class GrafanaConnectorTest
     private GrafanaConfiguration configuration = new GrafanaConfiguration();
     private final ArrayList<ConnectorObject> results = new ArrayList<>();
     private String dataSourceName = null;
-    private Boolean grafana_local = false;
+    private Boolean grafana_local = true;
 
 
     /**
      * Implementation to capture an array list of search results
      */
-    SearchResultsHandler handler = new SearchResultsHandler() {
+    SearchResultsHandler handler = new SearchResultsHandler()
+    {
         @Override
         public boolean handle(ConnectorObject connectorObject) {
             results.add(connectorObject);
