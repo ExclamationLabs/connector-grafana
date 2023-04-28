@@ -1,4 +1,4 @@
-# Zoom Connector
+# Grafana Connector
 
 Open source Identity Management connector for [Grafana](https://zoom.us) API
 
