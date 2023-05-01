@@ -6,6 +6,7 @@ import com.exclamationlabs.connid.base.connector.results.ResultsPaginator;
 import com.exclamationlabs.connid.base.grafana.model.GrafanaDataSource;
 import com.exclamationlabs.connid.base.connector.driver.rest.RestResponseData;
 import com.exclamationlabs.connid.base.grafana.model.GrafanaOrg;
+import com.exclamationlabs.connid.base.grafana.model.response.GrafanaDashboardResponse;
 import com.exclamationlabs.connid.base.grafana.model.response.GrafanaDatasourceResponse;
 import com.exclamationlabs.connid.base.grafana.model.response.GrafanaStandardResponse;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +42,19 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
             }
         }
         return items;
+    }
+    public String createDashboard(GrafanaDriver driver, String orgId, String dashboard)
+    {
+        String success = null;
+        RestResponseData<GrafanaDashboardResponse> response;
+        Map<String, String> headers = driver.getAdminHeaders();
+        headers.put(ORG_HEADER, String.valueOf(orgId));
+
+        response = driver.executePostRequest("/dashboards/db",
+                GrafanaDashboardResponse.class,
+                dashboard,
+                headers);
+        return success;
     }
     @Override
     public String create(GrafanaDriver driver, GrafanaDataSource dataSource) throws ConnectorException
@@ -132,6 +146,19 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
         {
             // Construct __UID__
             UID = createInfo.getDatasource().getOrgId() + "_" + createInfo.getDatasource().getUid();
+            try
+            {
+                if ( driver.getConfiguration().getUpdateDashBoards() != null && driver.getConfiguration().getUpdateDashBoards())
+                {
+                    String template = driver.getConfiguration().getDashboardTemplate();
+                    template = template.replace("<DataSourceUID>", createInfo.getDatasource().getUid());
+                    createDashboard(driver, String.valueOf(createInfo.getDatasource().getOrgId()), template);
+                }
+            }
+            catch (Exception exception)
+            {
+                LOG.warn(exception.getMessage());
+            }
         }
 
         return UID;
@@ -256,12 +283,12 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                         }
                         dataSource.setVersion(version);
                     }
-
+*/
                     if ( dataSource.getDatabase() == null || dataSource.getDatabase().trim().length()==0 )
                     {
                         dataSource.setDatabase(actual.getDatabase());
                     }
-*/
+
                     if ( dataSource.getTypeLogoURL() == null || dataSource.getTypeLogoURL().trim().length()==0 )
                     {
                         dataSource.setTypeLogoURL(actual.getTypeLogoURL());
@@ -279,6 +306,22 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                             headers);
                     // GrafanaDatasourceResponse response = rd.getResponseObject();
                     LOG.info(String.format("Grafana Datasource Update response status %d for uid %s", rd.getResponseStatusCode(), id));
+                    if ( rd.getResponseStatusCode() == 200 )
+                    {
+                        try
+                        {
+                            if ( driver.getConfiguration().getUpdateDashBoards() != null && driver.getConfiguration().getUpdateDashBoards())
+                            {
+                                String template = driver.getConfiguration().getDashboardTemplate();
+                                template = template.replace("<DataSourceUID>", dataSource.getUid());
+                                createDashboard(driver, String.valueOf(dataSource.getOrgId()), template);
+                            }
+                        }
+                        catch (Exception exception)
+                        {
+                            LOG.warn(exception.getMessage());
+                        }
+                    }
                 }
                 else
                 {

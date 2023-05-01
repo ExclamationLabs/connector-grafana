@@ -11,37 +11,38 @@ security:
 custom:
   items:
     required:
+      separateOrgAssociation:
+        type: boolean
+        order: 100
+        display: 'separateOrgAssociation.display'
+        help: 'separateOrgAssociation.help'
       defaultOrgRole:
         type: string
-        order: 100
+        order: 110
         default: 'Viewer'
         display: 'defaultOrgRole.display'
         help: 'defaultOrgRole.help'
-      lokiURL:
-        type: string
-        order: 110
-        display: 'lokiURL.display'
-        help: 'lokiURL.help'
-      lokiUser:
-        type: string
-        order: 120
-        display: 'lokiUser.display'
-        help: 'lokiUser.help'
-      lokiPassword:
-        type: string
-        order: 130
-        display: 'lokiPassword.display'
-        help: 'lokiPassword.help'
-      separateOrgAssociation:
-        type: boolean
-        order: 140
-        display: 'separateOrgAssociation.display'
-        help: 'separateOrgAssociation.help'
       updateDashBoards:
         type: boolean
         order: 150
         display: 'updateDashBoards.display'
         help: 'updateDashBoards.help'
+    optional:
+      lokiURL:
+        type: string
+        order: 120
+        display: 'lokiURL.display'
+        help: 'lokiURL.help'
+      lokiUser:
+        type: string
+        order: 130
+        display: 'lokiUser.display'
+        help: 'lokiUser.help'
+      lokiPassword:
+        type: string
+        order: 140
+        display: 'lokiPassword.display'
+        help: 'lokiPassword.help'
       dashboardTemplate:
         type: string
         order: 160
