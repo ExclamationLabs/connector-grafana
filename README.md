@@ -7,9 +7,9 @@ Leverages the [Connector Base Framework](https://github.com/ExclamationLabs/conn
 Developed and tested in [Midpoint](https://evolveum.com/midpoint/), but also could be utilized in any [ConnId](https://connid.tirasa.net/) framework. 
 
 
-- This software is Copyright 2023 Exclamation Labs.  Licensed under the Apache License, Version 2.0.
+This software is Copyright 2023 Exclamation Graphics.  Licensed under the Apache License, Version 2.0.
 
-- As of this writing, there is no public Java API for Zoom User and Group management.
+
 
 
 # 1	Overview
