@@ -1,7 +1,7 @@
 # connector-zoom
 
 ## Change Log
-
++ **1.7.1** - Added Grafana Dashboard Create and Update Support
 + **1.7.0** - Initial Stable 
 + **1.5.9** - Add Logging on Org create
 + **1.5.8** - Org Identifier should not be specified on create
