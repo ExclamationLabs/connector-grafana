@@ -1,0 +1,84 @@
+<archetype xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oid="f09cdfcf-a153-42e8-90e8-f55a0835e17d" version="0">
+    <name>eduroam</name>
+    <extension xmlns:gen748="http://grouper-demo.tier.internet2.edu">
+        <gen748:grouperNamePrefix>app:fm:ref:orgrole:</gen748:grouperNamePrefix>
+        <gen748:midPointNamePrefix>eduroam_</gen748:midPointNamePrefix>
+        <gen748:midPointDisplayNamePrefix>Eduroam Institution: </gen748:midPointDisplayNamePrefix>
+    </extension>
+    <metadata>
+        <requestTimestamp>2023-04-05T19:24:13.975Z</requestTimestamp>
+        <requestorRef oid="e897468f-20bd-419c-8fc5-1fe60e2600de" relation="org:default" type="c:UserType">
+            <!-- banderson -->
+        </requestorRef>
+        <createTimestamp>2023-04-05T19:24:14.023Z</createTimestamp>
+        <creatorRef oid="e897468f-20bd-419c-8fc5-1fe60e2600de" relation="org:default" type="c:UserType">
+            <!-- banderson -->
+        </creatorRef>
+        <createChannel>http://midpoint.evolveum.com/xml/ns/public/common/channels-3#user</createChannel>
+    </metadata>
+    <assignment id="1">
+        <metadata>
+            <requestTimestamp>2023-04-05T19:24:13.975Z</requestTimestamp>
+            <requestorRef oid="e897468f-20bd-419c-8fc5-1fe60e2600de" relation="org:default" type="c:UserType">
+                <!-- banderson -->
+            </requestorRef>
+            <createTimestamp>2023-04-05T19:24:14.023Z</createTimestamp>
+            <creatorRef oid="e897468f-20bd-419c-8fc5-1fe60e2600de" relation="org:default" type="c:UserType">
+                <!-- banderson -->
+            </creatorRef>
+            <createChannel>http://midpoint.evolveum.com/xml/ns/public/common/channels-3#user</createChannel>
+        </metadata>
+        <targetRef oid="0328d903-510f-4cfa-b991-1b004c27dfeb" relation="org:default" type="c:RoleType">
+            <!-- Metarole Grafana Admin -->
+        </targetRef>
+        <activation>
+            <effectiveStatus>enabled</effectiveStatus>
+        </activation>
+    </assignment>
+    <assignment id="4">
+        <metadata>
+            <requestTimestamp>2023-04-05T19:24:13.975Z</requestTimestamp>
+            <requestorRef oid="e897468f-20bd-419c-8fc5-1fe60e2600de" relation="org:default" type="c:UserType">
+                <!-- banderson -->
+            </requestorRef>
+            <createTimestamp>2023-04-05T19:24:14.023Z</createTimestamp>
+            <creatorRef oid="e897468f-20bd-419c-8fc5-1fe60e2600de" relation="org:default" type="c:UserType">
+                <!-- banderson -->
+            </creatorRef>
+            <createChannel>http://midpoint.evolveum.com/xml/ns/public/common/channels-3#user</createChannel>
+        </metadata>
+        <targetRef oid="bcaec940-50c8-44bb-aa37-b2b5bb2d5b90" relation="org:default" type="c:RoleType">
+            <!-- metarole-grouper-provided-group -->
+        </targetRef>
+        <activation>
+            <effectiveStatus>enabled</effectiveStatus>
+        </activation>
+    </assignment>
+    <iteration>0</iteration>
+    <iterationToken/>
+    <roleMembershipRef oid="bcaec940-50c8-44bb-aa37-b2b5bb2d5b90" relation="org:default" type="c:RoleType">
+        <!-- metarole-grouper-provided-group -->
+    </roleMembershipRef>
+    <roleMembershipRef oid="0328d903-510f-4cfa-b991-1b004c27dfeb" relation="org:default" type="c:RoleType">
+        <!-- Metarole Grafana Admin -->
+    </roleMembershipRef>
+    <activation>
+        <effectiveStatus>enabled</effectiveStatus>
+        <enableTimestamp>2023-02-21T22:01:02.561Z</enableTimestamp>
+    </activation>
+    <inducement id="2">
+        <targetRef oid="a86dbf3b-74a4-46a8-a225-488056d8fccb" relation="org:default" type="c:OrgType">
+            <!-- eduroam institutions -->
+        </targetRef>
+    </inducement>
+    <archetypePolicy>
+        <display>
+            <label>Eduroam Institution</label>
+            <pluralLabel>Eduroam Institutions</pluralLabel>
+            <icon>
+                <cssClass>fa fa-building</cssClass>
+                <color>darkblue</color>
+            </icon>
+        </display>
+    </archetypePolicy>
+</archetype>

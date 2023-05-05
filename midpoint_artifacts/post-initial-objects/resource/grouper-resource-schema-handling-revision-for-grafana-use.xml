@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+	xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+	xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3">
+	<resource xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oid="1eff65de-5bb6-483d-9edf-8cc2c2ee0233" version="2">
+    <name>Source: Groups</name>
+    <description>Groups from Grouper</description>
+    <metadata>
+        <requestTimestamp>2023-04-05T14:51:26.064Z</requestTimestamp>
+        <createTimestamp>2023-04-05T14:51:26.106Z</createTimestamp>
+        <createChannel>http://midpoint.evolveum.com/xml/ns/public/common/channels-3#init</createChannel>
+    </metadata>
+    <iteration>0</iteration>
+    <iterationToken/>
+    <operationalState>
+        <lastAvailabilityStatus>up</lastAvailabilityStatus>
+        <message>Status set to UP because resource schema was successfully fetched</message>
+        <timestamp>2023-04-05T14:51:34.416Z</timestamp>
+        <nodeId>DefaultNode</nodeId>
+    </operationalState>
+    <operationalStateHistory id="11">
+        <lastAvailabilityStatus>up</lastAvailabilityStatus>
+        <message>Status set to UP because resource schema was successfully fetched</message>
+        <timestamp>2023-04-05T14:51:34.416Z</timestamp>
+        <nodeId>DefaultNode</nodeId>
+    </operationalStateHistory>
+    <connectorRef oid="a34088e2-c616-4775-b1e3-e7b21826e2b0" relation="org:default" type="c:ConnectorType">
+        <!-- ConnId com.evolveum.polygon.connector.grouper.rest.GrouperConnector v0.7 -->
+        <filter>
+            <q:equal>
+                <q:path>connectorType</q:path>
+                <q:value>com.evolveum.polygon.connector.grouper.rest.GrouperConnector</q:value>
+            </q:equal>
+        </filter>
+    </connectorRef>
+    <connectorConfiguration xmlns:icfc="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/connector-schema-3" xsi:type="c:ConnectorConfigurationType">
+        <icfc:resultsHandlerConfiguration>
+            <icfc:enableNormalizingResultsHandler>false</icfc:enableNormalizingResultsHandler>
+            <icfc:enableFilteredResultsHandler>true</icfc:enableFilteredResultsHandler>
+            <icfc:enableAttributesToGetSearchResultsHandler>false</icfc:enableAttributesToGetSearchResultsHandler>
+        </icfc:resultsHandlerConfiguration>
+        <icfc:configurationProperties xmlns:gen887="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/com.evolveum.polygon.connector-grouper-rest/com.evolveum.polygon.connector.grouper.rest.GrouperConnector">
+            <gen887:baseUrl xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/com.evolveum.polygon.connector-grouper-rest/com.evolveum.polygon.connector.grouper.rest.GrouperConnector" xmlns:s="http://midpoint.evolveum.com/xml/ns/public/model/scripting-3">https://grouper-ws:443</gen887:baseUrl>
+            <gen887:username>banderson</gen887:username>
+            <gen887:password>
+                <t:encryptedData>
+                    <t:encryptionMethod>
+                        <t:algorithm xmlns="http://prism.evolveum.com/xml/ns/public/types-3">http://www.w3.org/2001/04/xmlenc#aes256-cbc</t:algorithm>
+                    </t:encryptionMethod>
+                    <t:keyInfo>
+                        <t:keyName>/QWadwACIyKn6vICM+X1bx1TxGA=</t:keyName>
+                    </t:keyInfo>
+                    <t:cipherData>
+                        <t:cipherValue>+uYKQmXmDy1+emENduwuOekd9c73uvjeN3kzSdZLr7A=</t:cipherValue>
+                    </t:cipherData>
+                </t:encryptedData>
+            </gen887:password>
+            <gen887:ignoreSslValidation>true</gen887:ignoreSslValidation>
+            <gen887:baseStem xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/com.evolveum.polygon.connector-grouper-rest/com.evolveum.polygon.connector.grouper.rest.GrouperConnector">:</gen887:baseStem>
+            <gen887:groupIncludePattern xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/com.evolveum.polygon.connector-grouper-rest/com.evolveum.polygon.connector.grouper.rest.GrouperConnector">app:.*</gen887:groupIncludePattern>
+            <gen887:groupIncludePattern xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/com.evolveum.polygon.connector-grouper-rest/com.evolveum.polygon.connector.grouper.rest.GrouperConnector">test:.*</gen887:groupIncludePattern>
+            <gen887:groupIncludePattern xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/com.evolveum.polygon.connector-grouper-rest/com.evolveum.polygon.connector.grouper.rest.GrouperConnector">ref:.*</gen887:groupIncludePattern>
+            <gen887:groupExcludePattern>.*_(includes|excludes|systemOfRecord|systemOfRecordAndIncludes)</gen887:groupExcludePattern>
+            <gen887:subjectSource>ldap</gen887:subjectSource>
+            <gen887:testStem xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/com.evolveum.polygon.connector-grouper-rest/com.evolveum.polygon.connector.grouper.rest.GrouperConnector">:</gen887:testStem>
+        </icfc:configurationProperties>
+    </connectorConfiguration>
+    <additionalConnector id="1">
+        <name>AMQP async update connector</name>
+        <connectorRef oid="fba60f89-f262-4fb5-9534-540e2034fbae" relation="org:default" type="c:ConnectorType">
+            <!-- Built-in AsyncUpdateConnector v1.0.0 -->
+            <filter>
+                <q:equal>
+                    <q:path>connectorType</q:path>
+                    <q:value>AsyncUpdateConnector</q:value>
+                </q:equal>
+            </filter>
+        </connectorRef>
+        <connectorConfiguration xmlns:gen94="http://midpoint.evolveum.com/xml/ns/public/connector/builtin-1/bundle/com.evolveum.midpoint.provisioning.ucf.impl.builtin.async.update/AsyncUpdateConnector" xsi:type="c:ConnectorConfigurationType">
+            <gen94:sources>
+                <amqp091>
+                    <uri>amqp://mq:5672</uri>
+                    <username>guest</username>
+                    <password>
+                        <t:encryptedData>
+                            <t:encryptionMethod>
+                                <t:algorithm xmlns="http://prism.evolveum.com/xml/ns/public/types-3">http://www.w3.org/2001/04/xmlenc#aes256-cbc</t:algorithm>
+                            </t:encryptionMethod>
+                            <t:keyInfo>
+                                <t:keyName>/QWadwACIyKn6vICM+X1bx1TxGA=</t:keyName>
+                            </t:keyInfo>
+                            <t:cipherData>
+                                <t:cipherValue>o365XQMPB1dTRTyXqrVH5I9LzG2PDDCcjWB+Pc/ip60=</t:cipherValue>
+                            </t:cipherData>
+                        </t:encryptedData>
+                    </password>
+                    <queue>sampleQueue</queue>
+                </amqp091>
+            </gen94:sources>
+            <gen94:transformExpression>
+                <script>
+                    <code>
+                        // ------------------ START OF CONFIGURATION ------------------
+
+                        parameters = [
+                            groupIncludePattern: [ 'app:.*', 'test:.*', 'ref:.*' ],
+                            groupExcludePattern: [ '.*_(includes|excludes|systemOfRecord|systemOfRecordAndIncludes)' ],
+                            relevantSourceId: 'ldap'
+                        ]
+
+                        // ------------------ END OF CONFIGURATION ------------------
+
+                        parameters.put('message', message)
+                        grouper.execute('createUcfChange', parameters)
+                    </code>
+                </script>
+            </gen94:transformExpression>
+        </connectorConfiguration>
+        <capabilities>
+            <cachingMetadata>
+                <retrievalTimestamp>2023-04-05T14:51:34.371Z</retrievalTimestamp>
+                <serialNumber>55f9486f0e7de051-9210b84dffbfa495</serialNumber>
+            </cachingMetadata>
+            <native xmlns:cap="http://midpoint.evolveum.com/xml/ns/public/resource/capabilities-3">
+                <cap:asyncUpdate/>
+            </native>
+        </capabilities>
+    </additionalConnector>
+    <schema>
+        <cachingMetadata>
+            <retrievalTimestamp>2023-04-05T14:51:34.416Z</retrievalTimestamp>
+            <serialNumber>94930df3a24750da-9a5131777dbda97b</serialNumber>
+        </cachingMetadata>
+        <definition>
+            <xsd:schema xmlns:a="http://prism.evolveum.com/xml/ns/public/annotation-3" xmlns:ra="http://midpoint.evolveum.com/xml/ns/public/resource/annotation-3" xmlns:tns="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xml:space="preserve">
+                <xsd:import namespace="http://prism.evolveum.com/xml/ns/public/annotation-3"/>
+                <xsd:import namespace="http://midpoint.evolveum.com/xml/ns/public/resource/annotation-3"/>
+                <xsd:complexType name="Group">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <a:container/>
+                            <ra:resourceObject/>
+                            <ra:identifier>ri:uuid</ra:identifier>
+                            <ra:secondaryIdentifier>ri:name</ra:secondaryIdentifier>
+                            <ra:displayNameAttribute>ri:name</ra:displayNameAttribute>
+                            <ra:namingAttribute>ri:name</ra:namingAttribute>
+                            <ra:nativeObjectClass>Group</ra:nativeObjectClass>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="0" name="extension" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>120</a:displayOrder>
+                                    <ra:frameworkAttributeName>extension</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="name" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>name</a:displayName>
+                                    <a:displayOrder>110</a:displayOrder>
+                                    <ra:nativeAttributeName>name</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>__NAME__</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element maxOccurs="unbounded" minOccurs="0" name="member" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>130</a:displayOrder>
+                                    <ra:frameworkAttributeName>member</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>false</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="uuid" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>uuid</a:displayName>
+                                    <a:displayOrder>100</a:displayOrder>
+                                    <ra:nativeAttributeName>uuid</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>__UID__</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:schema>
+        </definition>
+    </schema>
+    <schemaHandling>
+        <objectType id="2">
+            <kind>entitlement</kind>
+            <intent>group</intent>
+            <default>true</default>
+            <objectClass>ri:Group</objectClass>
+            <attribute id="3">
+                <ref>ri:name</ref>
+                <inbound id="5">
+                    <strength>strong</strength>
+                    <target>
+                        <path>extension/grouperName</path>
+                    </target>
+                </inbound>
+                <inbound id="6">
+                    <strength>strong</strength>
+                    <expression>
+                        <script>
+                            <code>
+                                import com.evolveum.midpoint.schema.util.*
+                                import com.evolveum.midpoint.schema.constants.*
+                                
+                                if (input == null) {
+                                    null
+                                } else {
+                                    archetypeOid = '5f2b96d2-49b5-4a8a-9601-14457309a69b'       // generic-grouper-group archetype
+                                    switch (input) {
+                                        case ~/ref:affiliation:.*/: archetypeOid = '56f53812-047d-4b69-83e8-519a73d161e1'; break;   // affiliation archetype
+                                        case ~/ref:dept:.*/: archetypeOid = '1cec5f78-8fba-459b-9547-ef7485009f40'; break;          // department archetype
+                                        case ~/ref:course:.*/: archetypeOid = '3dab9a72-118b-4e40-a138-bb691c335eca'; break;        // course archetype
+                                        case ~/app:mailinglist:.*/: archetypeOid = '1645d1dc-1f7c-4508-b50b-97b501ccdee3'; break;   // mailing-list archetype
+                                        case ~/app:fm:.*/: archetypeOid = 'f09cdfcf-a153-42e8-90e8-f55a0835e17d'; break;   // eduroam archetype
+                                    }
+                                    ObjectTypeUtil.createAssignmentTo(archetypeOid, ObjectTypes.ARCHETYPE, prismContext)
+                                }
+                            </code>
+                        </script>
+                    </expression>
+                    <target>
+                        <path>assignment</path>
+                        <set>
+                            <predefined>all</predefined>
+                        </set>
+                    </target>
+                </inbound>
+                <inbound id="7">
+                    <strength>strong</strength>
+                    <expression>
+                        <assignmentTargetSearch>
+                            <targetType>RoleType</targetType>
+                            <oid>30082d24-0bea-4f22-b558-d0ee2a399c38</oid>
+                        </assignmentTargetSearch>
+                    </expression>
+                    <target>
+                        <path>assignment</path>
+                        <set>
+                            <predefined>all</predefined>
+                        </set>
+                    </target>
+                    <condition>
+                        <script>
+                            <code>
+                             input.startsWith('app:wordpress:editors')
+                          </code>
+                        </script>
+                    </condition>
+                </inbound>
+                <inbound id="8">
+                    <strength>strong</strength>
+                    <expression>
+                        <assignmentTargetSearch>
+                            <targetType>RoleType</targetType>
+                            <oid>9e5a82fc-7969-4fd8-9f74-e0857969cdbb</oid>
+                        </assignmentTargetSearch>
+                    </expression>
+                    <target>
+                        <path>assignment</path>
+                        <set>
+                            <predefined>all</predefined>
+                        </set>
+                    </target>
+                    <condition>
+                        <script>
+                            <code>
+                             input.startsWith('app:wordpress:admins')
+                          </code>
+                        </script>
+                    </condition>
+                </inbound>
+            </attribute>
+            <attribute id="4">
+                <ref>ri:member</ref>
+                <fetchStrategy>explicit</fetchStrategy>
+                <storageStrategy>indexOnly</storageStrategy>
+            </attribute>
+        </objectType>
+    </schemaHandling>
+    <capabilities>
+        <cachingMetadata>
+            <retrievalTimestamp>2023-04-05T14:51:34.410Z</retrievalTimestamp>
+            <serialNumber>de585823a5b996b7-f73eeb2e1e3bb32</serialNumber>
+        </cachingMetadata>
+        <native xmlns:cap="http://midpoint.evolveum.com/xml/ns/public/resource/capabilities-3">
+            <cap:schema/>
+            <cap:read>
+                <cap:returnDefaultAttributesOption>false</cap:returnDefaultAttributesOption>
+            </cap:read>
+            <cap:testConnection/>
+            <cap:script>
+                <cap:host id="10">
+                    <cap:type>connector</cap:type>
+                </cap:host>
+            </cap:script>
+        </native>
+    </capabilities>
+    <caching>
+        <cachingStrategy>passive</cachingStrategy>
+    </caching>
+    <synchronization>
+        <objectSynchronization id="9">
+            <objectClass>ri:Group</objectClass>
+            <kind>entitlement</kind>
+            <intent>group</intent>
+            <focusType>OrgType</focusType>
+            <enabled>true</enabled>
+            <correlation>
+                <q:equal>
+                    <q:path>extension/grouperName</q:path>
+                    <expression>
+                        <path>$projection/attributes/name</path>
+                    </expression>
+                </q:equal>
+            </correlation>
+            <reaction>
+                <situation>linked</situation>
+                <channel>http://midpoint.evolveum.com/xml/ns/public/provisioning/channels-3#asyncUpdate</channel>
+                <synchronize>false</synchronize>
+                <condition>
+                    <script>
+                        <code>import com.evolveum.midpoint.prism.path.ItemPath
+                        import com.evolveum.midpoint.xml.ns._public.common.common_3.ShadowType
+
+                        // member-only updates should _NOT_ be synchronized
+                        resourceObjectDelta != null &amp;&amp; resourceObjectDelta.isModify() &amp;&amp;
+                                resourceObjectDelta.modifications.size() == 1 &amp;&amp;
+                                ItemPath.create(ShadowType.F_ATTRIBUTES, 'member').equivalent(resourceObjectDelta.modifications.iterator().next().path)
+                        </code>
+                    </script>
+                </condition>
+            </reaction>
+            <reaction>
+                <situation>linked</situation>
+                <synchronize>true</synchronize>
+            </reaction>
+            <reaction>
+                <situation>deleted</situation>
+                <synchronize>true</synchronize>
+            </reaction>
+            <reaction>
+                <situation>unlinked</situation>
+                <action>
+                    <handlerUri>http://midpoint.evolveum.com/xml/ns/public/model/action-3#link</handlerUri>
+                </action>
+            </reaction>
+            <reaction>
+                <situation>unmatched</situation>
+                <action>
+                    <handlerUri>http://midpoint.evolveum.com/xml/ns/public/model/action-3#addFocus</handlerUri>
+                </action>
+            </reaction>
+        </objectSynchronization>
+    </synchronization>
+</resource>
+
+</objects>

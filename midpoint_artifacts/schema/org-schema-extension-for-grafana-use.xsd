@@ -1,0 +1,18 @@
+<xsd:schema elementFormDefault="qualified"
+  targetNamespace="http://grafana-demo.tier.internet2.edu"
+  xmlns:tns="http://grafana-demo.tier.internet2.edu"
+  xmlns:a="http://prism.evolveum.com/xml/ns/public/annotation-3"
+  xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:complexType name="OrgExtensionType">
+    <xsd:annotation>
+      <xsd:appinfo>
+        <a:extension ref="c:OrgType"/>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:sequence>
+        <xsd:element name="grafanaOrgId" type="xsd:string" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>  
+</xsd:schema>
