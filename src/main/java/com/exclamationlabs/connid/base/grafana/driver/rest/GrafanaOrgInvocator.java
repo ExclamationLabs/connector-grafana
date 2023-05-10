@@ -40,7 +40,7 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
         GrafanaOrg existing = getOneByName(driver, org.getName());
         if ( existing != null && existing.getName() != null && existing.getName().trim().equalsIgnoreCase(org.getName().trim()))
         {
-            LOG.error("Attempting to Create an Org named {0} that already Exists", existing.getName());
+            LOG.warn("Attempting to Create an Org named {0} that already Exists", existing.getName());
             orgId = existing.getId().toString();
         }
         else

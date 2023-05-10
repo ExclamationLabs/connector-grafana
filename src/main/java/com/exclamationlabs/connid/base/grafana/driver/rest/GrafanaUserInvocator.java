@@ -163,24 +163,36 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
             user.setPassword(RandomStringUtils.randomAlphanumeric(10));
         }
 
-        response = driver.executePostRequest("/admin/users",
-                                                GrafanaStandardResponse.class,
-                                                user,
-                                                driver.getAdminHeaders());
-
-        createInfo = response.getResponseObject();
-
-        if ( createInfo == null || createInfo.getId() == null || createInfo.getId().trim().length() == 0 )
+        GrafanaUser actual = getOneByName(driver, user.getEmail());
+        if ( actual == null)
         {
-            String message = "HTTP status" + response.getResponseStatusCode() +
-                             ". Failed to create Global Grafana User: " + createInfo.getMessage() ;
-            LOG.warn( message);
-            throw new ConnectorException(message);
+            response = driver.executePostRequest("/admin/users",
+                    GrafanaStandardResponse.class,
+                    user,
+                    driver.getAdminHeaders());
+
+            createInfo = response.getResponseObject();
+
+            if ( createInfo == null || createInfo.getId() == null || createInfo.getId().trim().length() == 0 )
+            {
+                String message = "HTTP status" + response.getResponseStatusCode() +
+                        ". Failed to create Global Grafana User: " + createInfo.getMessage() ;
+                LOG.warn( message);
+                throw new ConnectorException(message);
+            }
+            else if (StringUtils.isNumeric(createInfo.getId().trim()))
+            {
+                userId = Integer.valueOf(createInfo.getId().trim());
+            }
         }
-        else if (StringUtils.isNumeric(createInfo.getId().trim()))
+        else
         {
-            userId = Integer.valueOf(createInfo.getId().trim());
+            userId = actual.getId();
+            createInfo = new GrafanaStandardResponse();
+            createInfo.setId(String.valueOf(actual.getId()));
+            LOG.warn("User already exists returning ID");
         }
+
         // If the User Model includes has a list or organizations, then add them when not already associated
         if (user.getOrganizations() != null && user.getOrganizations().size() > 0 && userId > 0 )
         {
