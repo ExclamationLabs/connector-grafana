@@ -163,7 +163,7 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
             user.setPassword(RandomStringUtils.randomAlphanumeric(10));
         }
 
-        GrafanaUser actual = getOneByName(driver, user.getEmail());
+        GrafanaUser actual = getOneByName(driver, user.getLogin());
         if ( actual == null)
         {
             response = driver.executePostRequest("/admin/users",
@@ -190,7 +190,7 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
             userId = actual.getId();
             createInfo = new GrafanaStandardResponse();
             createInfo.setId(String.valueOf(actual.getId()));
-            LOG.warn("User already exists returning ID");
+            LOG.warn("User already exists returning ID {0}", userId );
         }
 
         // If the User Model includes has a list or organizations, then add them when not already associated

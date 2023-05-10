@@ -130,7 +130,19 @@ public class GrafanaConnectorTest
         assertNotNull(newId);
         assertNotNull(newId.getUidValue());
     }
-
+    @Test
+    public void test130CreateDuplicateUser()
+    {
+        Set<Attribute> attributes = new HashSet<>();
+        attributes.add(new AttributeBuilder().setName(GrafanaUserAttribute.email.name()).addValue("user2@graf.com").build());
+        attributes.add(new AttributeBuilder().setName(GrafanaUserAttribute.name.name()).addValue("John User2").build());
+        attributes.add(new AttributeBuilder().setName(GrafanaUserAttribute.login.name()).addValue("user2").build());
+        attributes.add(new AttributeBuilder().setName(GrafanaUserAttribute.password.name()).addValue("Secret1234!").build());
+        attributes.add(new AttributeBuilder().setName(GrafanaUserAttribute.role.name()).addValue("Viewer").build());
+        Uid newId = connector.create(new ObjectClass("GrafanaUser"), attributes, new OperationOptionsBuilder().build());
+        assertNotNull(newId);
+        assertNotNull(newId.getUidValue());
+    }
 
     @Test
     public void test135CreateDatasource()

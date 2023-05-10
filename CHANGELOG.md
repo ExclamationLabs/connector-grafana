@@ -1,6 +1,7 @@
 # connector-zoom
 
 ## Change Log
++ **1.7.3** - Updated Create check for User already exists using login rather than email address 
 + **1.7.2** - Added Create check for User already exists and warning messages when it occurs
 + **1.7.1** - Added Grafana Dashboard Create and Update Support
 + **1.7.0** - Initial Stable 
