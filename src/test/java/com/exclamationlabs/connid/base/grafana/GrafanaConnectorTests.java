@@ -1,23 +1,23 @@
 package com.exclamationlabs.connid.base.grafana;
 
+import com.exclamationlabs.connid.base.grafana.attribute.GrafanaDataSourceAttribute;
 import com.exclamationlabs.connid.base.grafana.attribute.GrafanaOrgAttribute;
 import com.exclamationlabs.connid.base.grafana.attribute.GrafanaUserAttribute;
-import com.exclamationlabs.connid.base.grafana.attribute.GrafanaDataSourceAttribute;
 import com.exclamationlabs.connid.base.grafana.configuration.GrafanaConfiguration;
-import com.exclamationlabs.connid.base.grafana.model.GrafanaDataSource;
 import org.identityconnectors.framework.common.objects.*;
 import org.identityconnectors.framework.spi.SearchResultsHandler;
 import org.identityconnectors.test.common.ToListResultsHandler;
-
-
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
-public class GrafanaConnectorTest
+public class GrafanaConnectorTests
 {
     private GrafanaConnector connector = new GrafanaConnector();
     private GrafanaConfiguration configuration = new GrafanaConfiguration();
@@ -63,12 +63,12 @@ public class GrafanaConnectorTest
         }
         else
         {
-            configuration.setServiceUrl("https://logs.dev.infra.eduroam.us/provisioner_api/");
-            configuration.setBasicUsername("grafana_provisioner");
-            configuration.setBasicPassword("Ag4tNBY3Pienfa8eqH0akrhK");
-            configuration.setLokiUser("grafana");
-            configuration.setLokiPassword("foo");
-            configuration.setLokiURL("http://loki.dev.infra.eduroam.us");
+            configuration.setServiceUrl("http://localhost:3000/api/");
+            configuration.setBasicUsername("admin");
+            configuration.setBasicPassword("password");
+            configuration.setLokiUser("admin");
+            configuration.setLokiPassword("admin");
+            configuration.setLokiURL("http://localhost:3100/");
         }
 
 
@@ -189,7 +189,7 @@ public class GrafanaConnectorTest
     public void test140GetOrgByNumber()
     {
         ToListResultsHandler listHandler = new ToListResultsHandler();
-        connector.executeQuery(new ObjectClass("GrafanaOrganization"), "1", listHandler, new OperationOptionsBuilder().build());
+        connector.executeQuery(new ObjectClass("GrafanaOrganization"), "2", listHandler, new OperationOptionsBuilder().build());
         List<ConnectorObject> orgs = listHandler.getObjects();
         assertNotNull(orgs);
         assertEquals(1, orgs.size());
