@@ -133,7 +133,7 @@ The actual method of configuring a connector is largely dependent on the interfa
    </td>
    <td>No
    </td>
-   <td>When a dashboard template is supplied the connector will attempt to create a new Grafana Dashboard for an organization containing the uid of the newly created or updated Datasource. This is done through substitution of any string sequence “&lt;DataSourceUID>” with the actual UID of the newly created Datasource.  
+   <td>When a dashboard template is supplied the connector will attempt to create a new Grafana Dashboard for an organization containing the uid of the newly created or updated Datasource. This is done through substitution of any string sequence “&lt;DataSourceUID>” or “__DataSourceUID__” with the actual UID of the newly created Datasource.  
    </td>
   </tr>
   <tr>
@@ -616,7 +616,7 @@ The Grafana Datasource api does not support a delta update operation by default.
 
 ## Creating a Grafana Dashboard
 
-A grafana dashboard is automatically created when a datasource is created and the connector configuration contains a dashboard template. The connector will make a case sensitive substitution of  “&lt;DataSourceUID>”  in the template with the uid of the Datasource. The dashboard is actually associated with an organization so the value is stored in the organization schema.
+A grafana dashboard is automatically created when a datasource is created and the connector configuration contains a dashboard template. The connector will make a case sensitive substitution of  “&lt;DataSourceUID>” or “__DataSourceUID__” in the template with the uid of the Datasource. The dashboard is actually associated with an organization so the value is stored in the organization schema.
 
 
 ## Updating a Grafana Dashboard
