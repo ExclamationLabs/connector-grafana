@@ -196,17 +196,22 @@ The Grafana connector implements the following connId SPI operations:
 
 ## Deep Get Explained
 
-The connector supports a **deep get** functionality which returns detailed information for each item returned from a query. This feature is necessary because a query may return partial fields for a record.This is the case with the Grafana User lookup API call. **Deep get** is invoked when the query contains paging parameters such as page size and page offset.
+The connector supports a **deep get** functionality which returns detailed information for each item returned from a query. This feature is necessary because a query may return partial fields for a record.This is the case with the Grafana User lookup and the GrafanaOrg lookup API calls. **Deep get** is invoked when the query contains paging parameters such as page size and page offset. **Deep get is recommended to be true for this connector.**
 
 
 ## Deep Import Explained
 
-The connector’s deep import option is similar to the deep get option. The deep import option is invoked when a query does not have paging parameters.
+The connector’s deep import option is similar to the deep get option. The deep import option is invoked when a query does not have paging parameters. **Deep Import is recommended to be true for this connector.**
 
 
 ## Duplicate Record Returns Id Explained
 
-The duplicate record returns Id configuration option is invoked when an HTTP POST request, used to create a record, returns HTTP 409 (Conflict). This typically indicates that the record we are attempting to create already exists. When this option is true the connector will attempt to get the record by name and return the record’s ID value to the caller. In this way a record can be seamlessly imported when it already exists on the target server
+The duplicate record returns Id configuration option is invoked when an HTTP POST request, used to create a record, returns HTTP 409 (Conflict). This typically indicates that the record we are attempting to create already exists. When this option is true the connector will attempt to get the record by name and return the record’s ID value to the caller. In this way a record can be seamlessly imported when it already exists on the target server. Unfortunately the Grafana API does not return HTTP 409 instead it returns HTTP 412. Because this is the case the connector will always do a lookup for an existing object type before creating the type.
+
+
+## Separate Org Association Explained
+
+Separate org association is used when a new user is created. When **false** the user’s organization will be specified at the time of user creation. When **true** the user’s organization will be implemented as a separate api call. Depending on the Grafana configuration a true setting may cause the user to be associated with a default organization which may not be desirable. **We recommend that the setting should be false.**
 
 
 # 6	Connector Schema
@@ -356,6 +361,14 @@ ConnId Name -> login
    <td>String
    </td>
    <td>Not Returned (TBD)
+   </td>
+  </tr>
+  <tr>
+   <td>dashboards
+   </td>
+   <td>String
+   </td>
+   <td>Multivalued JSON dashboard data. Readonly. This field contains the dashboard configuration for an organization.
    </td>
   </tr>
 </table>
@@ -603,7 +616,7 @@ The Grafana Datasource api does not support a delta update operation by default.
 
 ## Creating a Grafana Dashboard
 
-A grafana dashboard is automatically created when a datasource is created and the connector configuration contains a dashboard template. The connector will make a case sensitive substitution of  “&lt;DataSourceUID>”  in the template with the uid of the Datasource
+A grafana dashboard is automatically created when a datasource is created and the connector configuration contains a dashboard template. The connector will make a case sensitive substitution of  “&lt;DataSourceUID>”  in the template with the uid of the Datasource. The dashboard is actually associated with an organization so the value is stored in the organization schema.
 
 
 ## Updating a Grafana Dashboard
