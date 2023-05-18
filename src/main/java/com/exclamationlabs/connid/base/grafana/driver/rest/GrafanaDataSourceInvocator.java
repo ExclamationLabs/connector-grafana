@@ -317,6 +317,7 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                                 template = template.replace("<DataSourceUID>", dataSource.getUid());
                                 template = template.replace("__DataSourceUID__", dataSource.getUid());
                                 createDashboard(driver, String.valueOf(dataSource.getOrgId()), template);
+
                             }
                         }
                         catch (Exception exception)
