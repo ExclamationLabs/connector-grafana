@@ -152,6 +152,7 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                 {
                     String template = driver.getConfiguration().getDashboardTemplate();
                     template = template.replace("<DataSourceUID>", createInfo.getDatasource().getUid());
+                    template = template.replace("__DataSourceUID__", createInfo.getDatasource().getUid());
                     createDashboard(driver, String.valueOf(createInfo.getDatasource().getOrgId()), template);
                 }
             }
