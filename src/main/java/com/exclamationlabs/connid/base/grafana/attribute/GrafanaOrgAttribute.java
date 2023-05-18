@@ -6,6 +6,7 @@ public enum GrafanaOrgAttribute
     address2,
     city,
     country,
+    dashboards,
     name,
     orgId,
     state,

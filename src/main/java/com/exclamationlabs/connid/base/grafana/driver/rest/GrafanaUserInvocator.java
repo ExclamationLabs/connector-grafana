@@ -107,7 +107,7 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
 
             if ( rd.getResponseStatusCode() == 200 )
             {
-                LOG.warn( "HTTP StatusCode {0}, login {1}, OrgId {2}, Message {3}",
+                LOG.info( "HTTP StatusCode {0}, login {1}, OrgId {2}, Message {3}",
                         rd.getResponseStatusCode(), login, orgId, response.getMessage());
                 success = true;
             }
@@ -146,7 +146,7 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
                 && !driver.getConfiguration().getSeparateOrgAssociation()  )
         {
             user.setOrgId(decomposeOrgId(user.getOrganizations().get(0)));
-            LOG.warn("Creating User with Org Association {0}", user.getOrgId());
+            LOG.info("Creating User with Org Association {0}", user.getOrgId());
             if ( user.getRole() == null || user.getRole().trim().length() == 0 )
             {
                 user.setRole(driver.getConfiguration().getDefaultOrgRole());
@@ -155,7 +155,7 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
         else
         {
             user.setRole(null);
-            LOG.warn("Creating user without Org Association");
+            LOG.info("Creating user without Org Association");
         }
 
         if ( user.getPassword()== null || user.getPassword().trim().length() == 0 )
@@ -290,7 +290,7 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
 
                 if ( message != null && (message.contains("delete") || message.contains("Delete") ) )
                 {
-                    LOG.warn("Grafana User " + user.getName() + " deleted");
+                    LOG.info("Grafana User " + user.getName() + " deleted");
                 }
                 else
                 {
@@ -336,18 +336,40 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
     public Set<GrafanaUser> getAll(GrafanaDriver driver, ResultsFilter resultsFilter, ResultsPaginator paginator, Integer maxResultsRecords) throws ConnectorException
     {
         String queryParameters = "";
+        int startpage = 1;
+        int pageSize  = 500;
+
+        GrafanaUser[] userArray = null;
+        Set<GrafanaUser> users = new HashSet<GrafanaUser>();
+        RestResponseData<GrafanaUser[]> rd;
         if (paginator.hasPagination())
         {
             queryParameters = "?perpage=" + paginator.getPageSize() + "&page=" + paginator.getCurrentPageNumber();
+            rd = driver.executeGetRequest("/users" + queryParameters, GrafanaUser[].class, driver.getAdminHeaders());
+            userArray = rd.getResponseObject();
+            users.addAll(Arrays.asList(userArray));
         }
-        GrafanaUser[] userArray = null;
-        Set<GrafanaUser> users = new HashSet<GrafanaUser>();
-
-        RestResponseData<GrafanaUser[]> rd = driver.executeGetRequest("/users" + queryParameters,
-                                                                        GrafanaUser[].class,
-                                                                        driver.getAdminHeaders());
-        userArray = rd.getResponseObject();
-        users = new HashSet<>(Arrays.asList(userArray));
+        else
+        {
+            boolean hasMore = false;
+            do
+            {
+                queryParameters = "?perpage=" + pageSize + "&page=" + startpage;
+                LOG.info("Get {0} Grafana Organizations on page {1}", pageSize, startpage);
+                rd = driver.executeGetRequest("/users" + queryParameters, GrafanaUser[].class, driver.getAdminHeaders());
+                userArray = rd.getResponseObject();
+                if ( userArray == null || userArray.length < pageSize )
+                {
+                    hasMore = false;
+                }
+                else
+                {
+                    hasMore = true;
+                    startpage++;
+                }
+                users.addAll(Arrays.asList(userArray));
+            } while (hasMore);
+        }
         return users;
     }
 
@@ -366,7 +388,7 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
         Set<GrafanaUser> users = new HashSet<GrafanaUser>();
         if ( id != null && id.trim().length() > 0 )
         {
-            LOG.warn("Lookup user with ID {0} ", id);
+            LOG.info("Lookup user with ID {0} ", id);
             if (StringUtils.isNumeric(id.trim()))
             {
                 // Get user By Numeric ID
@@ -402,7 +424,7 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
         GrafanaUser user;
         if ( name != null && name.trim().length() > 0 )
         {
-            LOG.warn("Lookup user with login or email ", name);
+            LOG.info("Lookup user with login or email ", name);
             // Get user By Numeric ID
             RestResponseData<GrafanaUser> rd = driver.executeGetRequest(
                     "/users/lookup?loginOrEmail=" + name.trim(),
@@ -511,7 +533,7 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
         // in each of those Org(s)
         if ( user != null )
         {
-            LOG.warn("Lookup Organizations for user {0} with email {1} ", user.getLogin(), user.getEmail());
+            LOG.info("Lookup Organizations for user {0} with email {1} ", user.getLogin(), user.getEmail());
             ArrayList<GrafanaUserOrg> orgs = getUserOrganizations(driver, user.getUserId());
             if ( orgs != null && orgs.size() > 0 )
             {

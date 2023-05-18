@@ -15,12 +15,10 @@ import org.identityconnectors.framework.common.objects.ObjectClass;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import static com.exclamationlabs.connid.base.connector.attribute.ConnectorAttributeDataType.INTEGER;
 import static com.exclamationlabs.connid.base.connector.attribute.ConnectorAttributeDataType.STRING;
-
-
 
 
 public class GrafanaOrgAdapter extends BaseAdapter<GrafanaOrg, GrafanaConfiguration>
@@ -47,6 +45,10 @@ public class GrafanaOrgAdapter extends BaseAdapter<GrafanaOrg, GrafanaConfigurat
         Set<ConnectorAttribute> result = new HashSet<>();
         result.add(new ConnectorAttribute(GrafanaOrgAttribute.name.name(), STRING, AttributeInfo.Flags.REQUIRED));
         result.add(new ConnectorAttribute(GrafanaOrgAttribute.orgId.name(), STRING, AttributeInfo.Flags.NOT_UPDATEABLE));
+        result.add(new ConnectorAttribute(GrafanaOrgAttribute.dashboards.name(), STRING,
+                AttributeInfo.Flags.MULTIVALUED,
+                AttributeInfo.Flags.NOT_UPDATEABLE,
+                AttributeInfo.Flags.NOT_CREATABLE));
         return result;
     }
 
@@ -60,6 +62,11 @@ public class GrafanaOrgAdapter extends BaseAdapter<GrafanaOrg, GrafanaConfigurat
         Set<Attribute> attributes = new HashSet<>();
         attributes.add(AttributeBuilder.build(GrafanaOrgAttribute.name.name(), org.getName()));
         attributes.add(AttributeBuilder.build(GrafanaOrgAttribute.orgId.name(), org.getIdentityIdValue()));
+        List<String> list = org.getDashboards();
+        if ( list != null && list.size() > 0 )
+        {
+            attributes.add(AttributeBuilder.build(GrafanaOrgAttribute.dashboards.name(), list));
+        }
         return attributes;
     }
 
@@ -90,6 +97,7 @@ public class GrafanaOrgAdapter extends BaseAdapter<GrafanaOrg, GrafanaConfigurat
                 NAME = item.getValue().get(0).toString();
             }
         }
+
         String orgName = AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, GrafanaOrgAttribute.name);
         if ( orgName != null )
         {

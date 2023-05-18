@@ -18,7 +18,7 @@ import java.util.*;
 public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver, GrafanaDataSource>
 {
     private static final Log LOG = Log.getLog(GrafanaDataSourceInvocator.class);
-    private static final String ORG_HEADER = "X-Grafana-Org-Id";
+    public static final String ORG_HEADER = "X-Grafana-Org-Id";
 
     /**
      * Decomposed an identity value into orgId and Datasource ID or DataSource Name.
