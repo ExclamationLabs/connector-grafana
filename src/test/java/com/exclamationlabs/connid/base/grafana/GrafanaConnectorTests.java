@@ -189,7 +189,7 @@ public class GrafanaConnectorTests
     public void test140GetOrgByNumber()
     {
         ToListResultsHandler listHandler = new ToListResultsHandler();
-        connector.executeQuery(new ObjectClass("GrafanaOrganization"), "2", listHandler, new OperationOptionsBuilder().build());
+        connector.executeQuery(new ObjectClass("GrafanaOrganization"), "3", listHandler, new OperationOptionsBuilder().build());
         List<ConnectorObject> orgs = listHandler.getObjects();
         assertNotNull(orgs);
         assertEquals(1, orgs.size());

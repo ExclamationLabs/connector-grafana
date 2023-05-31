@@ -347,7 +347,10 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
             queryParameters = "?perpage=" + paginator.getPageSize() + "&page=" + paginator.getCurrentPageNumber();
             rd = driver.executeGetRequest("/users" + queryParameters, GrafanaUser[].class, driver.getAdminHeaders());
             userArray = rd.getResponseObject();
-            users.addAll(Arrays.asList(userArray));
+            if ( userArray != null && userArray.length > 0 )
+            {
+                users.addAll(Arrays.asList(userArray));
+            }
         }
         else
         {
@@ -367,7 +370,10 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
                     hasMore = true;
                     startpage++;
                 }
-                users.addAll(Arrays.asList(userArray));
+                if ( userArray != null && userArray.length > 0 )
+                {
+                    users.addAll(Arrays.asList(userArray));
+                }
             } while (hasMore);
         }
         return users;

@@ -6,6 +6,7 @@ import com.exclamationlabs.connid.base.connector.results.ResultsPaginator;
 import com.exclamationlabs.connid.base.grafana.model.GrafanaDataSource;
 import com.exclamationlabs.connid.base.connector.driver.rest.RestResponseData;
 import com.exclamationlabs.connid.base.grafana.model.GrafanaOrg;
+import com.exclamationlabs.connid.base.grafana.model.GrafanaOrgPreferences;
 import com.exclamationlabs.connid.base.grafana.model.response.GrafanaDashboardResponse;
 import com.exclamationlabs.connid.base.grafana.model.response.GrafanaDatasourceResponse;
 import com.exclamationlabs.connid.base.grafana.model.response.GrafanaStandardResponse;
@@ -43,18 +44,30 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
         }
         return items;
     }
+
+    /**
+     * Creates or updates the dashboard for an associated organization whose datasource was created or updated
+     * @param driver The Grafana ResT Driver
+     * @param orgId  The Org whose Dashboard will be created or updated
+     * @param dashboard The dashboard raw JSON with datasource uid already embedded
+     * @return Dashboard uid
+     */
     public String createDashboard(GrafanaDriver driver, String orgId, String dashboard)
     {
-        String success = null;
-        RestResponseData<GrafanaDashboardResponse> response;
+        String dashboardUID = null;
+        RestResponseData<GrafanaDashboardResponse> rd;
         Map<String, String> headers = driver.getAdminHeaders();
         headers.put(ORG_HEADER, String.valueOf(orgId));
 
-        response = driver.executePostRequest("/dashboards/db",
+        rd = driver.executePostRequest("/dashboards/db",
                 GrafanaDashboardResponse.class,
                 dashboard,
                 headers);
-        return success;
+        if ( rd != null && rd.getResponseObject() != null )
+        {
+            dashboardUID = rd.getResponseObject().getUid();
+        }
+        return dashboardUID ;
     }
     @Override
     public String create(GrafanaDriver driver, GrafanaDataSource dataSource) throws ConnectorException
@@ -144,16 +157,29 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
         }
         else
         {
-            // Construct __UID__
+            // Construct __UID__ of the datasource
             UID = createInfo.getDatasource().getOrgId() + "_" + createInfo.getDatasource().getUid();
+
+            // If a datasource is created, also create a dashboard for that datasource using the existing
+            // dashboard templete
             try
             {
-                if ( driver.getConfiguration().getUpdateDashBoards() != null && driver.getConfiguration().getUpdateDashBoards())
+                String dashboardUID = null;
+                if ( driver.getConfiguration().getUpdateDashBoards() != null
+                        && driver.getConfiguration().getUpdateDashBoards()
+                        && driver.getConfiguration().getDashboardTemplate() != null
+                        && driver.getConfiguration().getDashboardTemplate().trim().length() > 0 )
                 {
                     String template = driver.getConfiguration().getDashboardTemplate();
                     template = template.replace("<DataSourceUID>", createInfo.getDatasource().getUid());
                     template = template.replace("__DataSourceUID__", createInfo.getDatasource().getUid());
-                    createDashboard(driver, String.valueOf(createInfo.getDatasource().getOrgId()), template);
+                    dashboardUID = createDashboard(driver, String.valueOf(createInfo.getDatasource().getOrgId()), template);
+                    if ( dashboardUID != null && dashboardUID.trim().length() > 0 )
+                    {
+                        GrafanaOrgPreferences preferences = new GrafanaOrgPreferences();
+                        preferences.setHomeDashboardUID(dashboardUID);
+                        GrafanaOrgInvocator.updateOrganizationPreferences(driver, createInfo.getDatasource().getOrgId(), preferences);
+                    }
                 }
             }
             catch (Exception exception)
@@ -311,13 +337,21 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                     {
                         try
                         {
-                            if ( driver.getConfiguration().getUpdateDashBoards() != null && driver.getConfiguration().getUpdateDashBoards())
+                            if ( driver.getConfiguration().getUpdateDashBoards() != null
+                                    && driver.getConfiguration().getUpdateDashBoards()
+                                    && driver.getConfiguration().getDashboardTemplate() != null
+                                    && driver.getConfiguration().getDashboardTemplate().trim().length() > 0 )
                             {
                                 String template = driver.getConfiguration().getDashboardTemplate();
                                 template = template.replace("<DataSourceUID>", dataSource.getUid());
                                 template = template.replace("__DataSourceUID__", dataSource.getUid());
-                                createDashboard(driver, String.valueOf(dataSource.getOrgId()), template);
-
+                                String dashboardUID = createDashboard(driver, String.valueOf(dataSource.getOrgId()), template);
+                                if ( dashboardUID != null && dashboardUID.trim().length() > 0 )
+                                {
+                                    GrafanaOrgPreferences preferences = new GrafanaOrgPreferences();
+                                    preferences.setHomeDashboardUID(dashboardUID);
+                                    GrafanaOrgInvocator.updateOrganizationPreferences(driver, Integer.valueOf(orgId.trim()), preferences);
+                                }
                             }
                         }
                         catch (Exception exception)

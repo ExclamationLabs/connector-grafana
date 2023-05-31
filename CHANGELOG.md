@@ -1,6 +1,8 @@
 # connector-grafana
 
 ## Change Log
++ **1.7.8** - Set the Grafana loki password as confidential and not required
++ **1.7.6** - Set Home Dashboard Organization Preference when a datasource is created, updated, or read and not set  
 + **1.7.5** - Added "\_\_DataSourceUID\_\_" as an alternate datasource substitution code for the dashboard template.
 + **1.7.4** - Added Dashboard JSON content to organization. An organization can have multiple dashboards. Changed some warning level logs to info level. 
 + **1.7.3** - Updated Create check for User already exists using login rather than email address 

@@ -41,6 +41,7 @@ custom:
       lokiPassword:
         type: string
         order: 140
+        confidential: true
         display: 'lokiPassword.display'
         help: 'lokiPassword.help'
       dashboardTemplate:

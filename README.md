@@ -33,6 +33,7 @@ The Grafana connector has the following features:
 * The connector can Create, Update, Delete, and Retrieve information about Grafana Datasources.
 * The connector supports automatic creation of Grafana Data Sources through Configuration
 * The connector supports automatic creation of a Grafana Dashboard when a Data Source is created. This is done through a Dashboard template defined in the  connector configuration.
+* A dashboard created by this connector will become the home dashboard for Grafana
 
 
 # 3	Getting Started
@@ -371,6 +372,14 @@ ConnId Name -> login
    <td>Multivalued JSON dashboard data. Readonly. This field contains the dashboard configuration for an organization.
    </td>
   </tr>
+  <tr>
+   <td>homeDashboardUID
+   </td>
+   <td>String
+   </td>
+   <td>The Organization’s preferred Home Dashboard. ReadOnly. This is set when blank on import and a dashboard exists
+   </td>
+  </tr>
 </table>
 
 
@@ -582,6 +591,11 @@ The Grafana Connector supports the following Query Operations
 This section describes the specific details of the Grafana Connector Create and Update operation.
 
 
+## Importing Organization’s
+
+In addition to reading the organization **id** and the organization **name**, the grafana connector also imports the dashboard and the home dashboard set in org preferences. When the organization’s preferred home dashboard is not set, the current dashboard UID will be used to set the homeDashboardUID during the import procedure.
+
+
 ## Creating a Grafana Organization
 
 When creating a Grafana Organization the only item that can be supplied is the Organization name. The connector automatically responds with the automatically generated integer ID supplied by the Grafana API. This value is converted to a string on return.
@@ -616,12 +630,14 @@ The Grafana Datasource api does not support a delta update operation by default.
 
 ## Creating a Grafana Dashboard
 
-A grafana dashboard is automatically created when a datasource is created and the connector configuration contains a dashboard template. The connector will make a case sensitive substitution of  “&lt;DataSourceUID>” or “__DataSourceUID__” in the template with the uid of the Datasource. The dashboard is actually associated with an organization so the value is stored in the organization schema.
+A grafana dashboard is automatically created when a datasource is created and the connector configuration contains a dashboard template. The connector will make a case sensitive substitution of  “&lt;DataSourceUID>” or “__DataSourceUID__” in the template with the uid of the Datasource. The dashboard is actually associated with an organization so the value is stored in the organization schema. When a dashboard is created it is set as the organization’s preferred home dashboard.
 
 
 ## Updating a Grafana Dashboard
 
-The connector will update the Grafana Dashboard for a Datasource whenever the Datasource is updated, The Dashboard Template exists, and the Dashboard Update option is set to true.
+The connector will update the Grafana Dashboard for a Datasource whenever the Datasource is updated, The Dashboard Template exists, and the Dashboard Update option is set to true.  When a dashboard is updated the organization's preference for home dashboard is also updated to the dashboard UID.
+
+
 
 
 # Using Grouper to Provision Grafana with Midpoint

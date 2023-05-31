@@ -49,6 +49,9 @@ public class GrafanaOrgAdapter extends BaseAdapter<GrafanaOrg, GrafanaConfigurat
                 AttributeInfo.Flags.MULTIVALUED,
                 AttributeInfo.Flags.NOT_UPDATEABLE,
                 AttributeInfo.Flags.NOT_CREATABLE));
+        result.add(new ConnectorAttribute(GrafanaOrgAttribute.homeDashboardUID.name(), STRING,
+                AttributeInfo.Flags.NOT_UPDATEABLE,
+                AttributeInfo.Flags.NOT_CREATABLE));
         return result;
     }
 
@@ -66,6 +69,10 @@ public class GrafanaOrgAdapter extends BaseAdapter<GrafanaOrg, GrafanaConfigurat
         if ( list != null && list.size() > 0 )
         {
             attributes.add(AttributeBuilder.build(GrafanaOrgAttribute.dashboards.name(), list));
+        }
+        if ( org.getHomeDashboardUID() != null && org.getHomeDashboardUID().trim().length() > 0 )
+        {
+            attributes.add(AttributeBuilder.build(GrafanaOrgAttribute.homeDashboardUID.name(), org.getHomeDashboardUID()));
         }
         return attributes;
     }
@@ -118,6 +125,11 @@ public class GrafanaOrgAdapter extends BaseAdapter<GrafanaOrg, GrafanaConfigurat
             org.setId( Integer.valueOf(UID.trim()));
         }
 
+        String homeDashBoardUID = AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, GrafanaOrgAttribute.homeDashboardUID);
+        if ( homeDashBoardUID != null )
+        {
+            org.setHomeDashboardUID(homeDashBoardUID);
+        }
         return org;
     }
 }

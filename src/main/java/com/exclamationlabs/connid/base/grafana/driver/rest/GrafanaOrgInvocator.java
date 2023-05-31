@@ -6,7 +6,9 @@ import com.exclamationlabs.connid.base.connector.results.ResultsFilter;
 import com.exclamationlabs.connid.base.connector.results.ResultsPaginator;
 import com.exclamationlabs.connid.base.grafana.model.GrafanaDashboard;
 import com.exclamationlabs.connid.base.grafana.model.GrafanaOrg;
+import com.exclamationlabs.connid.base.grafana.model.GrafanaOrgPreferences;
 import com.exclamationlabs.connid.base.grafana.model.response.GrafanaDashboardResponse;
+import com.exclamationlabs.connid.base.grafana.model.response.GrafanaOrgPreferencesResponse;
 import com.exclamationlabs.connid.base.grafana.model.response.GrafanaSearchResponse;
 import com.exclamationlabs.connid.base.grafana.model.response.GrafanaStandardResponse;
 import com.google.gson.Gson;
@@ -91,6 +93,26 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
         }
     }
 
+    public List<GrafanaSearchResponse> findDashboards(GrafanaDriver driver, GrafanaOrg org)
+    {
+        List<GrafanaSearchResponse> searchResults = null;
+        if ( org != null && org.getId() != null )
+        {
+            int orgId = org.getId();
+            RestResponseData<GrafanaSearchResponse[]> rd;
+            Map<String, String> headers = driver.getAdminHeaders();
+            headers.put(ORG_HEADER, String.valueOf(orgId));
+            rd = driver.executeGetRequest("/search?folderIds=0&query=&starred=false&type=dash-db",
+                    GrafanaSearchResponse[].class,
+                    headers);
+            if (rd.getResponseObject() != null)
+            {
+                searchResults = Arrays.asList(rd.getResponseObject());
+            }
+        }
+        return searchResults;
+    }
+
     @Override
     public Set<GrafanaOrg> getAll(GrafanaDriver driver, ResultsFilter resultsFilter, ResultsPaginator paginator, Integer maxResultsRecords) throws ConnectorException
     {
@@ -166,25 +188,6 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
         return list;
     }
 
-    public List<GrafanaSearchResponse> findDashboards(GrafanaDriver driver, GrafanaOrg org)
-    {
-        List<GrafanaSearchResponse> searchResults = null;
-        if ( org != null && org.getId() != null )
-        {
-            int orgId = org.getId();
-            RestResponseData<GrafanaSearchResponse[]> rd;
-            Map<String, String> headers = driver.getAdminHeaders();
-            headers.put(ORG_HEADER, String.valueOf(orgId));
-            rd = driver.executeGetRequest("/search?folderIds=0&query=&starred=false&type=dash-db",
-                    GrafanaSearchResponse[].class,
-                    headers);
-            if (rd.getResponseObject() != null)
-            {
-                searchResults = Arrays.asList(rd.getResponseObject());
-            }
-        }
-        return searchResults;
-    }
     /**
      * Get a Single Org from the Grafana Service
      * @param driver The Rest Driver for the Connector
@@ -233,9 +236,25 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
             }
             if ( org != null )
             {
+                // Get the Org Dashboards and update the GrafanaOrg Object Type
                 List<GrafanaSearchResponse> dashboardList = findDashboards(driver, org);
                 List<String> dashboards = getDashboards(driver, org, dashboardList);
                 org.setDashboards(dashboards);
+                // Get the Org Preferences and potentially update
+                GrafanaOrgPreferencesResponse current = getOrganizationPreferences(driver, org.getId());
+                if ( current != null
+                        && (current.getHomeDashboardUID() == null || current.getHomeDashboardUID().trim().length() == 0 )
+                        && dashboardList != null
+                        && dashboardList.size() > 0 )
+                {
+                    GrafanaOrgPreferences preferences = new GrafanaOrgPreferences();
+                    preferences.setHomeDashboardUID(dashboardList.get(0).getUid());
+                    updateOrganizationPreferences(driver, org.getId(), preferences);
+                }
+                else if (current != null && current.getHomeDashboardUID() != null && current.getHomeDashboardUID().trim().length() > 0 )
+                {
+                    org.setHomeDashboardUID(current.getHomeDashboardUID());
+                }
             }
         }
         return org;
@@ -267,11 +286,27 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
                         driver.getAdminHeaders());
                 org = rd.getResponseObject();
             }
+
             if ( org != null )
             {
                 List<GrafanaSearchResponse> dashboardList = findDashboards(driver, org);
                 List<String> dashboards = getDashboards(driver, org, dashboardList);
                 org.setDashboards(dashboards);
+                // Get the Org Preferences and potentially update
+                GrafanaOrgPreferencesResponse current = getOrganizationPreferences(driver, org.getId());
+                if ( current != null
+                        && (current.getHomeDashboardUID() == null || current.getHomeDashboardUID().trim().length() == 0 )
+                        && dashboardList != null
+                        && dashboardList.size() > 0 )
+                {
+                    GrafanaOrgPreferences preferences = new GrafanaOrgPreferences();
+                    preferences.setHomeDashboardUID(dashboardList.get(0).getUid());
+                    updateOrganizationPreferences(driver, org.getId(), preferences);
+                }
+                else if (current != null && current.getHomeDashboardUID() != null && current.getHomeDashboardUID().trim().length() > 0 )
+                {
+                    org.setHomeDashboardUID(current.getHomeDashboardUID());
+                }
             }
         }
         else
@@ -280,6 +315,30 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
         }
         return org;
     }
+
+    /**
+     * Returns an organization's preferences
+     * @param driver The Grafana REST Driver
+     * @param orgId  The Organization whose preferences updated
+     * @return Dashboard uid
+     */
+    public static GrafanaOrgPreferencesResponse getOrganizationPreferences(GrafanaDriver driver, Integer orgId)
+    {
+        GrafanaOrgPreferencesResponse preferences = null;
+        RestResponseData<GrafanaOrgPreferencesResponse> rd;
+        Map<String, String> headers = driver.getAdminHeaders();
+        headers.put(ORG_HEADER, String.valueOf(orgId));
+
+        rd = driver.executeGetRequest("/org/preferences",
+                GrafanaOrgPreferencesResponse.class,
+                headers);
+        if ( rd != null && rd.getResponseObject() != null )
+        {
+            preferences = rd.getResponseObject();
+        }
+        return preferences ;
+    }
+
 
     /**
      * Updates a Grafana Organization
@@ -305,5 +364,33 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
             response = responseData.getResponseObject();
             LOG.warn("Updated Grafana Org {0} with name {1}", orgId, org.getName());
         }
+    }
+
+    /**
+     * Updates an organization preferences with a dashboard that was created or updated
+     * @param driver The Grafana REST Driver
+     * @param orgId  The Organization whose preferences updated
+     * @return Dashboard uid
+     */
+    public static void updateOrganizationPreferences(GrafanaDriver driver, Integer orgId, GrafanaOrgPreferences preferences)
+    {
+        RestResponseData<GrafanaStandardResponse> rd;
+        Map<String, String> headers = driver.getAdminHeaders();
+        headers.put(ORG_HEADER, String.valueOf(orgId));
+
+        rd = driver.executePatchRequest("/org/preferences",
+                GrafanaStandardResponse.class,
+                preferences,
+                headers);
+        if ( rd != null && rd.getResponseStatusCode() != 200 )
+        {
+            LOG.warn("Failed to update Grafana Org {0) preferences. Returned HTTP status {1}", orgId, rd.getResponseStatusCode());
+        }
+        return;
+    }
+
+    public static void updateOrganizationPreferences(GrafanaDriver driver, GrafanaOrg org )
+    {
+
     }
 }
