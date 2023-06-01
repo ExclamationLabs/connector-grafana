@@ -384,7 +384,7 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
                 headers);
         if ( rd != null && rd.getResponseStatusCode() != 200 )
         {
-            LOG.warn("Failed to update Grafana Org {0) preferences. Returned HTTP status {1}", orgId, rd.getResponseStatusCode());
+            LOG.warn("Failed to update Grafana Org {0} preferences. Returned HTTP status {1}", orgId, rd.getResponseStatusCode());
         }
         return;
     }
