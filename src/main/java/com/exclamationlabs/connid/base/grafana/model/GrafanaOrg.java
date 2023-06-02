@@ -12,6 +12,7 @@ public class GrafanaOrg implements IdentityModel
     private transient String homeDashboardUID;
     private Integer id;
     private String name;
+    private transient String timezone;
 
     public GrafanaOrgAddress getAddress()
     {
@@ -55,6 +56,11 @@ public class GrafanaOrg implements IdentityModel
         return name;
     }
 
+    public String getTimezone()
+    {
+        return timezone;
+    }
+
     public void setAddress(GrafanaOrgAddress address)
     {
         this.address = address;
@@ -83,5 +89,10 @@ public class GrafanaOrg implements IdentityModel
     public void setName(String name)
     {
         this.name = name;
+    }
+
+    public void setTimezone(String timezone)
+    {
+        this.timezone = timezone;
     }
 }

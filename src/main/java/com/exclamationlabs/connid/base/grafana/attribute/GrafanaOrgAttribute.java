@@ -13,5 +13,6 @@ public enum GrafanaOrgAttribute
     uuid,
     zipCode,
     homeDashboardUID,
-    homeDashboardId
+    homeDashboardId,
+    timezone
 }

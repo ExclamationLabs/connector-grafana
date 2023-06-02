@@ -52,6 +52,12 @@ public class GrafanaOrgAdapter extends BaseAdapter<GrafanaOrg, GrafanaConfigurat
         result.add(new ConnectorAttribute(GrafanaOrgAttribute.homeDashboardUID.name(), STRING,
                 AttributeInfo.Flags.NOT_UPDATEABLE,
                 AttributeInfo.Flags.NOT_CREATABLE));
+        result.add(new ConnectorAttribute(GrafanaOrgAttribute.homeDashboardId.name(), STRING,
+                AttributeInfo.Flags.NOT_UPDATEABLE,
+                AttributeInfo.Flags.NOT_CREATABLE));
+        result.add(new ConnectorAttribute(GrafanaOrgAttribute.timezone.name(), STRING,
+                AttributeInfo.Flags.NOT_UPDATEABLE,
+                AttributeInfo.Flags.NOT_CREATABLE));
         return result;
     }
 
@@ -73,6 +79,14 @@ public class GrafanaOrgAdapter extends BaseAdapter<GrafanaOrg, GrafanaConfigurat
         if ( org.getHomeDashboardUID() != null && org.getHomeDashboardUID().trim().length() > 0 )
         {
             attributes.add(AttributeBuilder.build(GrafanaOrgAttribute.homeDashboardUID.name(), org.getHomeDashboardUID()));
+        }
+        if ( org.getHomeDashboardId() != null )
+        {
+            attributes.add(AttributeBuilder.build(GrafanaOrgAttribute.homeDashboardId.name(), String.valueOf(org.getHomeDashboardId())));
+        }
+        if ( org.getTimezone() != null && org.getTimezone().trim().length() > 0 )
+        {
+            attributes.add(AttributeBuilder.build(GrafanaOrgAttribute.timezone.name(), org.getTimezone()));
         }
         return attributes;
     }
@@ -129,6 +143,12 @@ public class GrafanaOrgAdapter extends BaseAdapter<GrafanaOrg, GrafanaConfigurat
         if ( homeDashBoardUID != null )
         {
             org.setHomeDashboardUID(homeDashBoardUID);
+        }
+
+        String homeDashBoardId = AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, GrafanaOrgAttribute.homeDashboardUID);
+        if ( homeDashBoardId != null && StringUtils.isNumeric(homeDashBoardId))
+        {
+            org.setHomeDashboardId(Integer.valueOf(homeDashBoardId.trim()));
         }
         return org;
     }

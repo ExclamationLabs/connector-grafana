@@ -444,11 +444,13 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
                     {
                         org.setHomeDashboardId(preferences.getHomeDashboardId());
                         org.setHomeDashboardUID(preferences.getHomeDashboardUID());
+                        org.setTimezone(preferences.getTimezone());
                     }
                     else
                     {
                         org.setHomeDashboardId(current.getHomeDashboardId());
                         org.setHomeDashboardUID(current.getHomeDashboardUID());
+                        org.setTimezone(current.getTimezone());
                     }
                 }
                 else
