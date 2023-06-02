@@ -114,6 +114,14 @@ The actual method of configuring a connector is largely dependent on the interfa
    </td>
   </tr>
   <tr>
+   <td>Default Timezone
+   </td>
+   <td>No
+   </td>
+   <td>The organization default timezone. This is used to update an organization's preferences when the timezone is not set. The default value is UTC when the option is not set.
+   </td>
+  </tr>
+  <tr>
    <td>Separate Org Association
    </td>
    <td>Yes
