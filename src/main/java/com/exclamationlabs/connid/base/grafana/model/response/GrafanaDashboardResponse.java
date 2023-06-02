@@ -7,7 +7,7 @@ import com.exclamationlabs.connid.base.grafana.model.GrafanaDataSource;
  */
 public class GrafanaDashboardResponse
 {
-    private String id;
+    private Integer id;
     private String slug;
     private String status;
     private String uid;
@@ -15,7 +15,7 @@ public class GrafanaDashboardResponse
     private String version;
 
 
-    public String getId()
+    public Integer getId()
     {
         return id;
     }
@@ -45,7 +45,7 @@ public class GrafanaDashboardResponse
         return version;
     }
 
-    public void setId(String id)
+    public void setId(Integer id)
     {
         this.id = id;
     }

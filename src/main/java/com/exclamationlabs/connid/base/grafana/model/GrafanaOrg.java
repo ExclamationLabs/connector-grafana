@@ -8,6 +8,7 @@ public class GrafanaOrg implements IdentityModel
 {
     private GrafanaOrgAddress address;
     private transient List<String> dashboards;
+    private transient Integer homeDashboardId;
     private transient String homeDashboardUID;
     private Integer id;
     private String name;
@@ -20,6 +21,11 @@ public class GrafanaOrg implements IdentityModel
     public List<String> getDashboards()
     {
         return dashboards;
+    }
+
+    public Integer getHomeDashboardId()
+    {
+        return homeDashboardId;
     }
 
     public String getHomeDashboardUID()
@@ -57,6 +63,11 @@ public class GrafanaOrg implements IdentityModel
     public void setDashboards(List<String> dashboards)
     {
         this.dashboards = dashboards;
+    }
+
+    public void setHomeDashboardId(Integer homeDashboardId)
+    {
+        this.homeDashboardId = homeDashboardId;
     }
 
     public void setHomeDashboardUID(String homeDashboardUID)

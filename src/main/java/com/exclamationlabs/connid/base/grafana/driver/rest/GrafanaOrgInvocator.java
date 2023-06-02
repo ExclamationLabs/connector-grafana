@@ -4,15 +4,11 @@ import com.exclamationlabs.connid.base.connector.driver.DriverInvocator;
 import com.exclamationlabs.connid.base.connector.driver.rest.RestResponseData;
 import com.exclamationlabs.connid.base.connector.results.ResultsFilter;
 import com.exclamationlabs.connid.base.connector.results.ResultsPaginator;
-import com.exclamationlabs.connid.base.grafana.model.GrafanaDashboard;
+import com.exclamationlabs.connid.base.grafana.model.GrafanaHealth;
 import com.exclamationlabs.connid.base.grafana.model.GrafanaOrg;
 import com.exclamationlabs.connid.base.grafana.model.GrafanaOrgPreferences;
-import com.exclamationlabs.connid.base.grafana.model.response.GrafanaDashboardResponse;
-import com.exclamationlabs.connid.base.grafana.model.response.GrafanaOrgPreferencesResponse;
 import com.exclamationlabs.connid.base.grafana.model.response.GrafanaSearchResponse;
 import com.exclamationlabs.connid.base.grafana.model.response.GrafanaStandardResponse;
-import com.google.gson.Gson;
-import com.google.gson.internal.LinkedHashTreeMap;
 import org.apache.commons.lang3.StringUtils;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
@@ -164,6 +160,12 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
         return grafanaOrgs;
     }
 
+    /**
+     * @param driver
+     * @param org
+     * @param dashboardInfo
+     * @return
+     */
     public List<String> getDashboards(GrafanaDriver driver, GrafanaOrg org, List<GrafanaSearchResponse> dashboardInfo)
     {
         List<String>  list = new ArrayList<>();
@@ -186,6 +188,22 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
             }
         }
         return list;
+    }
+
+    /**
+     * Gets the Grafana Health which includes the version number
+     * @param driver
+     * @return GrafanaHealth Object
+     */
+    public static GrafanaHealth getHealth(GrafanaDriver driver)
+    {
+        RestResponseData<GrafanaHealth> rd;
+        Map<String, String> headers = driver.getAdminHeaders();
+        rd = driver.executeGetRequest("/health",
+                GrafanaHealth.class,
+                headers);
+        GrafanaHealth health = rd.getResponseObject();
+        return health;
     }
 
     /**
@@ -234,27 +252,15 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
                         driver.getAdminHeaders());
                 org = rd.getResponseObject();
             }
+
             if ( org != null )
             {
                 // Get the Org Dashboards and update the GrafanaOrg Object Type
                 List<GrafanaSearchResponse> dashboardList = findDashboards(driver, org);
                 List<String> dashboards = getDashboards(driver, org, dashboardList);
                 org.setDashboards(dashboards);
-                // Get the Org Preferences and potentially update
-                GrafanaOrgPreferencesResponse current = getOrganizationPreferences(driver, org.getId());
-                if ( current != null
-                        && (current.getHomeDashboardUID() == null || current.getHomeDashboardUID().trim().length() == 0 )
-                        && dashboardList != null
-                        && dashboardList.size() > 0 )
-                {
-                    GrafanaOrgPreferences preferences = new GrafanaOrgPreferences();
-                    preferences.setHomeDashboardUID(dashboardList.get(0).getUid());
-                    updateOrganizationPreferences(driver, org.getId(), preferences);
-                }
-                else if (current != null && current.getHomeDashboardUID() != null && current.getHomeDashboardUID().trim().length() > 0 )
-                {
-                    org.setHomeDashboardUID(current.getHomeDashboardUID());
-                }
+                // Get the Org Preferences and potentially update the home dashboard
+                updateOrganizationPreferences(driver, org, dashboardList);
             }
         }
         return org;
@@ -289,24 +295,12 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
 
             if ( org != null )
             {
+                // Retrieve the dashboard list
                 List<GrafanaSearchResponse> dashboardList = findDashboards(driver, org);
                 List<String> dashboards = getDashboards(driver, org, dashboardList);
                 org.setDashboards(dashboards);
-                // Get the Org Preferences and potentially update
-                GrafanaOrgPreferencesResponse current = getOrganizationPreferences(driver, org.getId());
-                if ( current != null
-                        && (current.getHomeDashboardUID() == null || current.getHomeDashboardUID().trim().length() == 0 )
-                        && dashboardList != null
-                        && dashboardList.size() > 0 )
-                {
-                    GrafanaOrgPreferences preferences = new GrafanaOrgPreferences();
-                    preferences.setHomeDashboardUID(dashboardList.get(0).getUid());
-                    updateOrganizationPreferences(driver, org.getId(), preferences);
-                }
-                else if (current != null && current.getHomeDashboardUID() != null && current.getHomeDashboardUID().trim().length() > 0 )
-                {
-                    org.setHomeDashboardUID(current.getHomeDashboardUID());
-                }
+                // Get and possibly update the home dashboard
+                updateOrganizationPreferences(driver, org, dashboardList);
             }
         }
         else
@@ -322,15 +316,15 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
      * @param orgId  The Organization whose preferences updated
      * @return Dashboard uid
      */
-    public static GrafanaOrgPreferencesResponse getOrganizationPreferences(GrafanaDriver driver, Integer orgId)
+    public static GrafanaOrgPreferences getOrganizationPreferences(GrafanaDriver driver, Integer orgId)
     {
-        GrafanaOrgPreferencesResponse preferences = null;
-        RestResponseData<GrafanaOrgPreferencesResponse> rd;
+        GrafanaOrgPreferences preferences = null;
+        RestResponseData<GrafanaOrgPreferences> rd;
         Map<String, String> headers = driver.getAdminHeaders();
         headers.put(ORG_HEADER, String.valueOf(orgId));
 
         rd = driver.executeGetRequest("/org/preferences",
-                GrafanaOrgPreferencesResponse.class,
+                GrafanaOrgPreferences.class,
                 headers);
         if ( rd != null && rd.getResponseObject() != null )
         {
@@ -339,6 +333,41 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
         return preferences ;
     }
 
+    /**
+     * Update the current organization preferences with dashboard and timezone
+     * @param driver The Grafana Driver
+     * @param current The current Organization preferences
+     * @param dashboardId The Dashboard ID to be set
+     * @param dashboardUid the dashboard UID to be set
+     * @return An updated organization preferences
+     */
+    public static GrafanaOrgPreferences setOrganizationPreferences(GrafanaDriver driver,
+                                                                    GrafanaOrgPreferences current,
+                                                                    Integer dashboardId,
+                                                                    String dashboardUid)
+    {
+        GrafanaOrgPreferences preferences = new GrafanaOrgPreferences();
+        preferences.setHomeDashboardUID(dashboardUid);
+        preferences.setHomeDashboardId(dashboardId);
+        preferences.setTheme(current.getTheme());
+        String timezone = driver.getConfiguration().getDefaultTimeZone();
+        if ( current.getTimezone() == null || current.getTimezone().trim().length() == 0)
+        {
+            if ( timezone != null && timezone.trim().length() > 0 )
+            {
+                preferences.setTimezone(timezone);
+            }
+            else
+            {
+                preferences.setTimezone("UTC");
+            }
+        }
+        else
+        {
+            preferences.setTimezone(current.getTimezone());
+        }
+        return preferences;
+    }
 
     /**
      * Updates a Grafana Organization
@@ -372,25 +401,72 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
      * @param orgId  The Organization whose preferences updated
      * @return Dashboard uid
      */
-    public static void updateOrganizationPreferences(GrafanaDriver driver, Integer orgId, GrafanaOrgPreferences preferences)
+    public static boolean updateOrganizationPreferences(GrafanaDriver driver, Integer orgId, GrafanaOrgPreferences preferences)
     {
+        boolean success = true;
         RestResponseData<GrafanaStandardResponse> rd;
         Map<String, String> headers = driver.getAdminHeaders();
         headers.put(ORG_HEADER, String.valueOf(orgId));
 
-        rd = driver.executePatchRequest("/org/preferences",
+        rd = driver.executePutRequest("/org/preferences",
                 GrafanaStandardResponse.class,
                 preferences,
                 headers);
         if ( rd != null && rd.getResponseStatusCode() != 200 )
         {
+            success = false;
             LOG.warn("Failed to update Grafana Org {0} preferences. Returned HTTP status {1}", orgId, rd.getResponseStatusCode());
         }
-        return;
+        return success;
     }
 
-    public static void updateOrganizationPreferences(GrafanaDriver driver, GrafanaOrg org )
+    /**
+     * Update the organization preferences especially to set the home dashboard
+     * @param driver The Grafana Driver
+     * @param org the Grafana Organization whose preferences we are requested to update
+     * @param dashboardList list of available dashboards associated with the organization
+     */
+    public void updateOrganizationPreferences(GrafanaDriver driver, GrafanaOrg org,  List<GrafanaSearchResponse> dashboardList  )
     {
-
+        if ( org != null && dashboardList != null && dashboardList.size() > 0 )
+        {
+            // Get the Org Preferences and potentially update
+            GrafanaOrgPreferences current = getOrganizationPreferences(driver, org.getId());
+            if ( current != null )
+            {
+                // this item is a dashboard
+                GrafanaSearchResponse item = dashboardList.get(0);
+                if ( current.getHomeDashboardId() == null || current.getHomeDashboardId() == 0)
+                {
+                    // The Id typically set
+                    GrafanaOrgPreferences preferences = setOrganizationPreferences(driver, current, item.getId(), item.getUid());
+                    if (updateOrganizationPreferences(driver, org.getId(), preferences))
+                    {
+                        org.setHomeDashboardId(preferences.getHomeDashboardId());
+                        org.setHomeDashboardUID(preferences.getHomeDashboardUID());
+                    }
+                    else
+                    {
+                        org.setHomeDashboardId(current.getHomeDashboardId());
+                        org.setHomeDashboardUID(current.getHomeDashboardUID());
+                    }
+                }
+                else
+                {
+                    org.setHomeDashboardId(current.getHomeDashboardId());
+                    if ( current.getHomeDashboardUID() != null )
+                    {
+                        org.setHomeDashboardUID(current.getHomeDashboardUID());
+                    }
+                    else
+                    {
+                        // An assumption that this is the only one available
+                        // since Version 8 does not return dashboard UID
+                        org.setHomeDashboardUID(item.getUid());
+                    }
+                }
+            }
+        }
+        return;
     }
 }

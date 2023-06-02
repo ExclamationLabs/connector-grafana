@@ -12,5 +12,6 @@ public enum GrafanaOrgAttribute
     state,
     uuid,
     zipCode,
-    homeDashboardUID
+    homeDashboardUID,
+    homeDashboardId
 }

@@ -52,9 +52,9 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
      * @param dashboard The dashboard raw JSON with datasource uid already embedded
      * @return Dashboard uid
      */
-    public String createDashboard(GrafanaDriver driver, String orgId, String dashboard)
+    public GrafanaDashboardResponse createDashboard(GrafanaDriver driver, String orgId, String dashboard)
     {
-        String dashboardUID = null;
+        GrafanaDashboardResponse dashboardInfo = null;
         RestResponseData<GrafanaDashboardResponse> rd;
         Map<String, String> headers = driver.getAdminHeaders();
         headers.put(ORG_HEADER, String.valueOf(orgId));
@@ -63,11 +63,12 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                 GrafanaDashboardResponse.class,
                 dashboard,
                 headers);
+
         if ( rd != null && rd.getResponseObject() != null )
         {
-            dashboardUID = rd.getResponseObject().getUid();
+            dashboardInfo = rd.getResponseObject();
         }
-        return dashboardUID ;
+        return dashboardInfo ;
     }
     @Override
     public String create(GrafanaDriver driver, GrafanaDataSource dataSource) throws ConnectorException
@@ -164,7 +165,7 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
             // dashboard templete
             try
             {
-                String dashboardUID = null;
+                GrafanaDashboardResponse dashboardInfo = null;
                 if ( driver.getConfiguration().getUpdateDashBoards() != null
                         && driver.getConfiguration().getUpdateDashBoards()
                         && driver.getConfiguration().getDashboardTemplate() != null
@@ -173,12 +174,13 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                     String template = driver.getConfiguration().getDashboardTemplate();
                     template = template.replace("<DataSourceUID>", createInfo.getDatasource().getUid());
                     template = template.replace("__DataSourceUID__", createInfo.getDatasource().getUid());
-                    dashboardUID = createDashboard(driver, String.valueOf(createInfo.getDatasource().getOrgId()), template);
-                    if ( dashboardUID != null && dashboardUID.trim().length() > 0 )
+                    dashboardInfo = createDashboard(driver, String.valueOf(createInfo.getDatasource().getOrgId()), template);
+                    if ( dashboardInfo != null )
                     {
-                        GrafanaOrgPreferences preferences = new GrafanaOrgPreferences();
-                        preferences.setHomeDashboardUID(dashboardUID);
-                        GrafanaOrgInvocator.updateOrganizationPreferences(driver, createInfo.getDatasource().getOrgId(), preferences);
+                        GrafanaOrgPreferences current = GrafanaOrgInvocator.getOrganizationPreferences(driver, dataSource.getOrgId());
+                        GrafanaOrgPreferences preferences = GrafanaOrgInvocator.setOrganizationPreferences(driver,
+                                current, dashboardInfo.getId(), dashboardInfo.getUid());
+                        GrafanaOrgInvocator.updateOrganizationPreferences(driver, dataSource.getOrgId(), preferences);
                     }
                 }
             }
@@ -345,12 +347,13 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                                 String template = driver.getConfiguration().getDashboardTemplate();
                                 template = template.replace("<DataSourceUID>", dataSource.getUid());
                                 template = template.replace("__DataSourceUID__", dataSource.getUid());
-                                String dashboardUID = createDashboard(driver, String.valueOf(dataSource.getOrgId()), template);
-                                if ( dashboardUID != null && dashboardUID.trim().length() > 0 )
+                                GrafanaDashboardResponse dashboardInfo = createDashboard(driver, String.valueOf(dataSource.getOrgId()), template);
+                                if ( dashboardInfo != null )
                                 {
-                                    GrafanaOrgPreferences preferences = new GrafanaOrgPreferences();
-                                    preferences.setHomeDashboardUID(dashboardUID);
-                                    GrafanaOrgInvocator.updateOrganizationPreferences(driver, Integer.valueOf(orgId.trim()), preferences);
+                                    GrafanaOrgPreferences current = GrafanaOrgInvocator.getOrganizationPreferences(driver, dataSource.getOrgId());
+                                    GrafanaOrgPreferences preferences = GrafanaOrgInvocator.setOrganizationPreferences(driver,
+                                            current, dashboardInfo.getId(), dashboardInfo.getUid());
+                                    GrafanaOrgInvocator.updateOrganizationPreferences(driver, dataSource.getOrgId(), preferences);
                                 }
                             }
                         }

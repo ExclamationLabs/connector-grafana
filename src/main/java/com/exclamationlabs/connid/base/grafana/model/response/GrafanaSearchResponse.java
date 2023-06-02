@@ -5,7 +5,7 @@ package com.exclamationlabs.connid.base.grafana.model.response;
  */
 public class GrafanaSearchResponse
 {
-    private String id;
+    private Integer id;
     private String slug;
     private String sortMeta;
     private String title;
@@ -14,7 +14,7 @@ public class GrafanaSearchResponse
     private String uri;
     private String url;
 
-    public String getId()
+    public Integer getId()
     {
         return id;
     }
@@ -54,7 +54,7 @@ public class GrafanaSearchResponse
         return url;
     }
 
-    public void setId(String id)
+    public void setId(Integer id)
     {
         this.id = id;
     }

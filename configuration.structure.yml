@@ -22,6 +22,12 @@ custom:
         default: 'Viewer'
         display: 'defaultOrgRole.display'
         help: 'defaultOrgRole.help'
+      defaultTimeZone:
+        type: string
+        order: 110
+        default: 'UTC'
+        display: 'defaultTimeZone.display'
+        help: 'defaultTimeZone.help'
       updateDashBoards:
         type: boolean
         order: 150

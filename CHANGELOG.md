@@ -1,6 +1,7 @@
 # connector-grafana
 
 ## Change Log
++ **1.7.10** - Changed Org preference update to add the homeDashboardId to support Grafana 8.X. Added default timezone option in configuration
 + **1.7.9** - Fixed unmatched curly brace when logging org preference update failure
 + **1.7.8** - Set the Grafana loki password as confidential and not required
 + **1.7.6** - Set Home Dashboard Organization Preference when a datasource is created, updated, or read and not set  
