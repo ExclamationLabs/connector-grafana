@@ -456,6 +456,7 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
                 else
                 {
                     org.setHomeDashboardId(current.getHomeDashboardId());
+                    org.setTimezone(current.getTimezone());
                     if ( current.getHomeDashboardUID() != null )
                     {
                         org.setHomeDashboardUID(current.getHomeDashboardUID());
