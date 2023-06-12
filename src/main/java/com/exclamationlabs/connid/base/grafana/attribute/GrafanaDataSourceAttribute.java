@@ -17,5 +17,6 @@ public enum GrafanaDataSourceAttribute
     secureJsonData,
     user,
     password,
-    dataSourceId
+    dataSourceId,
+    database
 }

@@ -13,10 +13,7 @@ import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.framework.common.objects.AttributeBuilder;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.exclamationlabs.connid.base.connector.attribute.ConnectorAttributeDataType.BOOLEAN;
 import static com.exclamationlabs.connid.base.connector.attribute.ConnectorAttributeDataType.STRING;
@@ -49,11 +46,32 @@ public class GrafanaDataSourceAdapter extends BaseAdapter<GrafanaDataSource, Gra
         attributes.add(AttributeBuilder.build(url.name(), dataSource.getUrl()));
         attributes.add(AttributeBuilder.build(basicAuth.name(), dataSource.getBasicAuth()));
         attributes.add(AttributeBuilder.build(basicAuthUser.name(), dataSource.getBasicAuthUser()));
-        attributes.add(AttributeBuilder.build(basicAuthPassword.name(), dataSource.getBasicAuthPassword()));
+        if ( dataSource.getBasicAuthPassword() != null && dataSource.getBasicAuthPassword().trim().length() > 0  )
+        {
+            String encoded = Base64.getEncoder().encodeToString(dataSource.getBasicAuthPassword().getBytes());
+            attributes.add(AttributeBuilder.build(basicAuthPassword.name(), "OBF:"+encoded));
+        }
+        else
+        {
+            attributes.add(AttributeBuilder.build(basicAuthPassword.name(), dataSource.getBasicAuthPassword()));
+        }
+
+        attributes.add(AttributeBuilder.build(database.name(), dataSource.getDatabase()));
         attributes.add(AttributeBuilder.build(uid.name(), dataSource.getUid()));
         attributes.add(AttributeBuilder.build(user.name(), dataSource.getUser()));
-        attributes.add(AttributeBuilder.build(password.name(), dataSource.getPassword()));
+
+        if ( dataSource.getPassword() != null && dataSource.getPassword().trim().length() > 0 )
+        {
+            String encoded = Base64.getEncoder().encodeToString(dataSource.getPassword().getBytes());
+            attributes.add(AttributeBuilder.build(password.name(), "OBF:"+encoded));
+        }
+        else
+        {
+            attributes.add(AttributeBuilder.build(password.name(), dataSource.getPassword()));
+        }
+
         attributes.add(AttributeBuilder.build(dataSourceId.name(), String.valueOf(dataSource.getId())));
+
         if ( dataSource.getJsonData() != null )
         {
             String json = gson.toJson(dataSource.getJsonData());
@@ -137,13 +155,38 @@ public class GrafanaDataSourceAdapter extends BaseAdapter<GrafanaDataSource, Gra
         dataSource.setAccess(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, access));
         dataSource.setBasicAuth(AdapterValueTypeConverter.getSingleAttributeValue(Boolean.class, attributes, basicAuth));
         dataSource.setBasicAuthUser(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, basicAuthUser));
-        dataSource.setBasicAuthPassword(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, basicAuthPassword));
+
+        String basicPassword = AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, basicAuthPassword);
+        if ( basicPassword != null && basicPassword.startsWith("OBF:"))
+        {
+            basicPassword = basicPassword.substring(4);
+            byte[] decoded = Base64.getDecoder().decode(basicPassword);
+            String decodedString = new String(decoded);
+            dataSource.setBasicAuthPassword(decodedString);
+        }
+        else
+        {
+            dataSource.setBasicAuthPassword(basicPassword);
+        }
+
         dataSource.setDefault(AdapterValueTypeConverter.getSingleAttributeValue(Boolean.class, attributes, isDefault));
         dataSource.setType(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, type));
         dataSource.setUid(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, uid));
         dataSource.setUrl(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, url));
         dataSource.setUser(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, user));
-        dataSource.setUser(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, password));
+        dataSource.setDatabase(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, database));
+        String pwd = AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, password);
+        if ( pwd != null && pwd.startsWith("OBF:"))
+        {
+            pwd = pwd.substring(4);
+            byte[] decoded = Base64.getDecoder().decode(pwd);
+            String decodedString = new String(decoded);
+            dataSource.setPassword(decodedString);
+        }
+        else
+        {
+            dataSource.setPassword(pwd);
+        }
 
         String did = AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, dataSourceId);
         if ( did != null && StringUtils.isNumeric(did.trim()))
@@ -186,6 +229,7 @@ public class GrafanaDataSourceAdapter extends BaseAdapter<GrafanaDataSource, Gra
         result.add(new ConnectorAttribute(jsonData.name(), STRING));
         result.add(new ConnectorAttribute(secureJsonData.name(), STRING, NOT_READABLE, NOT_RETURNED_BY_DEFAULT, NOT_UPDATEABLE));
         result.add(new ConnectorAttribute(user.name(), STRING));
+        result.add(new ConnectorAttribute(database.name(), STRING));
         result.add(new ConnectorAttribute(password.name(), STRING));
         result.add(new ConnectorAttribute(dataSourceId.name(), STRING, NOT_UPDATEABLE, NOT_CREATABLE));
         return result;
