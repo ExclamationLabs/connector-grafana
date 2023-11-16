@@ -62,6 +62,7 @@ public class GrafanaFaultProcessor implements RestFaultProcessor
                  message.equalsIgnoreCase("data source not found") ||
                  message.equalsIgnoreCase("organization not found") ||
                  message.equalsIgnoreCase("Permission denied") ||
+                 message.equalsIgnoreCase("User info cannot be updated for external Users") ||
                  message.equalsIgnoreCase("Not Found"))
             {
                 LOG.info(message);

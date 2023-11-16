@@ -13,46 +13,48 @@ custom:
     required:
       separateOrgAssociation:
         type: boolean
-        order: 100
+        default: 'false'
+        order: 3001
         display: 'separateOrgAssociation.display'
         help: 'separateOrgAssociation.help'
       defaultOrgRole:
         type: string
-        order: 110
+        order: 3010
         default: 'Viewer'
         display: 'defaultOrgRole.display'
         help: 'defaultOrgRole.help'
       defaultTimeZone:
         type: string
-        order: 110
+        order: 3020
         default: 'UTC'
         display: 'defaultTimeZone.display'
         help: 'defaultTimeZone.help'
       updateDashBoards:
         type: boolean
-        order: 150
+        default: 'false'
+        order: 3055
         display: 'updateDashBoards.display'
         help: 'updateDashBoards.help'
     optional:
       lokiURL:
         type: string
-        order: 120
+        order: 3030
         display: 'lokiURL.display'
         help: 'lokiURL.help'
       lokiUser:
         type: string
-        order: 130
+        order: 3031
         display: 'lokiUser.display'
         help: 'lokiUser.help'
       lokiPassword:
         type: string
-        order: 140
+        order: 3032
         confidential: true
         display: 'lokiPassword.display'
         help: 'lokiPassword.help'
       dashboardTemplate:
         type: string
-        order: 160
+        order: 3060
         display: 'dashboardTemplate.display'
         help: 'dashboardTemplate.help'
 helpText:

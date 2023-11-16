@@ -70,6 +70,40 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
         }
         return dashboardInfo ;
     }
+
+    /**
+     * Update the Dashboard and Org Preferences with a new or update datasource
+     * @param driver Grafana Driver
+     * @param orgId  The orgId of the Datasource
+     * @param dataSourceUid The dataSourceId
+     */
+    public void updateDashboardAndPreferences(GrafanaDriver driver, String orgId, String dataSourceUid)
+    {
+        try
+        {
+            if ( driver.getConfiguration().getUpdateDashBoards() != null
+                    && driver.getConfiguration().getUpdateDashBoards()
+                    && driver.getConfiguration().getDashboardTemplate() != null
+                    && driver.getConfiguration().getDashboardTemplate().trim().length() > 0 )
+            {
+                String template = driver.getConfiguration().getDashboardTemplate();
+                template = template.replace("<DataSourceUID>", dataSourceUid);
+                template = template.replace("__DataSourceUID__", dataSourceUid);
+                GrafanaDashboardResponse dashboardInfo = createDashboard(driver, orgId, template);
+                if ( dashboardInfo != null )
+                {
+                    GrafanaOrgPreferences current = GrafanaOrgInvocator.getOrganizationPreferences(driver, Integer.valueOf(orgId));
+                    GrafanaOrgPreferences preferences = GrafanaOrgInvocator.setOrganizationPreferences(driver,
+                            current, dashboardInfo.getId(), dashboardInfo.getUid());
+                    GrafanaOrgInvocator.updateOrganizationPreferences(driver, Integer.valueOf(orgId), preferences);
+                }
+            }
+        }
+        catch (Exception exception)
+        {
+            LOG.warn(exception.getMessage());
+        }
+    }
     @Override
     public String create(GrafanaDriver driver, GrafanaDataSource dataSource) throws ConnectorException
     {
@@ -162,32 +196,8 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
             UID = createInfo.getDatasource().getOrgId() + "_" + createInfo.getDatasource().getUid();
 
             // If a datasource is created, also create a dashboard for that datasource using the existing
-            // dashboard templete
-            try
-            {
-                GrafanaDashboardResponse dashboardInfo = null;
-                if ( driver.getConfiguration().getUpdateDashBoards() != null
-                        && driver.getConfiguration().getUpdateDashBoards()
-                        && driver.getConfiguration().getDashboardTemplate() != null
-                        && driver.getConfiguration().getDashboardTemplate().trim().length() > 0 )
-                {
-                    String template = driver.getConfiguration().getDashboardTemplate();
-                    template = template.replace("<DataSourceUID>", createInfo.getDatasource().getUid());
-                    template = template.replace("__DataSourceUID__", createInfo.getDatasource().getUid());
-                    dashboardInfo = createDashboard(driver, String.valueOf(createInfo.getDatasource().getOrgId()), template);
-                    if ( dashboardInfo != null )
-                    {
-                        GrafanaOrgPreferences current = GrafanaOrgInvocator.getOrganizationPreferences(driver, dataSource.getOrgId());
-                        GrafanaOrgPreferences preferences = GrafanaOrgInvocator.setOrganizationPreferences(driver,
-                                current, dashboardInfo.getId(), dashboardInfo.getUid());
-                        GrafanaOrgInvocator.updateOrganizationPreferences(driver, dataSource.getOrgId(), preferences);
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                LOG.warn(exception.getMessage());
-            }
+            // dashboard template and then set the org preferences
+            updateDashboardAndPreferences(driver, String.valueOf(createInfo.getDatasource().getOrgId()), createInfo.getDatasource().getUid());
         }
 
         return UID;
@@ -337,30 +347,7 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                     LOG.info(String.format("Grafana Datasource Update response status %d for uid %s", rd.getResponseStatusCode(), id));
                     if ( rd.getResponseStatusCode() == 200 )
                     {
-                        try
-                        {
-                            if ( driver.getConfiguration().getUpdateDashBoards() != null
-                                    && driver.getConfiguration().getUpdateDashBoards()
-                                    && driver.getConfiguration().getDashboardTemplate() != null
-                                    && driver.getConfiguration().getDashboardTemplate().trim().length() > 0 )
-                            {
-                                String template = driver.getConfiguration().getDashboardTemplate();
-                                template = template.replace("<DataSourceUID>", dataSource.getUid());
-                                template = template.replace("__DataSourceUID__", dataSource.getUid());
-                                GrafanaDashboardResponse dashboardInfo = createDashboard(driver, String.valueOf(dataSource.getOrgId()), template);
-                                if ( dashboardInfo != null )
-                                {
-                                    GrafanaOrgPreferences current = GrafanaOrgInvocator.getOrganizationPreferences(driver, dataSource.getOrgId());
-                                    GrafanaOrgPreferences preferences = GrafanaOrgInvocator.setOrganizationPreferences(driver,
-                                            current, dashboardInfo.getId(), dashboardInfo.getUid());
-                                    GrafanaOrgInvocator.updateOrganizationPreferences(driver, dataSource.getOrgId(), preferences);
-                                }
-                            }
-                        }
-                        catch (Exception exception)
-                        {
-                            LOG.warn(exception.getMessage());
-                        }
+                        updateDashboardAndPreferences(driver, String.valueOf(dataSource.getOrgId()), dataSource.getUid());
                     }
                 }
                 else
@@ -491,6 +478,10 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                         rd = driver.executeGetRequest(path, GrafanaDataSource.class, headers);
                         datasource = rd.getResponseObject();
                     }
+                    if ( datasource != null )
+                    {
+                        updateDashboardAndPreferences(driver, orgId, datasource.getUid());
+                    }
                 }
                 else
                 {
@@ -543,6 +534,10 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                                 GrafanaDataSource.class,
                                 headers);
                         datasource = rd.getResponseObject();
+                    }
+                    if ( datasource != null )
+                    {
+                        updateDashboardAndPreferences(driver, orgId, datasource.getUid());
                     }
                 }
                 else

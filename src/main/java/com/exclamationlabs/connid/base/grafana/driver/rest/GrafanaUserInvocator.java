@@ -568,76 +568,99 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
         GrafanaStandardResponse response;
         RestResponseData<GrafanaStandardResponse> responseData;
         int userId = 0;
+        String inRole = user.getRole();
+        boolean isUserUpdate = false;
 
         if ( StringUtils.isNumeric(id))
         {
-            // Grafana User allows one or more of these  items to be specified
-            if ( user.getEmail() == null && user.getLogin() == null )
+            GrafanaUser existing = getOne(driver, id, null );
+            GrafanaUser updates  = new GrafanaUser();
+            if ( existing != null )
             {
-                GrafanaUser existing = getOne(driver, id, null );
-                if ( existing != null )
+                if ( user.getEmail() != null )
                 {
-                    user.setEmail(existing.getEmail());
-                    user.setLogin(existing.getLogin());
+                    updates.setEmail(user.getEmail());
+                    isUserUpdate = true;
+                }
+                if ( user.getLogin() != null )
+                {
+                    updates.setLogin(user.getLogin());
+                    isUserUpdate = true;
+                }
+                if ( user.getName() != null )
+                {
+                    updates.setName(user.getName());
+                    isUserUpdate = true;
                 }
             }
 
-
-            responseData = driver.executePutRequest(
-                    "/users/" + id,
-                    GrafanaStandardResponse.class,
-                    user,
-                    driver.getAdminHeaders());
-            response = responseData.getResponseObject();
-
-
-
-            // Retrieve the Organizations associated with the User
-            userId = Integer.valueOf(id);
-            ArrayList<GrafanaUserOrg> userOrgs = getUserOrganizations(driver, userId);
-
-            // Check for Delta update to add the User to an Org
-            if ( user.getOrgsAdd() != null && user.getOrgsAdd().size() > 0)
+            if ( isUserUpdate )
             {
-                for (String organization: user.getOrgsAdd())
+                LOG.ok( "Updating User " + id);
+                responseData = driver.executePutRequest(
+                        "/users/" + id,
+                        GrafanaStandardResponse.class,
+                        updates,
+                        driver.getAdminHeaders());
+
+                if ( responseData.getResponseStatusCode() != 200 )
                 {
-                    int orgId = decomposeOrgId(organization);
-                    String role = decomposeRole(organization);
-                    if ( isUserInOrg(userOrgs, orgId) == null )
+                    LOG.error("HTTP Status {0} occurred when Updating User {1}", responseData.getResponseStatusCode(), id);
+                }
+            }
+
+            try
+            {
+                // Retrieve the Organizations associated with the User
+                userId = Integer.valueOf(id);
+                ArrayList<GrafanaUserOrg> userOrgs = getUserOrganizations(driver, userId);
+
+                // Check for Delta update to add the User to an Org
+                if ( user.getOrgsAdd() != null && user.getOrgsAdd().size() > 0)
+                {
+                    for (String organization: user.getOrgsAdd())
                     {
-                        if ( role != null && role.trim().length() > 0  )
+                        int orgId = decomposeOrgId(organization);
+                        String role = decomposeRole(organization);
+                        if ( isUserInOrg(userOrgs, orgId) == null )
                         {
-                            role = driver.getConfiguration().getDefaultOrgRole();
+                            if ( role != null && role.trim().length() > 0  )
+                            {
+                                role = driver.getConfiguration().getDefaultOrgRole();
+                            }
+                            addUserToOrg(driver, user.getLogin(), role, userId, orgId );
                         }
-                        addUserToOrg(driver, user.getLogin(), role, userId, orgId );
                     }
                 }
-            }
-
-            // Check for delta update to remove the user from an org
-            if ( user.getOrgsRemove() != null && user.getOrgsRemove().size() > 0)
-            {
-                for (String organization: user.getOrgsRemove())
+                // Check for delta update to remove the user from an org
+                if ( user.getOrgsRemove() != null && user.getOrgsRemove().size() > 0)
                 {
-                    int orgId = decomposeOrgId(organization);
-                    if ( isUserInOrg(userOrgs, orgId) != null )
+                    for (String organization: user.getOrgsRemove())
                     {
-                        deleteUserFromOrg(driver, userId, String.valueOf(orgId));
+                        int orgId = decomposeOrgId(organization);
+                        if ( isUserInOrg(userOrgs, orgId) != null )
+                        {
+                            deleteUserFromOrg(driver, userId, String.valueOf(orgId));
+                        }
+                    }
+                }
+                // Perhaps the user org is specified otherwise
+                if ( user.getOrgId() != null  )
+                {
+                    user.setUserId(userId);
+                    user.setId(userId);
+                    // Determine whether the user is already in the organization
+
+                    GrafanaUserOrg userOrg = isUserInOrg(userOrgs, user.getOrgId());
+                    if ( userOrg == null )
+                    {
+                        addUserToOrg(driver, user.getLogin(), user.getRole(), userId, user.getOrgId() );
                     }
                 }
             }
-            // Perhaps the user org is specified otherwise
-            if ( user.getOrgId() != null  )
+            catch ( Exception ex )
             {
-                user.setUserId(userId);
-                user.setId(userId);
-                // Determine whether the user is already in the organization
-
-                GrafanaUserOrg userOrg = isUserInOrg(userOrgs, user.getOrgId());
-                if ( userOrg == null )
-                {
-                    addUserToOrg(driver, user.getLogin(), user.getRole(), userId, user.getOrgId() );
-                }
+                LOG.error(ex, ex.getMessage());
             }
         }
         else

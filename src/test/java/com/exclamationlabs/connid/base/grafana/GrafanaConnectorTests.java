@@ -123,7 +123,7 @@ public class GrafanaConnectorTests
         attributes.add(new AttributeBuilder().setName(GrafanaUserAttribute.login.name()).addValue("guest8@internet2.edu").build());
         attributes.add(new AttributeBuilder().setName(GrafanaUserAttribute.password.name()).addValue("Secret1234!").build());
         attributes.add(new AttributeBuilder().setName(GrafanaUserAttribute.role.name()).addValue("Viewer").build());
-        // attributes.add(new AttributeBuilder().setName(GrafanaUserAttribute.orgId.name()).addValue("3_ProvisionIAM_uuid").build());
+        attributes.add(new AttributeBuilder().setName(GrafanaUserAttribute.orgId.name()).addValue("3").build());
 
 
         Uid newId = connector.create(new ObjectClass("GrafanaUser"), attributes, new OperationOptionsBuilder().build());
@@ -321,6 +321,16 @@ public class GrafanaConnectorTests
         AttributeDeltaBuilder builder = new AttributeDeltaBuilder();
         delta.add(builder.setName(GrafanaUserAttribute.orgId.name()).addValueToRemove("3").build());
         delta.add(builder.setName(GrafanaUserAttribute.orgId.name()).addValueToAdd("4").build());
+
+        builder = new AttributeDeltaBuilder();
+        builder.setName(GrafanaUserAttribute.email.name()).addValueToReplace(user.getAttributeByName(GrafanaUserAttribute.email.name()).getValue().get(0));
+        delta.add(builder.build());
+
+        builder = new AttributeDeltaBuilder();
+        builder.setName(GrafanaUserAttribute.login.name()).addValueToReplace(user.getAttributeByName(GrafanaUserAttribute.login.name()).getValue().get(0));
+        delta.add(builder.build());
+
+
         Set<AttributeDelta> output = connector.updateDelta(objectClass, uid, delta, options);
         assertNotNull(output);
     }
