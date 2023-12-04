@@ -1,6 +1,8 @@
 # connector-grafana
 
 ## Change Log
++ **1.8.8**  - Fix User Updates when email or login is not specified
++ **1.8.7**  - Update to Bases connector 4.1.8
 + **1.8.6**  - Uses Bases Connector V3.1.3
 + **1.7.11** - Added readonly timezone and homeDashboardId attributes to GrafanaOrganization Object type
 + **1.7.10** - Changed Org preference update to add the homeDashboardId to support Grafana 8.X. Added default timezone option in configuration
