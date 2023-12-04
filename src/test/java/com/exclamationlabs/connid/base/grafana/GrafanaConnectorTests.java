@@ -334,7 +334,35 @@ public class GrafanaConnectorTests
         Set<AttributeDelta> output = connector.updateDelta(objectClass, uid, delta, options);
         assertNotNull(output);
     }
+    @Test
+    public void test160UpdateUserName()
+    {
+        ToListResultsHandler listHandler = new ToListResultsHandler();
+        ObjectClass objectClass = new ObjectClass("GrafanaUser");
+        OperationOptions options = new OperationOptionsBuilder().build();
 
+        // Lookup a User with viewer Role
+        connector.executeQuery(new ObjectClass("GrafanaUser"), "user2@graf.com", listHandler, options);
+        List<ConnectorObject> users = listHandler.getObjects();
+        ConnectorObject user = users.get(0);
+
+        // Get the Id of the user
+        Set<Attribute> attributes = user.getAttributes();
+        Attribute id = user.getAttributeByName(GrafanaUserAttribute.userId.name());
+
+        String oid = (String)id.getValue().get(0);
+        Uid uid = new Uid(oid);
+        // Set User to Org 3
+        Set<AttributeDelta> delta = new HashSet<>();
+        AttributeDeltaBuilder builder = new AttributeDeltaBuilder();
+
+        builder = new AttributeDeltaBuilder();
+        builder.setName(GrafanaUserAttribute.name.name()).addValueToReplace("Another Name");
+        delta.add(builder.build());
+
+        Set<AttributeDelta> output = connector.updateDelta(objectClass, uid, delta, options);
+        assertNotNull(output);
+    }
     /**
      * Update An organization
      */

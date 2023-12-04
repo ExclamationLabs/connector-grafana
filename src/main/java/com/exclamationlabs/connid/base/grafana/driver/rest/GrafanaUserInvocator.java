@@ -582,10 +582,18 @@ public class GrafanaUserInvocator implements DriverInvocator<GrafanaDriver, Graf
                     updates.setEmail(user.getEmail());
                     isUserUpdate = true;
                 }
+                else
+                {
+                    updates.setEmail(existing.getEmail());
+                }
                 if ( user.getLogin() != null )
                 {
                     updates.setLogin(user.getLogin());
                     isUserUpdate = true;
+                }
+                else
+                {
+                    updates.setLogin(existing.getLogin());
                 }
                 if ( user.getName() != null )
                 {

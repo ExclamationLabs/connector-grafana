@@ -63,6 +63,7 @@ public class GrafanaFaultProcessor implements RestFaultProcessor
                  message.equalsIgnoreCase("organization not found") ||
                  message.equalsIgnoreCase("Permission denied") ||
                  message.equalsIgnoreCase("User info cannot be updated for external Users") ||
+                 message.equalsIgnoreCase("Validation error, need to specify either username or email" ) ||
                  message.equalsIgnoreCase("Not Found"))
             {
                 LOG.info(message);
