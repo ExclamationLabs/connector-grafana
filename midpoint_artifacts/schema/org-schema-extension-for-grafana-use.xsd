@@ -13,6 +13,7 @@
     </xsd:annotation>
     <xsd:sequence>
         <xsd:element name="grafanaOrgId" type="xsd:string" minOccurs="0"/>
+        <xsd:element name="eduroam_subscription_type" type="xsd:string" minOccurs="0"/>
     </xsd:sequence>
   </xsd:complexType>  
 </xsd:schema>

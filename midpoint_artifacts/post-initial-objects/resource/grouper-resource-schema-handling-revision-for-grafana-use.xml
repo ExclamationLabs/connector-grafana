@@ -1,230 +1,434 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<objects xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
-	xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
-	xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3">
-	<resource xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oid="1eff65de-5bb6-483d-9edf-8cc2c2ee0233" version="2">
+<resource xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oid="fb0bbf07-e33f-4ddd-85a1-16a7edc237f2">
     <name>Source: Groups</name>
-    <description>Groups from Grouper</description>
-    <metadata>
-        <requestTimestamp>2023-04-05T14:51:26.064Z</requestTimestamp>
-        <createTimestamp>2023-04-05T14:51:26.106Z</createTimestamp>
-        <createChannel>http://midpoint.evolveum.com/xml/ns/public/common/channels-3#init</createChannel>
-    </metadata>
     <iteration>0</iteration>
     <iterationToken/>
-    <operationalState>
-        <lastAvailabilityStatus>up</lastAvailabilityStatus>
-        <message>Status set to UP because resource schema was successfully fetched</message>
-        <timestamp>2023-04-05T14:51:34.416Z</timestamp>
-        <nodeId>DefaultNode</nodeId>
-    </operationalState>
-    <operationalStateHistory id="11">
-        <lastAvailabilityStatus>up</lastAvailabilityStatus>
-        <message>Status set to UP because resource schema was successfully fetched</message>
-        <timestamp>2023-04-05T14:51:34.416Z</timestamp>
-        <nodeId>DefaultNode</nodeId>
-    </operationalStateHistory>
-    <connectorRef oid="a34088e2-c616-4775-b1e3-e7b21826e2b0" relation="org:default" type="c:ConnectorType">
-        <!-- ConnId com.evolveum.polygon.connector.grouper.rest.GrouperConnector v0.7 -->
+    <connectorRef oid="02e37261-45ff-4c3f-bfb9-c561c20b3e7c" relation="org:default" type="c:ConnectorType">
+        <!-- ConnId com.evolveum.polygon.connector.grouper.GrouperConnector v1.2.0.0 -->
         <filter>
-            <q:equal>
-                <q:path>connectorType</q:path>
-                <q:value>com.evolveum.polygon.connector.grouper.rest.GrouperConnector</q:value>
-            </q:equal>
+            <q:and>
+                <q:equal>
+                    <q:path>c:connectorType</q:path>
+                    <q:value>com.evolveum.polygon.connector.grouper.GrouperConnector</q:value>
+                </q:equal>
+                <q:equal>
+                    <q:path>connectorVersion</q:path>
+                    <q:value>1.2.0.0</q:value>
+                </q:equal>
+            </q:and>
         </filter>
     </connectorRef>
-    <connectorConfiguration xmlns:icfc="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/connector-schema-3" xsi:type="c:ConnectorConfigurationType">
+    <connectorConfiguration xmlns:icfc="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/connector-schema-3">
         <icfc:resultsHandlerConfiguration>
             <icfc:enableNormalizingResultsHandler>false</icfc:enableNormalizingResultsHandler>
-            <icfc:enableFilteredResultsHandler>true</icfc:enableFilteredResultsHandler>
+            <icfc:enableFilteredResultsHandler>false</icfc:enableFilteredResultsHandler>
             <icfc:enableAttributesToGetSearchResultsHandler>false</icfc:enableAttributesToGetSearchResultsHandler>
         </icfc:resultsHandlerConfiguration>
-        <icfc:configurationProperties xmlns:gen887="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/com.evolveum.polygon.connector-grouper-rest/com.evolveum.polygon.connector.grouper.rest.GrouperConnector">
-            <gen887:baseUrl xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/com.evolveum.polygon.connector-grouper-rest/com.evolveum.polygon.connector.grouper.rest.GrouperConnector" xmlns:s="http://midpoint.evolveum.com/xml/ns/public/model/scripting-3">https://grouper-ws:443</gen887:baseUrl>
-            <gen887:username>banderson</gen887:username>
-            <gen887:password>
+        <icfc:configurationProperties xmlns:cfg="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/com.evolveum.polygon.connector-grouper/com.evolveum.polygon.connector.grouper.GrouperConnector">
+            <cfg:host>grouper_data</cfg:host>
+            <cfg:port>5432</cfg:port>
+            <cfg:userName>grouper</cfg:userName>
+            <cfg:password>
                 <t:encryptedData>
                     <t:encryptionMethod>
                         <t:algorithm xmlns="http://prism.evolveum.com/xml/ns/public/types-3">http://www.w3.org/2001/04/xmlenc#aes256-cbc</t:algorithm>
                     </t:encryptionMethod>
                     <t:keyInfo>
-                        <t:keyName>/QWadwACIyKn6vICM+X1bx1TxGA=</t:keyName>
+                        <t:keyName>xlqn3qDF0Tasf+UPhUmZZufR9pk=</t:keyName>
                     </t:keyInfo>
                     <t:cipherData>
-                        <t:cipherValue>+uYKQmXmDy1+emENduwuOekd9c73uvjeN3kzSdZLr7A=</t:cipherValue>
+                        <t:cipherValue>e0iRx2IqcS3BA7tXMm4PBHlL+ppfUnYQ2KVZtaweqs4=</t:cipherValue>
                     </t:cipherData>
                 </t:encryptedData>
-            </gen887:password>
-            <gen887:ignoreSslValidation>true</gen887:ignoreSslValidation>
-            <gen887:baseStem xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/com.evolveum.polygon.connector-grouper-rest/com.evolveum.polygon.connector.grouper.rest.GrouperConnector">:</gen887:baseStem>
-            <gen887:groupIncludePattern xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/com.evolveum.polygon.connector-grouper-rest/com.evolveum.polygon.connector.grouper.rest.GrouperConnector">app:.*</gen887:groupIncludePattern>
-            <gen887:groupIncludePattern xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/com.evolveum.polygon.connector-grouper-rest/com.evolveum.polygon.connector.grouper.rest.GrouperConnector">test:.*</gen887:groupIncludePattern>
-            <gen887:groupIncludePattern xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/com.evolveum.polygon.connector-grouper-rest/com.evolveum.polygon.connector.grouper.rest.GrouperConnector">ref:.*</gen887:groupIncludePattern>
-            <gen887:groupExcludePattern>.*_(includes|excludes|systemOfRecord|systemOfRecordAndIncludes)</gen887:groupExcludePattern>
-            <gen887:subjectSource>ldap</gen887:subjectSource>
-            <gen887:testStem xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/com.evolveum.polygon.connector-grouper-rest/com.evolveum.polygon.connector.grouper.rest.GrouperConnector">:</gen887:testStem>
+            </cfg:password>
+            <cfg:databaseName>grouper_to_midpoint</cfg:databaseName>
+            <cfg:extendedGroupProperties>emailListName</cfg:extendedGroupProperties>
+            <cfg:extendedGroupProperties>eduroam_subscription_type</cfg:extendedGroupProperties>
+            <cfg:attrsToHaveInAllSearch>members</cfg:attrsToHaveInAllSearch>
+            <cfg:attrsToHaveInAllSearch>member_of</cfg:attrsToHaveInAllSearch>
         </icfc:configurationProperties>
     </connectorConfiguration>
-    <additionalConnector id="1">
-        <name>AMQP async update connector</name>
-        <connectorRef oid="fba60f89-f262-4fb5-9534-540e2034fbae" relation="org:default" type="c:ConnectorType">
-            <!-- Built-in AsyncUpdateConnector v1.0.0 -->
-            <filter>
-                <q:equal>
-                    <q:path>connectorType</q:path>
-                    <q:value>AsyncUpdateConnector</q:value>
-                </q:equal>
-            </filter>
-        </connectorRef>
-        <connectorConfiguration xmlns:gen94="http://midpoint.evolveum.com/xml/ns/public/connector/builtin-1/bundle/com.evolveum.midpoint.provisioning.ucf.impl.builtin.async.update/AsyncUpdateConnector" xsi:type="c:ConnectorConfigurationType">
-            <gen94:sources>
-                <amqp091>
-                    <uri>amqp://mq:5672</uri>
-                    <username>guest</username>
-                    <password>
-                        <t:encryptedData>
-                            <t:encryptionMethod>
-                                <t:algorithm xmlns="http://prism.evolveum.com/xml/ns/public/types-3">http://www.w3.org/2001/04/xmlenc#aes256-cbc</t:algorithm>
-                            </t:encryptionMethod>
-                            <t:keyInfo>
-                                <t:keyName>/QWadwACIyKn6vICM+X1bx1TxGA=</t:keyName>
-                            </t:keyInfo>
-                            <t:cipherData>
-                                <t:cipherValue>o365XQMPB1dTRTyXqrVH5I9LzG2PDDCcjWB+Pc/ip60=</t:cipherValue>
-                            </t:cipherData>
-                        </t:encryptedData>
-                    </password>
-                    <queue>sampleQueue</queue>
-                </amqp091>
-            </gen94:sources>
-            <gen94:transformExpression>
-                <script>
-                    <code>
-                        // ------------------ START OF CONFIGURATION ------------------
-
-                        parameters = [
-                            groupIncludePattern: [ 'app:.*', 'test:.*', 'ref:.*' ],
-                            groupExcludePattern: [ '.*_(includes|excludes|systemOfRecord|systemOfRecordAndIncludes)' ],
-                            relevantSourceId: 'ldap'
-                        ]
-
-                        // ------------------ END OF CONFIGURATION ------------------
-
-                        parameters.put('message', message)
-                        grouper.execute('createUcfChange', parameters)
-                    </code>
-                </script>
-            </gen94:transformExpression>
-        </connectorConfiguration>
-        <capabilities>
-            <cachingMetadata>
-                <retrievalTimestamp>2023-04-05T14:51:34.371Z</retrievalTimestamp>
-                <serialNumber>55f9486f0e7de051-9210b84dffbfa495</serialNumber>
-            </cachingMetadata>
-            <native xmlns:cap="http://midpoint.evolveum.com/xml/ns/public/resource/capabilities-3">
-                <cap:asyncUpdate/>
-            </native>
-        </capabilities>
-    </additionalConnector>
     <schema>
         <cachingMetadata>
-            <retrievalTimestamp>2023-04-05T14:51:34.416Z</retrievalTimestamp>
-            <serialNumber>94930df3a24750da-9a5131777dbda97b</serialNumber>
+            <retrievalTimestamp>2024-12-11T19:40:30.407Z</retrievalTimestamp>
+            <serialNumber>b31bd74ac69f942d-a2b83210d58c25c3</serialNumber>
         </cachingMetadata>
         <definition>
-            <xsd:schema xmlns:a="http://prism.evolveum.com/xml/ns/public/annotation-3" xmlns:ra="http://midpoint.evolveum.com/xml/ns/public/resource/annotation-3" xmlns:tns="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xml:space="preserve">
+            <xsd:schema xmlns:a="http://prism.evolveum.com/xml/ns/public/annotation-3" xmlns:ra="http://midpoint.evolveum.com/xml/ns/public/resource/annotation-3" xmlns:tns="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3">
                 <xsd:import namespace="http://prism.evolveum.com/xml/ns/public/annotation-3"/>
+                <xsd:import namespace="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3"/>
                 <xsd:import namespace="http://midpoint.evolveum.com/xml/ns/public/resource/annotation-3"/>
-                <xsd:complexType name="Group">
+                <xsd:complexType name="subject">
                     <xsd:annotation>
                         <xsd:appinfo>
-                            <a:container/>
-                            <ra:resourceObject/>
-                            <ra:identifier>ri:uuid</ra:identifier>
-                            <ra:secondaryIdentifier>ri:name</ra:secondaryIdentifier>
-                            <ra:displayNameAttribute>ri:name</ra:displayNameAttribute>
-                            <ra:namingAttribute>ri:name</ra:namingAttribute>
-                            <ra:nativeObjectClass>Group</ra:nativeObjectClass>
+                            <a:container>true</a:container>
+                            <ra:resourceObject>true</ra:resourceObject>
+                            <ra:nativeObjectClass>subject</ra:nativeObjectClass>
+                            <ra:default>false</ra:default>
+                            <ra:auxiliary>false</ra:auxiliary>
+                            <ra:embedded>false</ra:embedded>
+                            <ra:namingAttribute>ri:subject_id</ra:namingAttribute>
+                            <ra:displayNameAttribute>ri:subject_id</ra:displayNameAttribute>
+                            <ra:identifier>icfs:uid</ra:identifier>
+                            <ra:secondaryIdentifier>ri:subject_id</ra:secondaryIdentifier>
                         </xsd:appinfo>
                     </xsd:annotation>
                     <xsd:sequence>
-                        <xsd:element minOccurs="0" name="extension" type="xsd:string">
+                        <xsd:element maxOccurs="unbounded" minOccurs="0" name="member_of" type="xsd:string">
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayOrder>120</a:displayOrder>
-                                    <ra:frameworkAttributeName>extension</ra:frameworkAttributeName>
-                                </xsd:appinfo>
-                            </xsd:annotation>
-                        </xsd:element>
-                        <xsd:element name="name" type="xsd:string">
-                            <xsd:annotation>
-                                <xsd:appinfo>
-                                    <a:displayName>name</a:displayName>
-                                    <a:displayOrder>110</a:displayOrder>
-                                    <ra:nativeAttributeName>name</ra:nativeAttributeName>
-                                    <ra:frameworkAttributeName>__NAME__</ra:frameworkAttributeName>
-                                </xsd:appinfo>
-                            </xsd:annotation>
-                        </xsd:element>
-                        <xsd:element maxOccurs="unbounded" minOccurs="0" name="member" type="xsd:string">
-                            <xsd:annotation>
-                                <xsd:appinfo>
-                                    <a:displayOrder>130</a:displayOrder>
-                                    <ra:frameworkAttributeName>member</ra:frameworkAttributeName>
+                                    <a:access>read</a:access>
+                                    <ra:frameworkAttributeName>member_of</ra:frameworkAttributeName>
                                     <ra:returnedByDefault>false</ra:returnedByDefault>
                                 </xsd:appinfo>
                             </xsd:annotation>
                         </xsd:element>
-                        <xsd:element name="uuid" type="xsd:string">
+                        <xsd:element minOccurs="0" name="last_modified" type="xsd:int">
                             <xsd:annotation>
                                 <xsd:appinfo>
-                                    <a:displayName>uuid</a:displayName>
-                                    <a:displayOrder>100</a:displayOrder>
-                                    <ra:nativeAttributeName>uuid</ra:nativeAttributeName>
-                                    <ra:frameworkAttributeName>__UID__</ra:frameworkAttributeName>
+                                    <a:displayOrder>130</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:frameworkAttributeName>last_modified</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>true</ra:returnedByDefault>
                                 </xsd:appinfo>
                             </xsd:annotation>
                         </xsd:element>
-                        <xsd:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
+                        <xsd:element name="subject_id" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>110</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:nativeAttributeName>subject_id</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>__NAME__</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>true</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="deleted" type="xsd:int">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>140</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:frameworkAttributeName>deleted</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>true</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" ref="icfs:uid">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>ConnId UID</a:displayName>
+                                    <a:displayOrder>100</a:displayOrder>
+                                    <a:access>read</a:access>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+                <xsd:complexType name="group">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <a:container>true</a:container>
+                            <ra:resourceObject>true</ra:resourceObject>
+                            <ra:nativeObjectClass>group</ra:nativeObjectClass>
+                            <ra:default>false</ra:default>
+                            <ra:auxiliary>false</ra:auxiliary>
+                            <ra:embedded>false</ra:embedded>
+                            <ra:namingAttribute>ri:group_name</ra:namingAttribute>
+                            <ra:displayNameAttribute>ri:group_name</ra:displayNameAttribute>
+                            <ra:identifier>icfs:uid</ra:identifier>
+                            <ra:secondaryIdentifier>ri:group_name</ra:secondaryIdentifier>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                    <xsd:sequence>
+                        <xsd:element maxOccurs="unbounded" minOccurs="0" name="members" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>120</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:frameworkAttributeName>members</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>false</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="description" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>130</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:frameworkAttributeName>description</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>true</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="eduroam_subscription_type" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>140</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:frameworkAttributeName>eduroam_subscription_type</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>false</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="last_modified" type="xsd:int">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>150</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:frameworkAttributeName>last_modified</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>true</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="group_name" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>110</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:nativeAttributeName>group_name</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>__NAME__</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>true</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="emailListName" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>160</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:frameworkAttributeName>emailListName</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>false</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="deleted" type="xsd:int">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>170</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:frameworkAttributeName>deleted</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>true</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="display_name" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayOrder>180</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:frameworkAttributeName>display_name</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>true</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" ref="icfs:uid">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>ConnId UID</a:displayName>
+                                    <a:displayOrder>100</a:displayOrder>
+                                    <a:access>read</a:access>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:schema>
         </definition>
     </schema>
     <schemaHandling>
-        <objectType id="2">
+        <objectType>
+            <kind>account</kind>
+            <intent>default</intent>
+            <displayName>Default Account</displayName>
+            <default>true</default>
+            <objectClass>ri:subject</objectClass>
+            <focus>
+                <type>c:UserType</type>
+            </focus>
+            <attribute>
+                <ref>ri:subject_id</ref>
+                <inbound>
+                    <target>
+                        <path>$user/name</path>
+                    </target>
+                </inbound>
+            </attribute>
+            <attribute>
+                <ref>ri:member_of</ref>
+                <fetchStrategy>explicit</fetchStrategy>
+            </attribute>
+            <association>
+                <ref>ri:group</ref>
+                <inbound>
+                    <strength>strong</strength>
+                    <expression>
+                        <assignmentTargetSearch>
+                            <targetType>c:OrgType</targetType>
+                            <filter>
+                                <q:equal>
+                                    <q:path>name</q:path>
+                                    <expression>
+                                        <script>
+                                            <code>
+
+                                                def attrs = entitlement.getAttributes();
+                                                pcvi = attrs.asPrismContainerValue().getItems();
+                                                def groupName;
+
+                                                for (obj in pcvi){
+                                                if (obj.isSingleValue()){
+
+                                                if("uid".equals(obj?.getElementName().toString())){
+
+                                                groupName = obj?.getValue()?.getRealValue()
+                                                return groupName
+                                                }
+                                                }
+                                                }
+                                                return groupName;
+                                            </code>
+                                        </script>
+                                    </expression>
+                                </q:equal>
+                            </filter>
+                            <populate>
+                                <populateItem>
+                                    <expression>
+                                        <value>grouper-group</value>
+                                    </expression>
+                                    <target>
+                                        <path>subtype</path>
+                                    </target>
+                                </populateItem>
+                            </populate>
+                        </assignmentTargetSearch>
+                    </expression>
+                    <target>
+                        <path>assignment</path>
+                        <set>
+                            <condition>
+                                <script>
+                                    <code>
+                                        assignment?.subtype?.contains('grouper-group')
+                                    </code>
+                                </script>
+                            </condition>
+                        </set>
+                    </target>
+                </inbound>
+                <kind>entitlement</kind>
+                <intent>group</intent>
+                <direction>objectToSubject</direction>
+                <associationAttribute>ri:members</associationAttribute>
+                <valueAttribute>icfs:uid</valueAttribute>
+                <shortcutAssociationAttribute>ri:member_of</shortcutAssociationAttribute>
+                <shortcutValueAttribute>icfs:uid</shortcutValueAttribute>
+                <explicitReferentialIntegrity>false</explicitReferentialIntegrity>
+            </association>
+            <correlation>
+                <correlators>
+                    <items>
+                        <name>unique_index</name>
+                        <item>
+                            <ref>name</ref>
+                        </item>
+                    </items>
+                </correlators>
+            </correlation>
+            <synchronization>
+                <reaction>
+                    <situation>unmatched</situation>
+                    <actions>
+                        <addFocus>
+                            <synchronize>true</synchronize>
+                        </addFocus>
+                    </actions>
+                </reaction>
+                <reaction>
+                    <situation>unlinked</situation>
+                    <actions>
+                        <link>
+                            <synchronize>true</synchronize>
+                        </link>
+                    </actions>
+                </reaction>
+                <reaction>
+                    <situation>linked</situation>
+                    <actions>
+                        <synchronize/>
+                    </actions>
+                </reaction>
+                <reaction>
+                    <situation>deleted</situation>
+                    <actions>
+                        <synchronize/>
+                    </actions>
+                </reaction>
+            </synchronization>
+        </objectType>
+        <objectType>
             <kind>entitlement</kind>
             <intent>group</intent>
+            <displayName>Group</displayName>
             <default>true</default>
-            <objectClass>ri:Group</objectClass>
-            <attribute id="3">
-                <ref>ri:name</ref>
-                <inbound id="5">
+            <objectClass>ri:group</objectClass>
+            <focus>
+                <type>c:OrgType</type>
+            </focus>
+            <attribute>
+                <ref>ri:emailListName</ref>
+                <fetchStrategy>explicit</fetchStrategy>
+                <inbound>
+                    <strength>strong</strength>
+                    <target>
+                        <path>emailAddress</path>
+                    </target>
+                </inbound>
+            </attribute>
+            <attribute>
+                <ref>icfs:uid</ref>
+                <inbound>
+                    <target>
+                        <path>$focus/name</path>
+                    </target>
+                </inbound>
+            </attribute>
+            <attribute>
+                <ref>ri:group_name</ref>
+                <inbound>
                     <strength>strong</strength>
                     <target>
                         <path>extension/grouperName</path>
                     </target>
                 </inbound>
-                <inbound id="6">
+                <inbound>
                     <strength>strong</strength>
                     <expression>
                         <script>
                             <code>
                                 import com.evolveum.midpoint.schema.util.*
                                 import com.evolveum.midpoint.schema.constants.*
-                                
+
                                 if (input == null) {
-                                    null
+                                null
                                 } else {
-                                    archetypeOid = '5f2b96d2-49b5-4a8a-9601-14457309a69b'       // generic-grouper-group archetype
-                                    switch (input) {
-                                        case ~/ref:affiliation:.*/: archetypeOid = '56f53812-047d-4b69-83e8-519a73d161e1'; break;   // affiliation archetype
-                                        case ~/ref:dept:.*/: archetypeOid = '1cec5f78-8fba-459b-9547-ef7485009f40'; break;          // department archetype
-                                        case ~/ref:course:.*/: archetypeOid = '3dab9a72-118b-4e40-a138-bb691c335eca'; break;        // course archetype
-                                        case ~/app:mailinglist:.*/: archetypeOid = '1645d1dc-1f7c-4508-b50b-97b501ccdee3'; break;   // mailing-list archetype
-                                        case ~/app:fm:.*/: archetypeOid = 'f09cdfcf-a153-42e8-90e8-f55a0835e17d'; break;   // eduroam archetype
-                                    }
-                                    ObjectTypeUtil.createAssignmentTo(archetypeOid, ObjectTypes.ARCHETYPE, prismContext)
+                                archetypeOid = '5f2b96d2-49b5-4a8a-9601-14457309a69b'       // generic-grouper-group archetype
+                                switch (input) {
+                                case ~/ref:affiliation:.*/: archetypeOid = '56f53812-047d-4b69-83e8-519a73d161e1'; break;   // affiliation archetype
+                                case ~/ref:dept:.*/: archetypeOid = '1cec5f78-8fba-459b-9547-ef7485009f40'; break;          // department archetype
+                                case ~/ref:course:.*/: archetypeOid = '3dab9a72-118b-4e40-a138-bb691c335eca'; break;        // course archetype
+                                case ~/app:mailinglist:.*/: archetypeOid = '1645d1dc-1f7c-4508-b50b-97b501ccdee3'; break;   // mailing-list archetype
+                                case ~/app:fm:.*/:
+                                eduroamSubscriptionType = basic.getAttributeValue(projection, 'eduroam_subscription_type')
+                                if(eduroamSubscriptionType == 'eSO'){
+                                archetypeOid = 'ceaecf67-f51f-4063-9802-d5f8cca36859'                               // eduroam-eso archetype
+                                }else{
+                                archetypeOid = 'f09cdfcf-a153-42e8-90e8-f55a0835e17d'                               // eduroam archetype
+                                }
+                                break
+                                }
+                                ObjectTypeUtil.createAssignmentTo(archetypeOid, ObjectTypes.ARCHETYPE, prismContext)
                                 }
                             </code>
                         </script>
@@ -236,133 +440,103 @@
                         </set>
                     </target>
                 </inbound>
-                <inbound id="7">
-                    <strength>strong</strength>
-                    <expression>
-                        <assignmentTargetSearch>
-                            <targetType>RoleType</targetType>
-                            <oid>30082d24-0bea-4f22-b558-d0ee2a399c38</oid>
-                        </assignmentTargetSearch>
-                    </expression>
+            </attribute>
+            <attribute>
+                <ref>ri:display_name</ref>
+                <inbound>
                     <target>
-                        <path>assignment</path>
-                        <set>
-                            <predefined>all</predefined>
-                        </set>
+                        <path>extension/grouperDisplayName</path>
                     </target>
-                    <condition>
-                        <script>
-                            <code>
-                             input.startsWith('app:wordpress:editors')
-                          </code>
-                        </script>
-                    </condition>
                 </inbound>
-                <inbound id="8">
-                    <strength>strong</strength>
-                    <expression>
-                        <assignmentTargetSearch>
-                            <targetType>RoleType</targetType>
-                            <oid>9e5a82fc-7969-4fd8-9f74-e0857969cdbb</oid>
-                        </assignmentTargetSearch>
-                    </expression>
+                <inbound>
                     <target>
-                        <path>assignment</path>
-                        <set>
-                            <predefined>all</predefined>
-                        </set>
+                        <path>$focus/displayName</path>
                     </target>
-                    <condition>
-                        <script>
-                            <code>
-                             input.startsWith('app:wordpress:admins')
-                          </code>
-                        </script>
-                    </condition>
                 </inbound>
             </attribute>
-            <attribute id="4">
-                <ref>ri:member</ref>
+            <attribute>
+                <ref>ri:description</ref>
+                <inbound>
+                    <target>
+                        <path>$focus/description</path>
+                    </target>
+                </inbound>
+            </attribute>
+            <attribute>
+                <ref>ri:members</ref>
                 <fetchStrategy>explicit</fetchStrategy>
-                <storageStrategy>indexOnly</storageStrategy>
             </attribute>
+            <attribute>
+                <ref>ri:eduroam_subscription_type</ref>
+                <fetchStrategy>explicit</fetchStrategy>
+                <inbound>
+                    <strength>strong</strength>
+                    <target>
+                        <path>extension/eduroam_subscription_type</path>
+                    </target>
+                </inbound>
+            </attribute>
+            <correlation>
+                <correlators>
+                    <items>
+                        <name>unique_index</name>
+                        <item>
+                            <ref>name</ref>
+                        </item>
+                    </items>
+                </correlators>
+            </correlation>
+            <synchronization>
+                <reaction>
+                    <situation>unmatched</situation>
+                    <actions>
+                        <addFocus>
+                            <synchronize>true</synchronize>
+                        </addFocus>
+                    </actions>
+                </reaction>
+                <reaction>
+                    <situation>unlinked</situation>
+                    <actions>
+                        <link>
+                            <synchronize>true</synchronize>
+                        </link>
+                    </actions>
+                </reaction>
+                <reaction>
+                    <situation>linked</situation>
+                    <actions>
+                        <synchronize/>
+                    </actions>
+                </reaction>
+                <reaction>
+                    <situation>deleted</situation>
+                    <actions>
+                        <deleteFocus>
+                            <synchronize>true</synchronize>
+                        </deleteFocus>
+                    </actions>
+                </reaction>
+            </synchronization>
         </objectType>
     </schemaHandling>
     <capabilities>
         <cachingMetadata>
-            <retrievalTimestamp>2023-04-05T14:51:34.410Z</retrievalTimestamp>
-            <serialNumber>de585823a5b996b7-f73eeb2e1e3bb32</serialNumber>
+            <retrievalTimestamp>2023-05-24T13:23:53.145+02:00</retrievalTimestamp>
+            <serialNumber>d991389de17be20e-55b20a5934dbcc31</serialNumber>
         </cachingMetadata>
         <native xmlns:cap="http://midpoint.evolveum.com/xml/ns/public/resource/capabilities-3">
             <cap:schema/>
+            <cap:liveSync/>
             <cap:read>
                 <cap:returnDefaultAttributesOption>false</cap:returnDefaultAttributesOption>
             </cap:read>
             <cap:testConnection/>
             <cap:script>
-                <cap:host id="10">
+                <cap:host>
                     <cap:type>connector</cap:type>
                 </cap:host>
             </cap:script>
         </native>
     </capabilities>
-    <caching>
-        <cachingStrategy>passive</cachingStrategy>
-    </caching>
-    <synchronization>
-        <objectSynchronization id="9">
-            <objectClass>ri:Group</objectClass>
-            <kind>entitlement</kind>
-            <intent>group</intent>
-            <focusType>OrgType</focusType>
-            <enabled>true</enabled>
-            <correlation>
-                <q:equal>
-                    <q:path>extension/grouperName</q:path>
-                    <expression>
-                        <path>$projection/attributes/name</path>
-                    </expression>
-                </q:equal>
-            </correlation>
-            <reaction>
-                <situation>linked</situation>
-                <channel>http://midpoint.evolveum.com/xml/ns/public/provisioning/channels-3#asyncUpdate</channel>
-                <synchronize>false</synchronize>
-                <condition>
-                    <script>
-                        <code>import com.evolveum.midpoint.prism.path.ItemPath
-                        import com.evolveum.midpoint.xml.ns._public.common.common_3.ShadowType
-
-                        // member-only updates should _NOT_ be synchronized
-                        resourceObjectDelta != null &amp;&amp; resourceObjectDelta.isModify() &amp;&amp;
-                                resourceObjectDelta.modifications.size() == 1 &amp;&amp;
-                                ItemPath.create(ShadowType.F_ATTRIBUTES, 'member').equivalent(resourceObjectDelta.modifications.iterator().next().path)
-                        </code>
-                    </script>
-                </condition>
-            </reaction>
-            <reaction>
-                <situation>linked</situation>
-                <synchronize>true</synchronize>
-            </reaction>
-            <reaction>
-                <situation>deleted</situation>
-                <synchronize>true</synchronize>
-            </reaction>
-            <reaction>
-                <situation>unlinked</situation>
-                <action>
-                    <handlerUri>http://midpoint.evolveum.com/xml/ns/public/model/action-3#link</handlerUri>
-                </action>
-            </reaction>
-            <reaction>
-                <situation>unmatched</situation>
-                <action>
-                    <handlerUri>http://midpoint.evolveum.com/xml/ns/public/model/action-3#addFocus</handlerUri>
-                </action>
-            </reaction>
-        </objectSynchronization>
-    </synchronization>
 </resource>
-
-</objects>
