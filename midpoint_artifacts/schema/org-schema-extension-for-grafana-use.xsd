@@ -14,6 +14,8 @@
     <xsd:sequence>
         <xsd:element name="grafanaOrgId" type="xsd:string" minOccurs="0"/>
         <xsd:element name="eduroam_subscription_type" type="xsd:string" minOccurs="0"/>
+        <xsd:element name="standardTemplateName" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="esoTemplateName" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
   </xsd:complexType>  
 </xsd:schema>

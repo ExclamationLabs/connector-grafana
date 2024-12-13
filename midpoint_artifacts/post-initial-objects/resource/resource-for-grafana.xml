@@ -21,8 +21,10 @@
         <timestamp>2023-04-24T21:22:11.980Z</timestamp>
         <nodeId>DefaultNode</nodeId>
     </operationalStateHistory>
-    <connectorRef oid="2bdbfab0-3f1b-4538-b895-e99fcdb48025" relation="org:default" type="c:ConnectorType">
-        <!-- ConnId com.exclamationlabs.connid.base.grafana.GrafanaConnector v1.6.7 -->
+    <connectorRef>
+        <filter>
+            <q:text>connectorType = 'com.exclamationlabs.connid.base.grafana.GrafanaConnector'</q:text>
+        </filter>
     </connectorRef>
     <connectorConfiguration xmlns:icfc="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/connector-schema-3">
         <icfc:resultsHandlerConfiguration>
