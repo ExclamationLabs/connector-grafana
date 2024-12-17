@@ -716,7 +716,7 @@
                     <expression>
                         <script>
                             <code>
-                                importgroovy.json.JsonOutput
+                                import groovy.json.JsonOutput
 
                                 standardTemplateName = basic.getExtensionPropertyValue(focus, "standardTemplateName")
 
@@ -972,15 +972,21 @@
                     <expression>
                         <script>
                             <code>
-                                importgroovy.json.JsonOutput
+                                import groovy.json.JsonOutput
 
+                                // eso datasources can have standard and eso templates
                                 esoTemplateName = basic.getExtensionPropertyValue(focus, "esoTemplateName")
+                                standardTemplateName = basic.getExtensionPropertyValue(focus, "standardTemplateName")
 
                                 jsonMap = new HashMap()
                                 jsonMap.add("httpHeaderName1", "X-Scope-OrgID")
 
+                                if(!basic.isEmpty(standardTemplateName)){
+                                    jsonMap.add("standardTemplateName", standardTemplateName)
+                                }
+
                                 if(!basic.isEmpty(esoTemplateName)){
-                                jsonMap.add("esoTemplateName", esoTemplateName)
+                                    jsonMap.add("esoTemplateName", esoTemplateName)
                                 }
 
                                 return JsonOutput.toJson(jsonMap)
