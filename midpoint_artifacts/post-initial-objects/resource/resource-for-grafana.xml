@@ -1,27 +1,10 @@
-<resource xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oid="75e2f666-4c07-46e5-b242-3ad66dc07d17" version="159">
+<resource xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oid="75e2f666-4c07-46e5-b242-3ad66dc07d17" version="2">
     <name>Target: Grafana</name>
-    <metadata>
-        <modifyTimestamp>2023-04-27T17:55:33.357Z</modifyTimestamp>
-        <modifierRef oid="e897468f-20bd-419c-8fc5-1fe60e2600de" relation="org:default" type="c:UserType">
-            <!-- banderson -->
-        </modifierRef>
-        <modifyChannel>http://midpoint.evolveum.com/xml/ns/public/common/channels-3#user</modifyChannel>
-    </metadata>
+    <lifecycleState>draft</lifecycleState>
     <iteration>0</iteration>
     <iterationToken/>
-    <operationalState>
-        <lastAvailabilityStatus>up</lastAvailabilityStatus>
-        <message>Status set to UP because resource test was successful</message>
-        <timestamp>2023-04-24T21:22:11.980Z</timestamp>
-        <nodeId>DefaultNode</nodeId>
-    </operationalState>
-    <operationalStateHistory id="107">
-        <lastAvailabilityStatus>up</lastAvailabilityStatus>
-        <message>Status set to UP because resource test was successful</message>
-        <timestamp>2023-04-24T21:22:11.980Z</timestamp>
-        <nodeId>DefaultNode</nodeId>
-    </operationalStateHistory>
-    <connectorRef>
+    <connectorRef oid="8a048271-48bb-434a-9eb4-5da10db79947" relation="org:default" type="c:ConnectorType">
+        <!-- ConnId com.exclamationlabs.connid.base.grafana.GrafanaConnector v1.8.8 -->
         <filter>
             <q:text>connectorType = 'com.exclamationlabs.connid.base.grafana.GrafanaConnector'</q:text>
         </filter>
@@ -34,20 +17,15 @@
             <icfc:enableCaseInsensitiveFilter>false</icfc:enableCaseInsensitiveFilter>
             <icfc:enableAttributesToGetSearchResultsHandler>false</icfc:enableAttributesToGetSearchResultsHandler>
         </icfc:resultsHandlerConfiguration>
-        <icfc:configurationProperties xmlns:gen415="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/connector-grafana/com.exclamationlabs.connid.base.grafana.GrafanaConnector">
-            <gen415:defaultOrgRole>Viewer</gen415:defaultOrgRole>
-            <gen415:lokiURL xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/connector-grafana/com.exclamationlabs.connid.base.grafana.GrafanaConnector">http://loki.dev.infra.eduroam.us/</gen415:lokiURL>
-            <gen415:lokiUser>grafana</gen415:lokiUser>
-            <gen415:lokiPassword>foo</gen415:lokiPassword>
-            <gen415:updateDashBoards>false</gen415:updateDashBoards>
-            <gen415:ioErrorRetries>3</gen415:ioErrorRetries>
-            <gen415:deepGet>false</gen415:deepGet>
-            <gen415:deepImport>false</gen415:deepImport>
-            <gen415:pagination>true</gen415:pagination>
-            <gen415:serviceUrl xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/connector-grafana/com.exclamationlabs.connid.base.grafana.GrafanaConnector" xmlns:s="http://midpoint.evolveum.com/xml/ns/public/model/scripting-3">https://logs.dev.infra.eduroam.us/provisioner_api</gen415:serviceUrl>
-            <gen415:duplicateErrorReturnsId>false</gen415:duplicateErrorReturnsId>
-            <gen415:basicUsername>grafana_provisioner</gen415:basicUsername>
-            <gen415:basicPassword>
+        <icfc:configurationProperties xmlns:cfg="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/connector-grafana/com.exclamationlabs.connid.base.grafana.GrafanaConnector">
+            <cfg:ioErrorRetries>3</cfg:ioErrorRetries>
+            <cfg:deepGet>false</cfg:deepGet>
+            <cfg:deepImport>false</cfg:deepImport>
+            <cfg:pagination>true</cfg:pagination>
+            <cfg:serviceUrl xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/connector-grafana/com.exclamationlabs.connid.base.grafana.GrafanaConnector" xmlns:s="http://midpoint.evolveum.com/xml/ns/public/model/scripting-3">https://logs.dev.infra.eduroam.us/provisioner_api</cfg:serviceUrl>
+            <cfg:duplicateErrorReturnsId>false</cfg:duplicateErrorReturnsId>
+            <cfg:basicUsername>grafana_provisioner</cfg:basicUsername>
+            <cfg:basicPassword>
                 <t:encryptedData>
                     <t:encryptionMethod>
                         <t:algorithm xmlns="http://prism.evolveum.com/xml/ns/public/types-3">http://www.w3.org/2001/04/xmlenc#aes256-cbc</t:algorithm>
@@ -59,8 +37,25 @@
                         <t:cipherValue>kN1pgldOWKgnGZF2+GaQgH7OaPNY+y4tSEgwKuyrzOzJaAS6WqDPxZ0DKlZSeoE5</t:cipherValue>
                     </t:cipherData>
                 </t:encryptedData>
-            </gen415:basicPassword>
-            <gen415:separateOrgAssociation>false</gen415:separateOrgAssociation>
+            </cfg:basicPassword>
+            <cfg:separateOrgAssociation>false</cfg:separateOrgAssociation>
+            <cfg:defaultOrgRole>Viewer</cfg:defaultOrgRole>
+            <cfg:lokiURL xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/connector-grafana/com.exclamationlabs.connid.base.grafana.GrafanaConnector">http://loki.dev.infra.eduroam.us/</cfg:lokiURL>
+            <cfg:lokiUser>grafana</cfg:lokiUser>
+            <cfg:lokiPassword>
+                <t:encryptedData>
+                    <t:encryptionMethod>
+                        <t:algorithm xmlns="http://prism.evolveum.com/xml/ns/public/types-3">http://www.w3.org/2001/04/xmlenc#aes256-cbc</t:algorithm>
+                    </t:encryptionMethod>
+                    <t:keyInfo>
+                        <t:keyName>xlqn3qDF0Tasf+UPhUmZZufR9pk=</t:keyName>
+                    </t:keyInfo>
+                    <t:cipherData>
+                        <t:cipherValue>0jUdsNisX4X77xNYkDiqizw+ZhhDoNRBXUbcOJEVyCM=</t:cipherValue>
+                    </t:cipherData>
+                </t:encryptedData>
+            </cfg:lokiPassword>
+            <cfg:updateDashBoards>false</cfg:updateDashBoards>
         </icfc:configurationProperties>
     </connectorConfiguration>
     <schema>
@@ -545,8 +540,8 @@
                         <expression>
                             <script>
                                 <code>
-                                      return "changeIt"
-                                 </code>
+                                    return "changeIt"
+                                </code>
                             </script>
                         </expression>
                     </outbound>
@@ -633,8 +628,8 @@
         </objectType>
         <objectType id="115">
             <kind>entitlement</kind>
-            <intent>DataSource</intent>
-            <displayName>GrafanaOrg-Datasource</displayName>
+            <intent>StandardDataSource</intent>
+            <displayName>GrafanaOrg-Standard-Datasource</displayName>
             <objectClass>ri:GrafanaDatasource</objectClass>
             <focus>
                 <type>c:OrgType</type>
@@ -721,7 +716,18 @@
                     <expression>
                         <script>
                             <code>
-                                return '{"httpHeaderName1": "X-Scope-OrgID"}'
+                                importgroovy.json.JsonOutput
+
+                                standardTemplateName = basic.getExtensionPropertyValue(focus, "standardTemplateName")
+
+                                jsonMap = new HashMap()
+                                jsonMap.add("httpHeaderName1", "X-Scope-OrgID")
+
+                                if(!basic.isEmpty(standardTemplateName)){
+                                jsonMap.add("standardTemplateName", standardTemplateName)
+                                }
+
+                                return JsonOutput.toJson(jsonMap)
                             </code>
                         </script>
                     </expression>
@@ -766,7 +772,7 @@
                     <condition>
                         <script>
                             <code>
-                               theUid = basic.getAttributeValue(shadow, 'uid')
+                                theUid = basic.getAttributeValue(shadow, 'uid')
                                 return ((null == theUid) || ("" == theUid))
                             </code>
                         </script>
@@ -876,6 +882,262 @@
                 </reaction>
             </synchronization>
         </objectType>
+        <objectType id="166">
+            <kind>entitlement</kind>
+            <intent>eSODataSource</intent>
+            <displayName>GrafanaOrg-eSO-Datasource</displayName>
+            <objectClass>ri:GrafanaDatasource</objectClass>
+            <focus>
+                <type>c:OrgType</type>
+            </focus>
+            <attribute id="167">
+                <ref>name</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>weak</strength>
+                    <source>
+                        <path>identifier</path>
+                    </source>
+                    <source>
+                        <path>extension/grafanaOrgId</path>
+                    </source>
+                    <expression>
+                        <script>
+                            <code>
+                                theWorkingName = identifier
+                                return grafanaOrgId + "_" + theWorkingName.replace("_",".")
+                            </code>
+                        </script>
+                    </expression>
+                </outbound>
+            </attribute>
+            <attribute id="168">
+                <ref>orgId</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>normal</strength>
+                    <source>
+                        <path>extension/grafanaOrgId</path>
+                    </source>
+                </outbound>
+            </attribute>
+            <attribute id="169">
+                <ref>basicAuth</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>normal</strength>
+                    <expression>
+                        <script>
+                            <code>
+                                return true
+                            </code>
+                        </script>
+                    </expression>
+                </outbound>
+            </attribute>
+            <attribute id="170">
+                <ref>basicAuthPassword</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>normal</strength>
+                    <expression>
+                        <script>
+                            <code>
+                                return "foo"
+                            </code>
+                        </script>
+                    </expression>
+                </outbound>
+            </attribute>
+            <attribute id="171">
+                <ref>jsonData</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>weak</strength>
+                    <expression>
+                        <script>
+                            <code>
+                                importgroovy.json.JsonOutput
+
+                                esoTemplateName = basic.getExtensionPropertyValue(focus, "esoTemplateName")
+
+                                jsonMap = new HashMap()
+                                jsonMap.add("httpHeaderName1", "X-Scope-OrgID")
+
+                                if(!basic.isEmpty(esoTemplateName)){
+                                jsonMap.add("esoTemplateName", esoTemplateName)
+                                }
+
+                                return JsonOutput.toJson(jsonMap)
+                            </code>
+                        </script>
+                    </expression>
+                </outbound>
+            </attribute>
+            <attribute id="172">
+                <ref>url</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>normal</strength>
+                    <expression>
+                        <script>
+                            <code>
+                                return "http://loki.dev.infra.eduroam.us"
+                            </code>
+                        </script>
+                    </expression>
+                </outbound>
+            </attribute>
+            <attribute id="173">
+                <ref>secureJsonData</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>weak</strength>
+                    <source>
+                        <path>identifier</path>
+                    </source>
+                    <expression>
+                        <script>
+                            <code>
+                                theWorkingName = identifier
+                                return '{"httpHeaderValue1": "' + theWorkingName.replace("_",".") + '"}'
+                            </code>
+                        </script>
+                    </expression>
+                    <condition>
+                        <script>
+                            <code>
+                                theUid = basic.getAttributeValue(shadow, 'uid')
+                                return ((null == theUid) || ("" == theUid))
+                            </code>
+                        </script>
+                    </condition>
+                </outbound>
+            </attribute>
+            <attribute id="174">
+                <ref>isDefault</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>normal</strength>
+                    <expression>
+                        <script>
+                            <code>
+                                return true
+                            </code>
+                        </script>
+                    </expression>
+                </outbound>
+            </attribute>
+            <attribute id="175">
+                <ref>basicAuthUser</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>normal</strength>
+                    <expression>
+                        <script>
+                            <code>
+                                return "grafana"
+                            </code>
+                        </script>
+                    </expression>
+                </outbound>
+            </attribute>
+            <attribute id="176">
+                <ref>type</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>normal</strength>
+                    <expression>
+                        <script>
+                            <code>
+                                return "loki"
+                            </code>
+                        </script>
+                    </expression>
+                </outbound>
+            </attribute>
+            <attribute id="177">
+                <ref>access</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>normal</strength>
+                    <expression>
+                        <script>
+                            <code>
+                                return "proxy"
+                            </code>
+                        </script>
+                    </expression>
+                </outbound>
+            </attribute>
+            <dependency id="178">
+                <resourceRef oid="75e2f666-4c07-46e5-b242-3ad66dc07d17" relation="org:default" type="c:ResourceType">
+                    <!-- Target: Grafana -->
+                </resourceRef>
+                <kind>entitlement</kind>
+                <intent>group</intent>
+                <strictness>lax</strictness>
+            </dependency>
+            <association id="179">
+                <ref>ri:isTheDatasourceFor</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <kind>entitlement</kind>
+                <intent>group</intent>
+                <direction>subjectToObject</direction>
+                <associationAttribute>ri:orgId</associationAttribute>
+                <valueAttribute>icfs:uid</valueAttribute>
+            </association>
+            <synchronization>
+                <reaction id="180">
+                    <name>DatasourceReaction1</name>
+                    <situation>unlinked</situation>
+                    <actions>
+                        <link id="181"/>
+                    </actions>
+                </reaction>
+                <reaction id="182">
+                    <name>DatasourceReaction2</name>
+                    <situation>linked</situation>
+                    <actions>
+                        <synchronize id="183"/>
+                    </actions>
+                </reaction>
+            </synchronization>
+        </objectType>
     </schemaHandling>
     <capabilities>
         <cachingMetadata>
@@ -933,10 +1195,10 @@
                     <expression>
                         <script>
                             <code>
-                             //theWorkingName = $shadow/attributes/name
-                             def theWorkingName = basic.getAttributeValue(shadow, 'name')
-                             return theWorkingName.replace(".","_")
-                          </code>
+                                //theWorkingName = $shadow/attributes/name
+                                def theWorkingName = basic.getAttributeValue(shadow, 'name')
+                                return theWorkingName.replace(".","_")
+                            </code>
                         </script>
                     </expression>
                 </q:equal>
