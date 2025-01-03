@@ -1,11 +1,14 @@
 package com.exclamationlabs.connid.base.grafana;
 
 import com.exclamationlabs.connid.base.connector.BaseFullAccessConnector;
+import com.exclamationlabs.connid.base.connector.authenticator.Authenticator;
+import com.exclamationlabs.connid.base.connector.configuration.basetypes.security.HttpBasicAuthConfiguration;
 import com.exclamationlabs.connid.base.grafana.adapter.GrafanaDataSourceAdapter;
 import com.exclamationlabs.connid.base.grafana.adapter.GrafanaOrgAdapter;
 import com.exclamationlabs.connid.base.grafana.adapter.GrafanaUserAdapter;
 import com.exclamationlabs.connid.base.grafana.configuration.GrafanaConfiguration;
 import com.exclamationlabs.connid.base.grafana.driver.rest.GrafanaDriver;
+import com.sun.net.httpserver.BasicAuthenticator;
 import org.identityconnectors.framework.common.objects.SuggestedValues;
 import org.identityconnectors.framework.common.objects.SuggestedValuesBuilder;
 

@@ -76,6 +76,14 @@ public class GrafanaDataSourceAdapter extends BaseAdapter<GrafanaDataSource, Gra
         {
             String json = gson.toJson(dataSource.getJsonData());
             attributes.add(AttributeBuilder.build(jsonData.name(), json));
+            if( dataSource.getJsonData().get("dashboardTemplateName") != null )
+            {
+                attributes.add(AttributeBuilder.build(dashboardTemplateName.name(), dataSource.getJsonData().get("dashboardTemplateName")));
+            }
+            else if ( dataSource.getDashboardTemplateName() != null )
+            {
+                attributes.add(AttributeBuilder.build(dashboardTemplateName.name(), dataSource.getDashboardTemplateName()));
+            }
         }
 
         if ( dataSource.getSecureJsonData() != null )
@@ -87,11 +95,19 @@ public class GrafanaDataSourceAdapter extends BaseAdapter<GrafanaDataSource, Gra
         if ( dataSource.getSecureJsonFields() != null )
         {
             String secureJson = gson.toJson(dataSource.getSecureJsonFields());
-            attributes.add(AttributeBuilder.build(secureJsonData.name(), secureJson));
+            attributes.add(AttributeBuilder.build(secureJsonFields.name(), secureJson));
         }
         return attributes;
     }
 
+    /**
+     * Outbound mapping of the controller to the Service
+     * @param attributes the set of attributes to be used to construct the model
+     * @param addedMultiValued the set of attributes that have been added
+     * @param removedMultivalued the set of attributes that have been removed
+     * @param create whether the model is being created or updated
+     * @return the Datasource model constructed from the attributes
+     */
     @Override
     protected GrafanaDataSource constructModel(Set<Attribute> attributes, Set<Attribute> addedMultiValued, Set<Attribute> removedMultivalued, boolean create)
     {
@@ -175,6 +191,7 @@ public class GrafanaDataSourceAdapter extends BaseAdapter<GrafanaDataSource, Gra
         dataSource.setUrl(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, url));
         dataSource.setUser(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, user));
         dataSource.setDatabase(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, database));
+        dataSource.setDashboardTemplateName(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, dashboardTemplateName));
         String pwd = AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, password);
         if ( pwd != null && pwd.startsWith("OBF:"))
         {
@@ -232,6 +249,8 @@ public class GrafanaDataSourceAdapter extends BaseAdapter<GrafanaDataSource, Gra
         result.add(new ConnectorAttribute(database.name(), STRING));
         result.add(new ConnectorAttribute(password.name(), STRING));
         result.add(new ConnectorAttribute(dataSourceId.name(), STRING, NOT_UPDATEABLE, NOT_CREATABLE));
+        result.add(new ConnectorAttribute(secureJsonFields.name(), STRING, NOT_RETURNED_BY_DEFAULT, NOT_UPDATEABLE));
+        result.add(new ConnectorAttribute(dashboardTemplateName.name(), STRING));
         return result;
     }
 

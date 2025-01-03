@@ -9,38 +9,29 @@ import java.util.Map;
  */
 public class GrafanaDataSource implements IdentityModel
 {
-    Integer id;
-    Integer orgId;
-    String user;
-    String name;
-    String database;
-    String access;
-    String type;
-    String url;
-    Boolean isDefault;
-    Boolean basicAuth;
-    String  basicAuthUser;
-    String  basicAuthPassword;
-    Map     jsonData;
-    Map     secureJsonData;
-
-    public Map getSecureJsonFields()
-    {
-        return secureJsonFields;
-    }
-
-    public void setSecureJsonFields(Map secureJsonFields)
-    {
-        this.secureJsonFields = secureJsonFields;
-    }
-
-    Map     secureJsonFields;
-    String  uid;
-    String  password;
-    Boolean readOnly;
-    String  typeLogoURL;
-    Boolean withCredentials;
-    String  version;
+    private String access;
+    private Boolean basicAuth;
+    private String  basicAuthPassword;
+    private String  basicAuthUser;
+    private transient String  dashboardTemplateName;
+    private String database;
+    private Integer id;
+    private Boolean isDefault;
+    private Map     jsonData;
+    private String name;
+    private Integer orgId;
+    private transient String  orgName;
+    private String  password;
+    private Boolean readOnly;
+    private Map     secureJsonData;
+    private Map     secureJsonFields;
+    private String type;
+    private String  typeLogoURL;
+    private String  uid;
+    private String url;
+    private String user;
+    private String  version;
+    private Boolean withCredentials;
 
     public String getAccess()
     {
@@ -60,6 +51,11 @@ public class GrafanaDataSource implements IdentityModel
     public String getBasicAuthUser()
     {
         return basicAuthUser;
+    }
+
+    public String getDashboardTemplateName()
+    {
+        return dashboardTemplateName;
     }
 
     public String getDatabase()
@@ -106,6 +102,11 @@ public class GrafanaDataSource implements IdentityModel
         return orgId;
     }
 
+    public String getOrgName()
+    {
+        return orgName;
+    }
+
     public String getPassword()
     {
         return password;
@@ -119,6 +120,11 @@ public class GrafanaDataSource implements IdentityModel
     public Map<String, String> getSecureJsonData()
     {
         return secureJsonData;
+    }
+
+    public Map getSecureJsonFields()
+    {
+        return secureJsonFields;
     }
 
     public String getType()
@@ -194,6 +200,11 @@ public class GrafanaDataSource implements IdentityModel
         this.basicAuthUser = basicAuthUser;
     }
 
+    public void setDashboardTemplateName(String dashboardTemplateName)
+    {
+        this.dashboardTemplateName = dashboardTemplateName;
+    }
+
     public void setDatabase(String database)
     {
         this.database = database;
@@ -224,6 +235,11 @@ public class GrafanaDataSource implements IdentityModel
         this.orgId = orgId;
     }
 
+    public void setOrgName(String orgName)
+    {
+        this.orgName = orgName;
+    }
+
     public void setPassword(String password)
     {
         this.password = password;
@@ -237,6 +253,11 @@ public class GrafanaDataSource implements IdentityModel
     public void setSecureJsonData(Map secureJsonData)
     {
         this.secureJsonData = secureJsonData;
+    }
+
+    public void setSecureJsonFields(Map secureJsonFields)
+    {
+        this.secureJsonFields = secureJsonFields;
     }
 
     public void setType(String type)

@@ -3,21 +3,26 @@ package com.exclamationlabs.connid.base.grafana.model.response;
 import com.exclamationlabs.connid.base.grafana.model.GrafanaDataSource;
 
 /**
- * Class to hold the Common JSON response for a grafana dashboard request
+ * Class to hold the Common JSON response for a grafana create dashboard request
  */
 public class GrafanaDashboardResponse
 {
     private Integer id;
+    private String message;
     private String slug;
     private String status;
     private String uid;
     private String url;
     private String version;
 
-
     public Integer getId()
     {
         return id;
+    }
+
+    public String getMessage()
+    {
+        return message;
     }
 
     public String getSlug()
@@ -48,6 +53,11 @@ public class GrafanaDashboardResponse
     public void setId(Integer id)
     {
         this.id = id;
+    }
+
+    public void setMessage(String message)
+    {
+        this.message = message;
     }
 
     public void setSlug(String slug)

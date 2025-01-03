@@ -61,8 +61,6 @@ public class GrafanaDriver extends BaseRestDriver<GrafanaConfiguration>
     Map<String, String> getAdminHeaders()
     {
         HashMap<String, String> headers = new HashMap<>();
-        // headers.put("Content-Type", "application/json; charset=UTF-8");
-        // headers.put("Accept", "application/json");
         String info = this.configuration.getBasicUsername() + ":" + configuration.getBasicPassword();
         String encoded = Base64.getEncoder().encodeToString(info.getBytes());
         headers.put("Authorization", "Basic " + encoded);

@@ -53,7 +53,7 @@ custom:
         display: 'lokiPassword.display'
         help: 'lokiPassword.help'
       dashboardTemplate:
-        type: string
+        type: string_array
         order: 3060
         display: 'dashboardTemplate.display'
         help: 'dashboardTemplate.help'
