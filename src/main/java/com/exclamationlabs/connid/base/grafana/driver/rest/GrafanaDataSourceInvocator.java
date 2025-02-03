@@ -9,7 +9,6 @@ import com.exclamationlabs.connid.base.grafana.model.GrafanaOrg;
 import com.exclamationlabs.connid.base.grafana.model.GrafanaOrgPreferences;
 import com.exclamationlabs.connid.base.grafana.model.response.GrafanaDashboardResponse;
 import com.exclamationlabs.connid.base.grafana.model.response.GrafanaDatasourceResponse;
-import com.exclamationlabs.connid.base.grafana.model.response.GrafanaSearchResponse;
 import com.exclamationlabs.connid.base.grafana.model.response.GrafanaStandardResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.identityconnectors.common.logging.Log;
@@ -21,6 +20,7 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
 {
     private static final Log LOG = Log.getLog(GrafanaDataSourceInvocator.class);
     public static final String ORG_HEADER = "X-Grafana-Org-Id";
+    public static final String DASHBOARD_TEMPLATE_NAME = "dashboardTemplateName";
 
     /**
      * Decomposed an identity value into orgId and Datasource ID or DataSource Name.
@@ -53,7 +53,7 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
      * @param dashboard The dashboard raw JSON with datasource uid already embedded
      * @return Dashboard uid
      */
-    public GrafanaDashboardResponse createDashboard(GrafanaDriver driver, String orgId, String dashboard)
+    public static GrafanaDashboardResponse createDashboard(GrafanaDriver driver, String orgId, String dashboard)
     {
         GrafanaDashboardResponse dashboardInfo = null;
         RestResponseData<GrafanaDashboardResponse> rd;
@@ -72,7 +72,7 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
         return dashboardInfo ;
     }
 
-    public String getTemplate(GrafanaDriver driver, String templateName)
+    public static String getTemplate(GrafanaDriver driver, String templateName)
     {
         String template = null;
         String[] templates = driver.getConfiguration().getDashboardTemplate();
@@ -111,7 +111,7 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
      * @param orgId  The orgId of the Datasource
      * @param dataSourceUid The dataSourceId
      */
-    public void updateDashboardAndPreferences(GrafanaDriver driver, String orgId, String dataSourceUid, String orgName, String dashboardTemplateName)
+    public static void updateDashboardAndPreferences(GrafanaDriver driver, String orgId, String dataSourceUid, String orgName, String dashboardTemplateName)
     {
         try
         {
@@ -213,7 +213,7 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
 
             if ( dataSource.getDashboardTemplateName() != null && !dataSource.getDashboardTemplateName().trim().isEmpty())
             {
-                dataSource.getJsonData().putIfAbsent("dashboardTemplateName", dataSource.getDashboardTemplateName());
+                dataSource.getJsonData().putIfAbsent(DASHBOARD_TEMPLATE_NAME, dataSource.getDashboardTemplateName());
             }
 
             if ( dataSource.getSecureJsonData() == null || dataSource.getSecureJsonData().isEmpty())
@@ -356,9 +356,9 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
 
                     if ( dataSource.getDashboardTemplateName() == null || dataSource.getDashboardTemplateName().trim().isEmpty())
                     {
-                        if ( dataSource.getJsonData().get("dashboardTemplateName") != null && !dataSource.getJsonData().get("dashboardTemplateName").trim().isEmpty())
+                        if ( dataSource.getJsonData().get(DASHBOARD_TEMPLATE_NAME) != null && !dataSource.getJsonData().get(DASHBOARD_TEMPLATE_NAME).trim().isEmpty())
                         {
-                            dataSource.setDashboardTemplateName(dataSource.getJsonData().get("dashboardTemplateName"));
+                            dataSource.setDashboardTemplateName(dataSource.getJsonData().get(DASHBOARD_TEMPLATE_NAME));
                         }
                     }
 
@@ -469,6 +469,22 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
         }
     }
 
+    public static List<GrafanaDataSource> findByOrg(GrafanaDriver driver, int orgId)
+            throws ConnectorException
+    {
+        GrafanaDataSource[] dataSourceArray;
+        List<GrafanaDataSource> dataSources = null;
+        RestResponseData<GrafanaDataSource[]> rd;
+        Map<String, String> headers = driver.getAdminHeaders();
+        if ( orgId > 0 )
+        {
+            headers.put(ORG_HEADER, Integer.valueOf(orgId).toString()); // orgId is a number
+            rd = driver.executeGetRequest("/datasources", GrafanaDataSource[].class, headers);
+            dataSourceArray = rd.getResponseObject();
+            dataSources = Arrays.asList(dataSourceArray);
+        }
+        return dataSources;
+    }
     /**
      * Retrieves all Data Sources or handles a results filter request for data sources related to an organization
      * @param driver The grafana REST driver
@@ -558,9 +574,9 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                         {
                             datasource.setOrgName(org.getName());
                         }
-                        if ( datasource.getJsonData() != null && datasource.getJsonData().get("dashboardTemplateName") != null )
+                        if ( datasource.getJsonData() != null && datasource.getJsonData().get(DASHBOARD_TEMPLATE_NAME) != null )
                         {
-                            datasource.setDashboardTemplateName(datasource.getJsonData().get("dashboardTemplateName"));
+                            datasource.setDashboardTemplateName(datasource.getJsonData().get(DASHBOARD_TEMPLATE_NAME));
                         }
                         updateDashboardAndPreferences(driver, orgId, datasource.getUid(), datasource.getOrgName(), datasource.getDashboardTemplateName());
                     }
@@ -624,9 +640,9 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                         {
                             datasource.setOrgName(org.getName());
                         }
-                        if ( datasource.getJsonData() != null && datasource.getJsonData().get("dashboardTemplateName") != null )
+                        if ( datasource.getJsonData() != null && datasource.getJsonData().get(DASHBOARD_TEMPLATE_NAME) != null )
                         {
-                            datasource.setDashboardTemplateName(datasource.getJsonData().get("dashboardTemplateName"));
+                            datasource.setDashboardTemplateName(datasource.getJsonData().get(DASHBOARD_TEMPLATE_NAME));
                         }
                         updateDashboardAndPreferences(driver, orgId, datasource.getUid(), datasource.getOrgName(), datasource.getDashboardTemplateName());
                     }

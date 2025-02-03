@@ -4,6 +4,7 @@ import com.exclamationlabs.connid.base.connector.driver.DriverInvocator;
 import com.exclamationlabs.connid.base.connector.driver.rest.RestResponseData;
 import com.exclamationlabs.connid.base.connector.results.ResultsFilter;
 import com.exclamationlabs.connid.base.connector.results.ResultsPaginator;
+import com.exclamationlabs.connid.base.grafana.model.GrafanaDataSource;
 import com.exclamationlabs.connid.base.grafana.model.GrafanaHealth;
 import com.exclamationlabs.connid.base.grafana.model.GrafanaOrg;
 import com.exclamationlabs.connid.base.grafana.model.GrafanaOrgPreferences;
@@ -161,6 +162,7 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
     }
 
     /**
+     * Returns a list of dashboards associated with an organization. The list is a list of JSON strings.
      * @param driver
      * @param org
      * @param dashboardInfo
@@ -219,7 +221,7 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
     {
         GrafanaOrg org = null;
 
-        if ( id != null && id.trim().length() > 0 )
+        if ( id != null && !id.trim().isEmpty())
         {
             int orgId = GrafanaUserInvocator.decomposeOrgId(id);
             if ( StringUtils.isNumeric(id.trim()) )
@@ -257,6 +259,12 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
             {
                 // Get the Org Dashboards and update the GrafanaOrg Object Type
                 List<GrafanaSearchResponse> dashboardList = findDashboards(driver, org);
+                List<GrafanaDataSource> dataSources = GrafanaDataSourceInvocator.findByOrg(driver, org.getId());
+                // For each datasource update the associated dashboard
+                for ( GrafanaDataSource ds : dataSources )
+                {
+                    ds.getJsonData().get("dashboardTemplateName");
+                }
                 List<String> dashboards = getDashboards(driver, org, dashboardList);
                 org.setDashboards(dashboards);
                 // Get the Org Preferences and potentially update the home dashboard
@@ -421,12 +429,13 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
     }
 
     /**
-     * Update the organization preferences especially to set the home dashboard
+     * Update the organization preferences especially to set the home dashboard.
+     * Also captures the timezone and dashboard UID from the first dashboard in the list.
      * @param driver The Grafana Driver
      * @param org the Grafana Organization whose preferences we are requested to update
      * @param dashboardList list of available dashboards associated with the organization
      */
-    public void updateOrganizationPreferences(GrafanaDriver driver, GrafanaOrg org,  List<GrafanaSearchResponse> dashboardList  )
+    public static void updateOrganizationPreferences(GrafanaDriver driver, GrafanaOrg org,  List<GrafanaSearchResponse> dashboardList  )
     {
         if ( org != null && dashboardList != null && dashboardList.size() > 0 )
         {
