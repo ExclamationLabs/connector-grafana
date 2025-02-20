@@ -6,6 +6,7 @@ import com.exclamationlabs.connid.base.connector.model.IdentityModel;
 public class GrafanaDashboard implements IdentityModel
 {
     private transient String dashboard;
+    private transient String dataSourceUid;
     private Integer id;
     private Boolean isStarred;
     private transient String meta;
@@ -15,7 +16,7 @@ public class GrafanaDashboard implements IdentityModel
     private String slug;
     private String sortMeta;
     private transient String status;
-    private String tags;
+    private String[] tags;
     private transient String templateName;
     private String title;
     private String type;
@@ -26,6 +27,11 @@ public class GrafanaDashboard implements IdentityModel
     public String getDashboard()
     {
         return dashboard;
+    }
+
+    public String getDataSourceUid()
+    {
+        return dataSourceUid;
     }
 
     public Integer getId()
@@ -85,7 +91,7 @@ public class GrafanaDashboard implements IdentityModel
         return status;
     }
 
-    public String getTags()
+    public String[] getTags()
     {
         return tags;
     }
@@ -123,6 +129,11 @@ public class GrafanaDashboard implements IdentityModel
     public void setDashboard(String dashboard)
     {
         this.dashboard = dashboard;
+    }
+
+    public void setDataSourceUid(String dataSourceUid)
+    {
+        this.dataSourceUid = dataSourceUid;
     }
 
     public void setId(Integer id)
@@ -170,7 +181,7 @@ public class GrafanaDashboard implements IdentityModel
         this.status = status;
     }
 
-    public void setTags(String tags)
+    public void setTags(String[] tags)
     {
         this.tags = tags;
     }

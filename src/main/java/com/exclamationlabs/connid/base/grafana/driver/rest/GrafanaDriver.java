@@ -6,6 +6,7 @@ import com.exclamationlabs.connid.base.connector.model.IdentityModel;
 import com.exclamationlabs.connid.base.connector.results.ResultsFilter;
 import com.exclamationlabs.connid.base.connector.results.ResultsPaginator;
 import com.exclamationlabs.connid.base.grafana.configuration.GrafanaConfiguration;
+import com.exclamationlabs.connid.base.grafana.model.GrafanaDashboard;
 import com.exclamationlabs.connid.base.grafana.model.GrafanaDataSource;
 import com.exclamationlabs.connid.base.grafana.model.GrafanaOrg;
 import com.exclamationlabs.connid.base.grafana.model.GrafanaUser;
@@ -27,6 +28,7 @@ public class GrafanaDriver extends BaseRestDriver<GrafanaConfiguration>
         addInvocator(GrafanaUser.class, new GrafanaUserInvocator());
         addInvocator(GrafanaOrg.class, new GrafanaOrgInvocator());
         addInvocator(GrafanaDataSource.class, new GrafanaDataSourceInvocator());
+        addInvocator(GrafanaDashboard.class, new GrafanaDashboardInvocator());
     }
     public static String encodeURIPath( String path)
     {

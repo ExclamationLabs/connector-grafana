@@ -6,8 +6,10 @@ package com.exclamationlabs.connid.base.grafana.model.response;
 public class GrafanaSearchResponse
 {
     private Integer id;
+    private Boolean isStarred;
     private String slug;
     private String sortMeta;
+    private String[] tags;
     private String title;
     private String type;
     private String uid;
@@ -27,6 +29,16 @@ public class GrafanaSearchResponse
     public String getSortMeta()
     {
         return sortMeta;
+    }
+
+    public Boolean getStarred()
+    {
+        return isStarred;
+    }
+
+    public String[] getTags()
+    {
+        return tags;
     }
 
     public String getTitle()
@@ -67,6 +79,16 @@ public class GrafanaSearchResponse
     public void setSortMeta(String sortMeta)
     {
         this.sortMeta = sortMeta;
+    }
+
+    public void setStarred(Boolean starred)
+    {
+        isStarred = starred;
+    }
+
+    public void setTags(String[] tags)
+    {
+        this.tags = tags;
     }
 
     public void setTitle(String title)

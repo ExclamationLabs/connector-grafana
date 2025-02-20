@@ -1,22 +1,20 @@
 package com.exclamationlabs.connid.base.grafana.driver.rest;
 
 import com.exclamationlabs.connid.base.connector.driver.DriverInvocator;
+import com.exclamationlabs.connid.base.connector.driver.rest.RestRequest;
 import com.exclamationlabs.connid.base.connector.driver.rest.RestResponseData;
 import com.exclamationlabs.connid.base.connector.results.ResultsFilter;
 import com.exclamationlabs.connid.base.connector.results.ResultsPaginator;
-import com.exclamationlabs.connid.base.grafana.model.GrafanaDataSource;
-import com.exclamationlabs.connid.base.grafana.model.GrafanaHealth;
-import com.exclamationlabs.connid.base.grafana.model.GrafanaOrg;
-import com.exclamationlabs.connid.base.grafana.model.GrafanaOrgPreferences;
+import com.exclamationlabs.connid.base.grafana.model.*;
 import com.exclamationlabs.connid.base.grafana.model.response.GrafanaSearchResponse;
 import com.exclamationlabs.connid.base.grafana.model.response.GrafanaStandardResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 
-import java.net.URISyntaxException;
+
 import java.util.*;
-import java.net.URI;
+
 
 import static com.exclamationlabs.connid.base.grafana.driver.rest.GrafanaDataSourceInvocator.ORG_HEADER;
 
@@ -35,7 +33,7 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
         String orgId = null;
         LOG.info("Creating organization {0} with id {1}", org.getName(), org.getId());
 
-        if ( org == null || org.getName() == null || org.getName().trim().length() == 0 )
+        if ( org.getName() == null || org.getName().trim().isEmpty())
         {
             throw new ConnectorException("Cannot create an org whose name is not specified");
         }
@@ -53,14 +51,14 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
                     org,
                     driver.getAdminHeaders());
             createInfo = response.getResponseObject();
-            orgId = createInfo.getOrgId();
-            if (createInfo == null || createInfo.getOrgId() == null || createInfo.getOrgId().trim().length() == 0)
+            if (createInfo == null || createInfo.getOrgId() == null || createInfo.getOrgId().trim().isEmpty())
             {
                 String message = "HTTP status " + response.getResponseStatusCode() +
                         ". Failed to create Global Grafana Org: " + org.getName();
                 LOG.error(message);
                 throw new ConnectorException(message);
             }
+            orgId = createInfo.getOrgId();
         }
         return orgId;
     }
@@ -90,8 +88,45 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
         }
     }
 
-    public List<GrafanaSearchResponse> findDashboards(GrafanaDriver driver, GrafanaOrg org)
+    /**
+     * Find the Dashboard for a specific datasource.
+     * Either the datasource uid is contained in the dashboard json or the dashboard uid is equal to the datasource uid
+     * In older versions of the connector the dashboard uid is not set to be the same as the datasource uid
+     * @param dashboardList List of Dashboards associated with the organization
+     * @param dataSource The datasource to find the dashboard for
+     * @return A GrafanaDashboard object
+     */
+    public GrafanaDashboard findDashboardForDataSource(List<GrafanaDashboard> dashboardList, GrafanaDataSource dataSource)
     {
+        GrafanaDashboard dashboard = null;
+        if ( dashboardList != null && dataSource != null )
+        {
+            for ( GrafanaDashboard db : dashboardList )
+            {
+                if ( db.getDashboard() != null && db.getDashboard().contains(dataSource.getUid().trim()))
+                {
+                    dashboard = db;
+                    break;
+                }
+                else if ( db.getUid() != null && dataSource.getUid() != null && db.getUid().trim().equalsIgnoreCase(dataSource.getUid().trim()))
+                {
+                    dashboard = db;
+                    break;
+                }
+            }
+        }
+        return dashboard;
+    }
+
+    /**
+     * lookup the dashboards for a particular organization and populate a GrafanaDashboard Object
+     * @param driver The Grafana Driver
+     * @param org The Organization whose dashboards are to be retrieved
+     * @return A list of Grafana Dashboards associated with the organization
+     */
+    public List<GrafanaDashboard> findDashboards(GrafanaDriver driver, GrafanaOrg org)
+    {
+        List<GrafanaDashboard> dashboards = new ArrayList<>();
         List<GrafanaSearchResponse> searchResults = null;
         if ( org != null && org.getId() != null )
         {
@@ -105,9 +140,28 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
             if (rd.getResponseObject() != null)
             {
                 searchResults = Arrays.asList(rd.getResponseObject());
+                for (GrafanaSearchResponse searchResult : searchResults)
+                {
+                    GrafanaDashboard dashboard = new GrafanaDashboard();
+                    dashboard.setId(searchResult.getId());
+                    dashboard.setSlug(searchResult.getSlug());
+                    dashboard.setSortMeta(searchResult.getSortMeta());
+                    dashboard.setStarred(searchResult.getStarred());
+                    dashboard.setTags(searchResult.getTags());
+                    dashboard.setTitle(searchResult.getTitle());
+                    dashboard.setType(searchResult.getType());
+                    dashboard.setUid(searchResult.getUid());
+                    dashboard.setUri(searchResult.getUri());
+                    dashboard.setUrl(searchResult.getUrl());
+                    dashboard.setOrgId(org.getId());
+                    dashboard.setOrgName(org.getName());
+                    dashboards.add(dashboard);
+                    String dashboardRaw = GrafanaDashboardInvocator.getDashboardByUID(driver, String.valueOf(orgId), searchResult.getUid());
+                    dashboard.setDashboard(dashboardRaw);
+                }
             }
         }
-        return searchResults;
+        return dashboards;
     }
 
     @Override
@@ -116,6 +170,7 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
         Set<GrafanaOrg> grafanaOrgs = new HashSet<>();
         GrafanaOrg[] orgs;
         String queryParameters = "";
+        RestResponseData<GrafanaOrg[]> rd = null;
         int startpage = 0;
         int pageSize  = 1000;
         boolean hasMore = false;
@@ -129,9 +184,12 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
             pageSize = paginator.getPageSize();
             queryParameters = "?perpage=" + pageSize + "&page=" + startpage;
             LOG.info("Get {0} Grafana Organizations on page {1}", paginator.getPageSize(), paginator.getCurrentPageNumber());
-            RestResponseData<GrafanaOrg[]> rd = driver.executeGetRequest("/orgs" + queryParameters,
-                    GrafanaOrg[].class,
-                    driver.getAdminHeaders());
+            RestRequest<GrafanaOrg[]> restRequest = new RestRequest.Builder<>(GrafanaOrg[].class)
+                    .withRequestUri("/orgs" + queryParameters)
+                    .withGet()
+                    .withHeaders(driver.getAdminHeaders())
+                    .build();
+            rd = driver.executeRequest(restRequest);
             orgs = rd.getResponseObject();
             grafanaOrgs.addAll(Arrays.asList(orgs));
         }
@@ -141,9 +199,12 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
             {
                 queryParameters = "?perpage=" + pageSize + "&page=" + startpage;
                 LOG.info("Get {0} Grafana Organizations on page {1}", pageSize, startpage);
-                RestResponseData<GrafanaOrg[]> rd = driver.executeGetRequest("/orgs" + queryParameters,
-                        GrafanaOrg[].class,
-                        driver.getAdminHeaders());
+                RestRequest<GrafanaOrg[]> restRequest = new RestRequest.Builder<>(GrafanaOrg[].class)
+                        .withRequestUri("/orgs" + queryParameters)
+                        .withGet()
+                        .withHeaders(driver.getAdminHeaders())
+                        .build();
+                rd = driver.executeRequest(restRequest);
                 orgs = rd.getResponseObject();
                 if ( orgs == null || orgs.length < pageSize )
                 {
@@ -155,46 +216,14 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
                     startpage++;
                 }
                 grafanaOrgs.addAll(Arrays.asList(orgs));
-
             } while ( hasMore );
         }
         return grafanaOrgs;
     }
 
     /**
-     * Returns a list of dashboards associated with an organization. The list is a list of JSON strings.
-     * @param driver
-     * @param org
-     * @param dashboardInfo
-     * @return
-     */
-    public List<String> getDashboards(GrafanaDriver driver, GrafanaOrg org, List<GrafanaSearchResponse> dashboardInfo)
-    {
-        List<String>  list = new ArrayList<>();
-        if ( org != null && org.getId() != null )
-        {
-            RestResponseData<String> rd;
-            Map<String, String> headers = driver.getAdminHeaders();
-            headers.put(ORG_HEADER, String.valueOf(org.getId()));
-            for( int i=0; dashboardInfo != null && i< dashboardInfo.size(); i++)
-            {
-                String uid = dashboardInfo.get(0).getUid();
-                rd = driver.executeGetRequest("/dashboards/uid/" + uid,
-                        String.class,
-                        headers);
-                String dashboard = rd.getResponseObject();
-                if ( dashboard != null )
-                {
-                    list.add(dashboard);
-                }
-            }
-        }
-        return list;
-    }
-
-    /**
      * Gets the Grafana Health which includes the version number
-     * @param driver
+     * @param driver The Grafana Driver
      * @return GrafanaHealth Object
      */
     public static GrafanaHealth getHealth(GrafanaDriver driver)
@@ -224,6 +253,7 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
         if ( id != null && !id.trim().isEmpty())
         {
             int orgId = GrafanaUserInvocator.decomposeOrgId(id);
+
             if ( StringUtils.isNumeric(id.trim()) )
             {
                 LOG.info("Lookup Org with ID {0} ", id);
@@ -232,7 +262,6 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
                                                 GrafanaOrg.class,
                                                 driver.getAdminHeaders());
                 org = rd.getResponseObject();
-
             }
             else if (  orgId > 0 )
             {
@@ -257,18 +286,9 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
 
             if ( org != null )
             {
-                // Get the Org Dashboards and update the GrafanaOrg Object Type
-                List<GrafanaSearchResponse> dashboardList = findDashboards(driver, org);
-                List<GrafanaDataSource> dataSources = GrafanaDataSourceInvocator.findByOrg(driver, org.getId());
-                // For each datasource update the associated dashboard
-                for ( GrafanaDataSource ds : dataSources )
-                {
-                    ds.getJsonData().get("dashboardTemplateName");
-                }
-                List<String> dashboards = getDashboards(driver, org, dashboardList);
-                org.setDashboards(dashboards);
-                // Get the Org Preferences and potentially update the home dashboard
-                updateOrganizationPreferences(driver, org, dashboardList);
+                // Get dashboards and preferences
+                // Update when necessary
+                getAdditionalOrgAttributes(driver, org);
             }
         }
         return org;
@@ -280,35 +300,20 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
         GrafanaOrg org = null;
         if ( name != null && name.trim().length() > 0 )
         {
-            if ( !StringUtils.isNumeric(name))
-            {
-                LOG.info("Lookup Org with Name {0} ", name);
-                String path = "/orgs/name/" + name.trim();
-                path = driver.encodeURIPath(path);
-                RestResponseData<GrafanaOrg> rd = driver.executeGetRequest(
-                        path,
-                        GrafanaOrg.class,
-                        driver.getAdminHeaders());
-                org = rd.getResponseObject();
-            }
-            else
-            {
-                LOG.info("Lookup Org with ID {0} ", name);
-                RestResponseData<GrafanaOrg> rd;
-                rd = driver.executeGetRequest("/orgs/" + name.trim(),
-                        GrafanaOrg.class,
-                        driver.getAdminHeaders());
-                org = rd.getResponseObject();
-            }
 
+            LOG.info("Lookup Org with Name {0} ", name);
+            String path = "/orgs/name/" + name.trim();
+            path = GrafanaDriver.encodeURIPath(path);
+            RestResponseData<GrafanaOrg> rd = driver.executeGetRequest(
+                    path,
+                    GrafanaOrg.class,
+                    driver.getAdminHeaders());
+            org = rd.getResponseObject();
             if ( org != null )
             {
-                // Retrieve the dashboard list
-                List<GrafanaSearchResponse> dashboardList = findDashboards(driver, org);
-                List<String> dashboards = getDashboards(driver, org, dashboardList);
-                org.setDashboards(dashboards);
-                // Get and possibly update the home dashboard
-                updateOrganizationPreferences(driver, org, dashboardList);
+                // Get dashboards and preferences
+                // Update when necessary
+                getAdditionalOrgAttributes(driver, org);
             }
         }
         else
@@ -316,6 +321,55 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
             throw new ConnectorException("Grafana Org name not specified");
         }
         return org;
+    }
+
+    /**
+     * Get the additional attributes for an organization and update the dashboard and preferences when necessary
+     * @param driver The Grafana REST Driver
+     * @param org The Organization whose additional attributes are to be retrieved
+     */
+    public void getAdditionalOrgAttributes(GrafanaDriver driver, GrafanaOrg org)
+    {
+        // Retrieve the dashboard list
+        List<GrafanaDashboard> dashboardList = findDashboards(driver, org);
+        List<GrafanaDataSource> dataSources = GrafanaDataSourceInvocator.findByOrg(driver, String.valueOf(org.getId()));
+        // Identify the default datasource
+        for ( GrafanaDataSource dataSource : dataSources )
+        {
+            GrafanaDashboard dashboard = findDashboardForDataSource(dashboardList, dataSource);
+            if ( dashboard != null )
+            {
+                dashboard.setDataSourceUid(dataSource.getUid());
+
+                if ( dataSource.getJsonData() != null && dataSource.getJsonData().containsKey("dashboardTemplateName"))
+                {
+                    dashboard.setTemplateName(dataSource.getJsonData().get("dashboardTemplateName"));
+                }
+                else {
+                    dashboard.setTemplateName(null);
+                }
+                // when the dashboard is the default or home dashboard, update the organization preferences
+                if ( dashboard.getTemplateName() == null
+                        || dashboard.getTemplateName().trim().isEmpty()
+                        || dashboard.getTemplateName().trim().equalsIgnoreCase("default"))
+                {
+                    // Get the Org Preferences and potentially update the home dashboard
+                    updateOrganizationPreferences(driver, org, dashboard);
+                }
+                GrafanaDataSourceInvocator.updateDashboardAndPreferences(driver,
+                        String.valueOf(org.getId()),
+                        dashboard.getDataSourceUid(),
+                        org.getName(),
+                        dashboard.getTemplateName());
+            }
+        }
+        // Update the GrafanaOrg Object Type
+        List<String> dashboards = new ArrayList<>();
+        for ( GrafanaDashboard dashboard : dashboardList )
+        {
+            dashboards.add(dashboard.getDashboard());
+        }
+        org.setDashboards(dashboards);
     }
 
     /**
@@ -359,9 +413,9 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
         preferences.setHomeDashboardId(dashboardId);
         preferences.setTheme(current.getTheme());
         String timezone = driver.getConfiguration().getDefaultTimeZone();
-        if ( current.getTimezone() == null || current.getTimezone().trim().length() == 0)
+        if ( current.getTimezone() == null || current.getTimezone().trim().isEmpty())
         {
-            if ( timezone != null && timezone.trim().length() > 0 )
+            if ( timezone != null && !timezone.trim().isEmpty())
             {
                 preferences.setTimezone(timezone);
             }
@@ -382,7 +436,7 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
      * @param driver The Grafana REST Driver
      * @param orgId The Id of the Organization
      * @param org The Organization information to update
-     * @throws ConnectorException
+     * @throws ConnectorException An exception thrown when the request fails
      */
     @Override
     public void update(GrafanaDriver driver, String orgId, GrafanaOrg org) throws ConnectorException
@@ -430,25 +484,23 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
 
     /**
      * Update the organization preferences especially to set the home dashboard.
-     * Also captures the timezone and dashboard UID from the first dashboard in the list.
+     * Also captures the timezone and dashboard UID from the specified dashboard to represent the home dashboard.
      * @param driver The Grafana Driver
      * @param org the Grafana Organization whose preferences we are requested to update
-     * @param dashboardList list of available dashboards associated with the organization
+     * @param dashboard The dashboard that becomes the home dashboard
      */
-    public static void updateOrganizationPreferences(GrafanaDriver driver, GrafanaOrg org,  List<GrafanaSearchResponse> dashboardList  )
+    public static void updateOrganizationPreferences(GrafanaDriver driver, GrafanaOrg org,  GrafanaDashboard dashboard  )
     {
-        if ( org != null && dashboardList != null && dashboardList.size() > 0 )
+        if ( org != null && dashboard != null  )
         {
             // Get the Org Preferences and potentially update
             GrafanaOrgPreferences current = getOrganizationPreferences(driver, org.getId());
             if ( current != null )
             {
-                // this item is a dashboard
-                GrafanaSearchResponse item = dashboardList.get(0);
                 if ( current.getHomeDashboardId() == null || current.getHomeDashboardId() == 0)
                 {
-                    // The Id typically set
-                    GrafanaOrgPreferences preferences = setOrganizationPreferences(driver, current, item.getId(), item.getUid());
+                    // The organization has no home dashboard set
+                    GrafanaOrgPreferences preferences = setOrganizationPreferences(driver, current, dashboard.getId(), dashboard.getUid());
                     if (updateOrganizationPreferences(driver, org.getId(), preferences))
                     {
                         org.setHomeDashboardId(preferences.getHomeDashboardId());
@@ -464,6 +516,7 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
                 }
                 else
                 {
+                    // The organization has a home dashboard set
                     org.setHomeDashboardId(current.getHomeDashboardId());
                     org.setTimezone(current.getTimezone());
                     if ( current.getHomeDashboardUID() != null )
@@ -472,9 +525,8 @@ public class GrafanaOrgInvocator implements DriverInvocator<GrafanaDriver, Grafa
                     }
                     else
                     {
-                        // An assumption that this is the only one available
-                        // since Version 8 does not return dashboard UID
-                        org.setHomeDashboardUID(item.getUid());
+                        // Version 8 does not return dashboard UID
+                        org.setHomeDashboardUID(dashboard.getUid());
                     }
                 }
             }

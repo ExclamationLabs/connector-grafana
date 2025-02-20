@@ -14,6 +14,7 @@ public class GrafanaDataSource implements IdentityModel
     private String  basicAuthPassword;
     private String  basicAuthUser;
     private transient String  dashboardTemplateName;
+    private transient String  dashboardUid;
     private String database;
     private Integer id;
     private Boolean isDefault;
@@ -56,6 +57,11 @@ public class GrafanaDataSource implements IdentityModel
     public String getDashboardTemplateName()
     {
         return dashboardTemplateName;
+    }
+
+    public String getDashboardUid()
+    {
+        return dashboardUid;
     }
 
     public String getDatabase()
@@ -203,6 +209,11 @@ public class GrafanaDataSource implements IdentityModel
     public void setDashboardTemplateName(String dashboardTemplateName)
     {
         this.dashboardTemplateName = dashboardTemplateName;
+    }
+
+    public void setDashboardUid(String dashboardUid)
+    {
+        this.dashboardUid = dashboardUid;
     }
 
     public void setDatabase(String database)

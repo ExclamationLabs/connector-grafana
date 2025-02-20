@@ -84,6 +84,15 @@ public class GrafanaDataSourceAdapter extends BaseAdapter<GrafanaDataSource, Gra
             {
                 attributes.add(AttributeBuilder.build(dashboardTemplateName.name(), dataSource.getDashboardTemplateName()));
             }
+
+            if( dataSource.getJsonData().get("dashboardUid") != null )
+            {
+                attributes.add(AttributeBuilder.build(dashboardUid.name(), dataSource.getJsonData().get("dashboardUid")));
+            }
+            else if ( dataSource.getDashboardUid() != null )
+            {
+                attributes.add(AttributeBuilder.build(dashboardUid.name(), dataSource.getDashboardUid()));
+            }
         }
 
         if ( dataSource.getSecureJsonData() != null )
@@ -192,6 +201,7 @@ public class GrafanaDataSourceAdapter extends BaseAdapter<GrafanaDataSource, Gra
         dataSource.setUser(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, user));
         dataSource.setDatabase(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, database));
         dataSource.setDashboardTemplateName(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, dashboardTemplateName));
+        dataSource.setDashboardUid(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, dashboardUid));
         String pwd = AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, password);
         if ( pwd != null && pwd.startsWith("OBF:"))
         {
@@ -250,7 +260,8 @@ public class GrafanaDataSourceAdapter extends BaseAdapter<GrafanaDataSource, Gra
         result.add(new ConnectorAttribute(password.name(), STRING));
         result.add(new ConnectorAttribute(dataSourceId.name(), STRING, NOT_UPDATEABLE, NOT_CREATABLE));
         result.add(new ConnectorAttribute(secureJsonFields.name(), STRING, NOT_RETURNED_BY_DEFAULT, NOT_UPDATEABLE));
-        result.add(new ConnectorAttribute(dashboardTemplateName.name(), STRING));
+        result.add(new ConnectorAttribute(dashboardTemplateName.name(), STRING, NOT_RETURNED_BY_DEFAULT));
+        result.add(new ConnectorAttribute(dashboardUid.name(), STRING, NOT_RETURNED_BY_DEFAULT));
         return result;
     }
 

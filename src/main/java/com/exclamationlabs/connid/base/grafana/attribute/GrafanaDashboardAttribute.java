@@ -18,5 +18,6 @@ public enum GrafanaDashboardAttribute
     tags,
     isStarred,
     meta,
-    dashboard
+    dashboard,
+    dataSourceUid
 }

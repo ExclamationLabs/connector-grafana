@@ -1,5 +1,6 @@
 package com.exclamationlabs.connid.base.grafana;
 
+import com.exclamationlabs.connid.base.grafana.attribute.GrafanaDashboardAttribute;
 import com.exclamationlabs.connid.base.grafana.attribute.GrafanaDataSourceAttribute;
 import com.exclamationlabs.connid.base.grafana.attribute.GrafanaOrgAttribute;
 import com.exclamationlabs.connid.base.grafana.attribute.GrafanaUserAttribute;
@@ -26,6 +27,7 @@ public class GrafanaConnectorTests
     private final ArrayList<ConnectorObject> results = new ArrayList<>();
     private String dataSourceName = null;
     private Boolean grafana_local = true;
+    private String dashboardUid = "6_be6iuisslqkn4e";
 
 
     /**
@@ -73,16 +75,14 @@ public class GrafanaConnectorTests
             configuration.setLokiURL("http://localhost:3100/");
         }
 
-
         configuration.setActive(true);
         configuration.setPagination(true);
         configuration.setUpdateDashBoards(true);
         configuration.setSeparateOrgAssociation(false);
-        String defaultTemplate = "{\"dashboard\":{\"id\":0,\"uid\":0,\"title\":\"__OrgName__ eduroam RADIUS Logs\",\"schemaVersion\":35,\"version\":2,\"timezone\":\"browser\",\"annotations\":{\"list\":[{\"builtIn\":1,\"datasource\":\"-- Grafana --\",\"enable\":true,\"hide\":true,\"iconColor\":\"rgba(0, 211, 255, 1)\",\"name\":\"Annotations & Alerts\",\"target\":{\"limit\":100,\"matchAny\":false,\"tags\":[],\"type\":\"dashboard\"},\"type\":\"dashboard\"}]},\"editable\":true,\"fiscalYearStartMonth\":0,\"graphTooltip\":0,\"links\":[],\"liveNow\":false,\"panels\":[{\"description\":\"\",\"fieldConfig\":{\"defaults\":{\"color\":{\"mode\":\"thresholds\"},\"custom\":{\"align\":\"auto\",\"displayMode\":\"auto\",\"filterable\":true},\"mappings\":[],\"thresholds\":{\"mode\":\"absolute\",\"steps\":[{\"color\":\"green\",\"value\":\"\"},{\"color\":\"red\",\"value\":80}]}},\"overrides\":[{\"matcher\":{\"id\":\"byName\",\"options\":\"TIMESTAMP\"},\"properties\":[{\"id\":\"custom.width\",\"value\":193}]}]},\"gridPos\":{\"h\":11,\"w\":23,\"x\":0,\"y\":0},\"id\":13,\"options\":{\"footer\":{\"fields\":\"\",\"reducer\":[\"sum\"],\"show\":false},\"showHeader\":true,\"sortBy\":[{\"desc\":true,\"displayName\":\"TIMESTAMP\"}]},\"pluginVersion\":\"8.4.3\",\"targets\":[{\"datasource\":{\"type\":\"loki\",\"uid\":\"__DataSourceUID__\"},\"expr\":\"{record_type=\\\"fticks\\\"}\",\"maxLines\":5000,\"refId\":\"A\"}],\"title\":\"Authentication Logs\",\"transformations\":[{\"id\":\"merge\",\"options\":{}},{\"id\":\"extractFields\",\"options\":{\"format\":\"auto\",\"replace\":false,\"source\":\"line\"}},{\"id\":\"organize\",\"options\":{\"excludeByName\":{\"FAILURE\":false,\"NEXTHOP\":false,\"REALM\":false,\"REGION\":true,\"TIMESTAMP\":true,\"Time\":false,\"Time ns\":true,\"UTC\":true,\"VISINST\":true,\"id\":true,\"line\":true,\"line {record_type=\\\"fticks\\\", side=\\\"rp\\\"}\":true,\"ts\":false,\"tsNs\":true},\"indexByName\":{\"14\":14,\"15\":15,\"2022\":16,\"CSI\":9,\"EAPTYPE\":8,\"FAILURE\":6,\"NEXTHOP\":4,\"REALM\":3,\"REGION\":12,\"RESULT\":5,\"Realm\":19,\"TIMESTAMP\":1,\"UTC\":13,\"VISCOUNTRY\":7,\"VISINST\":10,\"VISINSTID\":2,\"at\":23,\"does\":20,\"dot\":26,\"have\":22,\"id\":11,\"least\":24,\"line\":17,\"not\":21,\"one\":25,\"separator\":27,\"ts\":0,\"tsNs\":18},\"renameByName\":{\"Time\":\"TIMESTAMP\",\"ts\":\"TIMESTAMP\"}}},{\"id\":\"filterFieldsByName\",\"options\":{\"include\":{\"names\":[\"VISINSTID\",\"REALM\",\"NEXTHOP\",\"RESULT\",\"FAILURE\",\"VISCOUNTRY\",\"EAPTYPE\",\"CSI\",\"TIMESTAMP\"]}}}],\"type\":\"table\"},{\"gridPos\":{\"h\":12,\"w\":23,\"x\":0,\"y\":11},\"id\":6,\"options\":{\"dedupStrategy\":\"none\",\"enableLogDetails\":true,\"prettifyLogMessage\":false,\"showCommonLabels\":false,\"showLabels\":false,\"showTime\":true,\"sortOrder\":\"Descending\",\"wrapLogMessage\":false},\"targets\":[{\"datasource\":{\"type\":\"loki\",\"uid\":\"__DataSourceUID__\"},\"expr\":\"{record_type=\\\"stdout\\\"}\",\"maxLines\":5000,\"refId\":\"A\"}],\"title\":\"RADIUS Server Logs\",\"type\":\"logs\"}],\"style\":\"dark\",\"tags\":[],\"templating\":{\"list\":[]},\"time\":{\"from\":\"now-15m\",\"to\":\"now\"},\"timepicker\":{},\"weekStart\":\"\"},\"folderId\":0,\"overwrite\":true}";
-        String ecoTemplate = "eco{\"dashboard\":{\"id\":0,\"uid\":0,\"title\":\"__OrgName__ eduroam RADIUS Logs\",\"schemaVersion\":35,\"version\":2,\"timezone\":\"browser\",\"annotations\":{\"list\":[{\"builtIn\":1,\"datasource\":\"-- Grafana --\",\"enable\":true,\"hide\":true,\"iconColor\":\"rgba(0, 211, 255, 1)\",\"name\":\"Annotations & Alerts\",\"target\":{\"limit\":100,\"matchAny\":false,\"tags\":[],\"type\":\"dashboard\"},\"type\":\"dashboard\"}]},\"editable\":true,\"fiscalYearStartMonth\":0,\"graphTooltip\":0,\"links\":[],\"liveNow\":false,\"panels\":[{\"description\":\"\",\"fieldConfig\":{\"defaults\":{\"color\":{\"mode\":\"thresholds\"},\"custom\":{\"align\":\"auto\",\"displayMode\":\"auto\",\"filterable\":true},\"mappings\":[],\"thresholds\":{\"mode\":\"absolute\",\"steps\":[{\"color\":\"green\",\"value\":\"\"},{\"color\":\"red\",\"value\":80}]}},\"overrides\":[{\"matcher\":{\"id\":\"byName\",\"options\":\"TIMESTAMP\"},\"properties\":[{\"id\":\"custom.width\",\"value\":193}]}]},\"gridPos\":{\"h\":11,\"w\":23,\"x\":0,\"y\":0},\"id\":13,\"options\":{\"footer\":{\"fields\":\"\",\"reducer\":[\"sum\"],\"show\":false},\"showHeader\":true,\"sortBy\":[{\"desc\":true,\"displayName\":\"TIMESTAMP\"}]},\"pluginVersion\":\"8.4.3\",\"targets\":[{\"datasource\":{\"type\":\"loki\",\"uid\":\"__DataSourceUID__\"},\"expr\":\"{record_type=\\\"fticks\\\"}\",\"maxLines\":5000,\"refId\":\"A\"}],\"title\":\"Authentication Logs\",\"transformations\":[{\"id\":\"merge\",\"options\":{}},{\"id\":\"extractFields\",\"options\":{\"format\":\"auto\",\"replace\":false,\"source\":\"line\"}},{\"id\":\"organize\",\"options\":{\"excludeByName\":{\"FAILURE\":false,\"NEXTHOP\":false,\"REALM\":false,\"REGION\":true,\"TIMESTAMP\":true,\"Time\":false,\"Time ns\":true,\"UTC\":true,\"VISINST\":true,\"id\":true,\"line\":true,\"line {record_type=\\\"fticks\\\", side=\\\"rp\\\"}\":true,\"ts\":false,\"tsNs\":true},\"indexByName\":{\"14\":14,\"15\":15,\"2022\":16,\"CSI\":9,\"EAPTYPE\":8,\"FAILURE\":6,\"NEXTHOP\":4,\"REALM\":3,\"REGION\":12,\"RESULT\":5,\"Realm\":19,\"TIMESTAMP\":1,\"UTC\":13,\"VISCOUNTRY\":7,\"VISINST\":10,\"VISINSTID\":2,\"at\":23,\"does\":20,\"dot\":26,\"have\":22,\"id\":11,\"least\":24,\"line\":17,\"not\":21,\"one\":25,\"separator\":27,\"ts\":0,\"tsNs\":18},\"renameByName\":{\"Time\":\"TIMESTAMP\",\"ts\":\"TIMESTAMP\"}}},{\"id\":\"filterFieldsByName\",\"options\":{\"include\":{\"names\":[\"VISINSTID\",\"REALM\",\"NEXTHOP\",\"RESULT\",\"FAILURE\",\"VISCOUNTRY\",\"EAPTYPE\",\"CSI\",\"TIMESTAMP\"]}}}],\"type\":\"table\"},{\"gridPos\":{\"h\":12,\"w\":23,\"x\":0,\"y\":11},\"id\":6,\"options\":{\"dedupStrategy\":\"none\",\"enableLogDetails\":true,\"prettifyLogMessage\":false,\"showCommonLabels\":false,\"showLabels\":false,\"showTime\":true,\"sortOrder\":\"Descending\",\"wrapLogMessage\":false},\"targets\":[{\"datasource\":{\"type\":\"loki\",\"uid\":\"__DataSourceUID__\"},\"expr\":\"{record_type=\\\"stdout\\\"}\",\"maxLines\":5000,\"refId\":\"A\"}],\"title\":\"RADIUS Server Logs\",\"type\":\"logs\"}],\"style\":\"dark\",\"tags\":[],\"templating\":{\"list\":[]},\"time\":{\"from\":\"now-15m\",\"to\":\"now\"},\"timepicker\":{},\"weekStart\":\"\"},\"folderId\":0,\"overwrite\":true}";
+        String defaultTemplate = "{\"dashboard\":{\"id\":__DashboardId__,\"uid\":__DashboardUid__,\"title\":\"__OrgName__ eduroam RADIUS Logs\",\"schemaVersion\":35,\"version\":2,\"timezone\":\"browser\",\"annotations\":{\"list\":[{\"builtIn\":1,\"datasource\":\"-- Grafana --\",\"enable\":true,\"hide\":true,\"iconColor\":\"rgba(0, 211, 255, 1)\",\"name\":\"Annotations & Alerts\",\"target\":{\"limit\":100,\"matchAny\":false,\"tags\":[],\"type\":\"dashboard\"},\"type\":\"dashboard\"}]},\"editable\":true,\"fiscalYearStartMonth\":0,\"graphTooltip\":0,\"links\":[],\"liveNow\":false,\"panels\":[{\"description\":\"\",\"fieldConfig\":{\"defaults\":{\"color\":{\"mode\":\"thresholds\"},\"custom\":{\"align\":\"auto\",\"displayMode\":\"auto\",\"filterable\":true},\"mappings\":[],\"thresholds\":{\"mode\":\"absolute\",\"steps\":[{\"color\":\"green\",\"value\":\"\"},{\"color\":\"red\",\"value\":80}]}},\"overrides\":[{\"matcher\":{\"id\":\"byName\",\"options\":\"TIMESTAMP\"},\"properties\":[{\"id\":\"custom.width\",\"value\":193}]}]},\"gridPos\":{\"h\":11,\"w\":23,\"x\":0,\"y\":0},\"id\":13,\"options\":{\"footer\":{\"fields\":\"\",\"reducer\":[\"sum\"],\"show\":false},\"showHeader\":true,\"sortBy\":[{\"desc\":true,\"displayName\":\"TIMESTAMP\"}]},\"pluginVersion\":\"8.4.3\",\"targets\":[{\"datasource\":{\"type\":\"loki\",\"uid\":\"__DataSourceUID__\"},\"expr\":\"{record_type=\\\"fticks\\\"}\",\"maxLines\":5000,\"refId\":\"A\"}],\"title\":\"Authentication Logs\",\"transformations\":[{\"id\":\"merge\",\"options\":{}},{\"id\":\"extractFields\",\"options\":{\"format\":\"auto\",\"replace\":false,\"source\":\"line\"}},{\"id\":\"organize\",\"options\":{\"excludeByName\":{\"FAILURE\":false,\"NEXTHOP\":false,\"REALM\":false,\"REGION\":true,\"TIMESTAMP\":true,\"Time\":false,\"Time ns\":true,\"UTC\":true,\"VISINST\":true,\"id\":true,\"line\":true,\"line {record_type=\\\"fticks\\\", side=\\\"rp\\\"}\":true,\"ts\":false,\"tsNs\":true},\"indexByName\":{\"14\":14,\"15\":15,\"2022\":16,\"CSI\":9,\"EAPTYPE\":8,\"FAILURE\":6,\"NEXTHOP\":4,\"REALM\":3,\"REGION\":12,\"RESULT\":5,\"Realm\":19,\"TIMESTAMP\":1,\"UTC\":13,\"VISCOUNTRY\":7,\"VISINST\":10,\"VISINSTID\":2,\"at\":23,\"does\":20,\"dot\":26,\"have\":22,\"id\":11,\"least\":24,\"line\":17,\"not\":21,\"one\":25,\"separator\":27,\"ts\":0,\"tsNs\":18},\"renameByName\":{\"Time\":\"TIMESTAMP\",\"ts\":\"TIMESTAMP\"}}},{\"id\":\"filterFieldsByName\",\"options\":{\"include\":{\"names\":[\"VISINSTID\",\"REALM\",\"NEXTHOP\",\"RESULT\",\"FAILURE\",\"VISCOUNTRY\",\"EAPTYPE\",\"CSI\",\"TIMESTAMP\"]}}}],\"type\":\"table\"},{\"gridPos\":{\"h\":12,\"w\":23,\"x\":0,\"y\":11},\"id\":6,\"options\":{\"dedupStrategy\":\"none\",\"enableLogDetails\":true,\"prettifyLogMessage\":false,\"showCommonLabels\":false,\"showLabels\":false,\"showTime\":true,\"sortOrder\":\"Descending\",\"wrapLogMessage\":false},\"targets\":[{\"datasource\":{\"type\":\"loki\",\"uid\":\"__DataSourceUID__\"},\"expr\":\"{record_type=\\\"stdout\\\"}\",\"maxLines\":5000,\"refId\":\"A\"}],\"title\":\"RADIUS Server Logs\",\"type\":\"logs\"}],\"style\":\"dark\",\"tags\":[],\"templating\":{\"list\":[]},\"time\":{\"from\":\"now-15m\",\"to\":\"now\"},\"timepicker\":{},\"weekStart\":\"\"},\"folderId\":0,\"overwrite\":true}";
+        String ecoTemplate = "eso{\"dashboard\":{\"id\":__DashboardId__,\"uid\":__DashboardUid__,\"title\":\"__OrgName__ ESO eduroam RADIUS Logs\",\"schemaVersion\":35,\"version\":2,\"timezone\":\"browser\",\"annotations\":{\"list\":[{\"builtIn\":1,\"datasource\":\"-- Grafana --\",\"enable\":true,\"hide\":true,\"iconColor\":\"rgba(0, 211, 255, 1)\",\"name\":\"Annotations & Alerts\",\"target\":{\"limit\":100,\"matchAny\":false,\"tags\":[],\"type\":\"dashboard\"},\"type\":\"dashboard\"}]},\"editable\":true,\"fiscalYearStartMonth\":0,\"graphTooltip\":0,\"links\":[],\"liveNow\":false,\"panels\":[{\"description\":\"\",\"fieldConfig\":{\"defaults\":{\"color\":{\"mode\":\"thresholds\"},\"custom\":{\"align\":\"auto\",\"displayMode\":\"auto\",\"filterable\":true},\"mappings\":[],\"thresholds\":{\"mode\":\"absolute\",\"steps\":[{\"color\":\"green\",\"value\":\"\"},{\"color\":\"red\",\"value\":80}]}},\"overrides\":[{\"matcher\":{\"id\":\"byName\",\"options\":\"TIMESTAMP\"},\"properties\":[{\"id\":\"custom.width\",\"value\":193}]}]},\"gridPos\":{\"h\":11,\"w\":23,\"x\":0,\"y\":0},\"id\":13,\"options\":{\"footer\":{\"fields\":\"\",\"reducer\":[\"sum\"],\"show\":false},\"showHeader\":true,\"sortBy\":[{\"desc\":true,\"displayName\":\"TIMESTAMP\"}]},\"pluginVersion\":\"8.4.3\",\"targets\":[{\"datasource\":{\"type\":\"loki\",\"uid\":\"__DataSourceUID__\"},\"expr\":\"{record_type=\\\"fticks\\\"}\",\"maxLines\":5000,\"refId\":\"A\"}],\"title\":\"Authentication Logs\",\"transformations\":[{\"id\":\"merge\",\"options\":{}},{\"id\":\"extractFields\",\"options\":{\"format\":\"auto\",\"replace\":false,\"source\":\"line\"}},{\"id\":\"organize\",\"options\":{\"excludeByName\":{\"FAILURE\":false,\"NEXTHOP\":false,\"REALM\":false,\"REGION\":true,\"TIMESTAMP\":true,\"Time\":false,\"Time ns\":true,\"UTC\":true,\"VISINST\":true,\"id\":true,\"line\":true,\"line {record_type=\\\"fticks\\\", side=\\\"rp\\\"}\":true,\"ts\":false,\"tsNs\":true},\"indexByName\":{\"14\":14,\"15\":15,\"2022\":16,\"CSI\":9,\"EAPTYPE\":8,\"FAILURE\":6,\"NEXTHOP\":4,\"REALM\":3,\"REGION\":12,\"RESULT\":5,\"Realm\":19,\"TIMESTAMP\":1,\"UTC\":13,\"VISCOUNTRY\":7,\"VISINST\":10,\"VISINSTID\":2,\"at\":23,\"does\":20,\"dot\":26,\"have\":22,\"id\":11,\"least\":24,\"line\":17,\"not\":21,\"one\":25,\"separator\":27,\"ts\":0,\"tsNs\":18},\"renameByName\":{\"Time\":\"TIMESTAMP\",\"ts\":\"TIMESTAMP\"}}},{\"id\":\"filterFieldsByName\",\"options\":{\"include\":{\"names\":[\"VISINSTID\",\"REALM\",\"NEXTHOP\",\"RESULT\",\"FAILURE\",\"VISCOUNTRY\",\"EAPTYPE\",\"CSI\",\"TIMESTAMP\"]}}}],\"type\":\"table\"},{\"gridPos\":{\"h\":12,\"w\":23,\"x\":0,\"y\":11},\"id\":6,\"options\":{\"dedupStrategy\":\"none\",\"enableLogDetails\":true,\"prettifyLogMessage\":false,\"showCommonLabels\":false,\"showLabels\":false,\"showTime\":true,\"sortOrder\":\"Descending\",\"wrapLogMessage\":false},\"targets\":[{\"datasource\":{\"type\":\"loki\",\"uid\":\"__DataSourceUID__\"},\"expr\":\"{record_type=\\\"stdout\\\"}\",\"maxLines\":5000,\"refId\":\"A\"}],\"title\":\"RADIUS Server Logs\",\"type\":\"logs\"}],\"style\":\"dark\",\"tags\":[],\"templating\":{\"list\":[]},\"time\":{\"from\":\"now-15m\",\"to\":\"now\"},\"timepicker\":{},\"weekStart\":\"\"},\"folderId\":0,\"overwrite\":true}";
         String[] templates = {defaultTemplate, ecoTemplate};
         configuration.setDashboardTemplate(templates);
-
         configuration.setDefaultOrgRole("Viewer");
         connector.init(configuration);
         ConnectorMessages messages = configuration.getConnectorMessages();
@@ -150,6 +150,9 @@ public class GrafanaConnectorTests
         assertNotNull(newId.getUidValue());
     }
 
+    /**
+     * Create a Datasource
+     */
     @Test
     public void test135CreateDatasource()
     {
@@ -158,10 +161,40 @@ public class GrafanaConnectorTests
         attributes.add(new AttributeBuilder().setName(GrafanaDataSourceAttribute.orgId.name()).addValue("7").build());
         attributes.add(new AttributeBuilder().setName(GrafanaDataSourceAttribute.isDefault.name()).addValue(true).build());
         attributes.add(new AttributeBuilder().setName(GrafanaDataSourceAttribute.basicAuth.name()).addValue(true).build());
-        attributes.add(new AttributeBuilder().setName(
-                GrafanaDataSourceAttribute.jsonData.name()).addValue("{\"httpHeaderName1\": \"X-Scope-OrgID\", \"dashboardTemplateName\":\"default\"}").build());
-        attributes.add(new AttributeBuilder().setName(GrafanaDataSourceAttribute.secureJsonData.name()).addValue("{\"httpHeaderValue1\": \"Internet2_uuid\"}").build());
         Uid newId = connector.create(new ObjectClass("GrafanaDatasource"), attributes, new OperationOptionsBuilder().build());
+        assertNotNull(newId);
+        assertNotNull(newId.getUidValue());
+    }
+
+    /**
+     * Create a Datasource for eco
+     */
+    @Test
+    public void test135CreateEsoDatasource()
+    {
+        Set<Attribute> attributes = new HashSet<>();
+        attributes.add(new AttributeBuilder().setName(GrafanaDataSourceAttribute.name.name()).addValue("ProvisionECO").build());
+        attributes.add(new AttributeBuilder().setName(GrafanaDataSourceAttribute.orgId.name()).addValue("7").build());
+        attributes.add(new AttributeBuilder().setName(GrafanaDataSourceAttribute.isDefault.name()).addValue(false).build());
+        attributes.add(new AttributeBuilder().setName(GrafanaDataSourceAttribute.dashboardTemplateName.name()).addValue("eso").build());
+        attributes.add(new AttributeBuilder().setName(GrafanaDataSourceAttribute.basicAuth.name()).addValue(true).build());
+        Uid newId = connector.create(new ObjectClass("GrafanaDatasource"), attributes, new OperationOptionsBuilder().build());
+        assertNotNull(newId);
+        assertNotNull(newId.getUidValue());
+    }
+    /**
+     * Create a dashboard
+     */
+    @Test
+    public void test135CreateDashboard()
+    {
+        Set<Attribute> attributes = new HashSet<>();
+        attributes.add(new AttributeBuilder().setName(GrafanaDashboardAttribute.orgId.name()).addValue("6").build());
+        attributes.add(new AttributeBuilder().setName(GrafanaDashboardAttribute.orgName.name()).addValue("GrafanaTest.org").build());
+        attributes.add(new AttributeBuilder().setName(GrafanaDashboardAttribute.templateName.name()).addValue("eso").build());
+        attributes.add(new AttributeBuilder().setName(GrafanaDashboardAttribute.dataSourceUid.name()).addValue("be6iuisslqkn4e").build());
+        Uid newId = connector.create(new ObjectClass("GrafanaDashboard"), attributes, new OperationOptionsBuilder().build());
+        dashboardUid = newId.getUidValue();
         assertNotNull(newId);
         assertNotNull(newId.getUidValue());
     }
@@ -209,7 +242,9 @@ public class GrafanaConnectorTests
     public void test140GetOrgByName()
     {
         ToListResultsHandler listHandler = new ToListResultsHandler();
-        connector.executeQuery(new ObjectClass("GrafanaOrganization"), "Main Org.", listHandler, new OperationOptionsBuilder().build());
+        Attribute aName = new AttributeBuilder().setName(Name.NAME).addValue("Internet2_uuid").build();
+        Filter eqName = new EqualsFilter(aName);
+        connector.executeQuery(new ObjectClass("GrafanaOrganization"), eqName, listHandler, new OperationOptionsBuilder().build());
         List<ConnectorObject> orgs = listHandler.getObjects();
         assertNotNull(orgs);
         assertEquals(1, orgs.size());
@@ -242,6 +277,28 @@ public class GrafanaConnectorTests
         List<ConnectorObject> dataSources = listHandler.getObjects();
         assertNotNull(dataSources);
         assertEquals(1, dataSources.size());
+    }
+
+    @Test
+    public void test140GetDashboardByUid()
+    {
+        ToListResultsHandler listHandler = new ToListResultsHandler();
+        connector.executeQuery(new ObjectClass("GrafanaDashboard"), dashboardUid, listHandler, new OperationOptionsBuilder().build());
+        List<ConnectorObject> dashboards = listHandler.getObjects();
+        assertNotNull(dashboards);
+        assertEquals(1, dashboards.size());
+    }
+
+    /**
+     * Get All Dashboards
+     */
+    public void test150GetAllDashboards()
+    {
+        ToListResultsHandler listHandler = new ToListResultsHandler();
+        connector.executeQuery(new ObjectClass("GrafanaDashboard"), "", listHandler, new OperationOptionsBuilder().build());
+        List<ConnectorObject> dashboards = listHandler.getObjects();
+        assertNotNull(dashboards);
+        assertFalse(dashboards.isEmpty());
     }
     /**
      * Get All Users
@@ -301,7 +358,20 @@ public class GrafanaConnectorTests
         connector.executeQuery(new ObjectClass("GrafanaDatasource"), "", listHandler, builder.build());
         List<ConnectorObject> dataSources = listHandler.getObjects();
         assertNotNull(dataSources);
-        assertTrue(dataSources.size() >= 1 );
+        assertFalse(dataSources.isEmpty());
+    }
+    @Test
+    public void test150GetAllDashboardsPaged()
+    {
+        OperationOptionsBuilder builder = new OperationOptionsBuilder();
+        builder.setPageSize(10);
+        builder.setPagedResultsOffset(1);
+
+        ToListResultsHandler listHandler = new ToListResultsHandler();
+        connector.executeQuery(new ObjectClass("GrafanaDashboard"), "", listHandler, builder.build());
+        List<ConnectorObject> dashboards = listHandler.getObjects();
+        assertNotNull(dashboards);
+        assertFalse(dashboards.isEmpty());
     }
     /**
      * Update user by adding to org 4
@@ -443,6 +513,27 @@ public class GrafanaConnectorTests
         Set<AttributeDelta> output = connector.updateDelta(objectClass, uid, delta, options);
         assertNotNull(output);
     }
+
+    /**
+     * Update a Single Dashboard by ID
+     */
+    @Test
+    public void test160UpdateDashboard()
+    {
+        ToListResultsHandler listHandler = new ToListResultsHandler();
+        ObjectClass objectClass = new ObjectClass("GrafanaDashboard");
+        Uid uid = new Uid(dashboardUid);
+        OperationOptions options = new OperationOptionsBuilder().build();
+        Set<AttributeDelta> delta = new HashSet<>();
+        AttributeDeltaBuilder builder = new AttributeDeltaBuilder();
+        builder.setName(GrafanaDashboardAttribute.templateName.name()).addValueToReplace("eco");
+        delta.add(builder.build());
+        builder = new AttributeDeltaBuilder();
+        builder.setName(GrafanaDashboardAttribute.dataSourceUid.name()).addValueToReplace("be6iuisslqkn4e");
+        delta.add(builder.build());
+        Set<AttributeDelta> output = connector.updateDelta(objectClass, uid, delta, options);
+        assertNotNull(output);
+    }
     /**
      * Delete a Single User by Id
      */
@@ -482,7 +573,16 @@ public class GrafanaConnectorTests
         Uid uid = new Uid(oid);
         connector.delete(new ObjectClass("GrafanaUser"),  uid, new OperationOptionsBuilder().build());
     }
-
+/**
+ * Delete a Single dashboard by id
+ */
+    @Test
+    public void test170DeleteDashboard()
+    {
+        ToListResultsHandler listHandler = new ToListResultsHandler();
+        Uid uid = new Uid(dashboardUid);
+        connector.delete(new ObjectClass("GrafanaDashboard"),  uid, new OperationOptionsBuilder().build());
+    }
     /**
      * Delete a Single Data Source by Name
      */
@@ -490,16 +590,20 @@ public class GrafanaConnectorTests
     public void test170DeleteDataSourceByName()
     {
         ToListResultsHandler listHandler = new ToListResultsHandler();
-        connector.executeQuery(new ObjectClass("GrafanaDatasource"), "7_ProvisionIAM_uuid", listHandler, new OperationOptionsBuilder().build());
+        Attribute aName = new AttributeBuilder().setName(Name.NAME).addValue("7_ProvisionIAM").build();
+        Filter filter = new EqualsFilter(aName);
+        connector.executeQuery(new ObjectClass("GrafanaDatasource"), filter, listHandler, new OperationOptionsBuilder().build());
         List<ConnectorObject> dataSources = listHandler.getObjects();
         ConnectorObject dataSource = dataSources.get(0);
 
         // Get the Id of the datasource
         Set<Attribute> attributes = dataSource.getAttributes();
-        Attribute id = dataSource.getAttributeByName(GrafanaDataSourceAttribute.name.name());
+        Attribute dsUid = dataSource.getAttributeByName(GrafanaDataSourceAttribute.uid.name());
+        Attribute dsOrg = dataSource.getAttributeByName(GrafanaDataSourceAttribute.orgId.name());
 
-        String oid = (String)id.getValue().get(0);
-        Uid uid = new Uid(oid);
+        String sUid = (String)dsUid.getValue().get(0);
+        String sOrg = (String)dsOrg.getValue().get(0);
+        Uid uid = new Uid(String.format("%s_%s", sOrg, sUid));
         connector.delete(new ObjectClass("GrafanaDatasource"),  uid, new OperationOptionsBuilder().build());
     }
 }
