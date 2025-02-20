@@ -526,7 +526,7 @@ public class GrafanaConnectorTests
         OperationOptions options = new OperationOptionsBuilder().build();
         Set<AttributeDelta> delta = new HashSet<>();
         AttributeDeltaBuilder builder = new AttributeDeltaBuilder();
-        builder.setName(GrafanaDashboardAttribute.templateName.name()).addValueToReplace("eco");
+        builder.setName(GrafanaDashboardAttribute.templateName.name()).addValueToReplace("eso");
         delta.add(builder.build());
         builder = new AttributeDeltaBuilder();
         builder.setName(GrafanaDashboardAttribute.dataSourceUid.name()).addValueToReplace("be6iuisslqkn4e");
