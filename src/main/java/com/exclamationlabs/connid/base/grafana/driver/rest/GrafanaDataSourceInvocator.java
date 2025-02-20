@@ -9,6 +9,7 @@ import com.exclamationlabs.connid.base.grafana.model.GrafanaOrg;
 import com.exclamationlabs.connid.base.grafana.model.GrafanaOrgPreferences;
 import com.exclamationlabs.connid.base.grafana.model.response.GrafanaDashboardResponse;
 import com.exclamationlabs.connid.base.grafana.model.response.GrafanaDatasourceResponse;
+import com.exclamationlabs.connid.base.grafana.model.response.GrafanaSearchResponse;
 import com.exclamationlabs.connid.base.grafana.model.response.GrafanaStandardResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.identityconnectors.common.logging.Log;
@@ -20,6 +21,9 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
 {
     private static final Log LOG = Log.getLog(GrafanaDataSourceInvocator.class);
     public static final String ORG_HEADER = "X-Grafana-Org-Id";
+    public static final String DASHBOARD_TEMPLATE_NAME = "dashboardTemplateName";
+    public static final String ORG_NAME = "orgName";
+    public static final String DASHBOARD_UID = "dashboardUid";
 
     /**
      * Decomposed an identity value into orgId and Datasource ID or DataSource Name.
@@ -46,56 +50,45 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
     }
 
     /**
-     * Creates or updates the dashboard for an associated organization whose datasource was created or updated
-     * @param driver The Grafana ResT Driver
-     * @param orgId  The Org whose Dashboard will be created or updated
-     * @param dashboard The dashboard raw JSON with datasource uid already embedded
-     * @return Dashboard uid
-     */
-    public GrafanaDashboardResponse createDashboard(GrafanaDriver driver, String orgId, String dashboard)
-    {
-        GrafanaDashboardResponse dashboardInfo = null;
-        RestResponseData<GrafanaDashboardResponse> rd;
-        Map<String, String> headers = driver.getAdminHeaders();
-        headers.put(ORG_HEADER, String.valueOf(orgId));
-
-        rd = driver.executePostRequest("/dashboards/db",
-                GrafanaDashboardResponse.class,
-                dashboard,
-                headers);
-
-        if ( rd != null && rd.getResponseObject() != null )
-        {
-            dashboardInfo = rd.getResponseObject();
-        }
-        return dashboardInfo ;
-    }
-
-    /**
      * Update the Dashboard and Org Preferences with a new or update datasource
      * @param driver Grafana Driver
      * @param orgId  The orgId of the Datasource
      * @param dataSourceUid The dataSourceId
      */
-    public void updateDashboardAndPreferences(GrafanaDriver driver, String orgId, String dataSourceUid)
+    public static GrafanaDashboardResponse updateDashboardAndPreferences(GrafanaDriver driver, String orgId, String dataSourceUid, String orgName, String dashboardTemplateName)
     {
+        GrafanaDashboardResponse dashboardInfo = null;
         try
         {
+            GrafanaSearchResponse dashboardMeta = GrafanaDashboardInvocator.findDashboardForDataSource(driver, orgId, dataSourceUid);
             if ( driver.getConfiguration().getUpdateDashBoards() != null
                     && driver.getConfiguration().getUpdateDashBoards()
                     && driver.getConfiguration().getDashboardTemplate() != null
-                    && driver.getConfiguration().getDashboardTemplate().trim().length() > 0 )
+                    && driver.getConfiguration().getDashboardTemplate().length > 0 )
             {
-                String template = driver.getConfiguration().getDashboardTemplate();
+                String template = GrafanaDashboardInvocator.getTemplate(driver, dashboardTemplateName);
                 template = template.replace("<DataSourceUID>", dataSourceUid);
                 template = template.replace("__DataSourceUID__", dataSourceUid);
-                GrafanaDashboardResponse dashboardInfo = createDashboard(driver, orgId, template);
-                if ( dashboardInfo != null )
+                template = template.replace("__OrgName__", orgName);
+                if ( dashboardMeta != null )
                 {
-                    GrafanaOrgPreferences current = GrafanaOrgInvocator.getOrganizationPreferences(driver, Integer.valueOf(orgId));
-                    GrafanaOrgPreferences preferences = GrafanaOrgInvocator.setOrganizationPreferences(driver,
-                            current, dashboardInfo.getId(), dashboardInfo.getUid());
-                    GrafanaOrgInvocator.updateOrganizationPreferences(driver, Integer.valueOf(orgId), preferences);
+                    template = template.replace("__DashboardUid__", String.format("\"%s\"",dashboardMeta.getUid()));
+                    template = template.replace("__DashboardId__", String.valueOf(dashboardMeta.getId()));
+                }
+                else {
+                    template = template.replace("__DashboardUid__", String.format("\"%s\"",dataSourceUid));
+                    template = template.replace("__DashboardId__", "null");
+                }
+                dashboardInfo = GrafanaDashboardInvocator.createDashboard(driver, orgId, template);
+                if ( dashboardTemplateName == null || dashboardTemplateName.trim().isEmpty() || dashboardTemplateName.trim().equalsIgnoreCase("default"))
+                {
+                    if ( dashboardInfo != null )
+                    {
+                        GrafanaOrgPreferences current = GrafanaOrgInvocator.getOrganizationPreferences(driver, Integer.valueOf(orgId));
+                        GrafanaOrgPreferences preferences = GrafanaOrgInvocator.setOrganizationPreferences(driver,
+                                current, dashboardInfo.getId(), dashboardInfo.getUid());
+                        GrafanaOrgInvocator.updateOrganizationPreferences(driver, Integer.valueOf(orgId), preferences);
+                    }
                 }
             }
         }
@@ -103,7 +96,16 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
         {
             LOG.warn(exception.getMessage());
         }
+        return dashboardInfo;
     }
+
+    /**
+     * Create a Grafana Datasource
+     * @param driver The Grafana Driver
+     * @param dataSource The Datasource to create
+     * @return The UID of the created Datasource
+     * @throws ConnectorException when a failure occurs
+     */
     @Override
     public String create(GrafanaDriver driver, GrafanaDataSource dataSource) throws ConnectorException
     {
@@ -115,25 +117,33 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
         // we will not create a datasource for an unspecified organization
         if ( dataSource.getOrgId() != null && dataSource.getOrgId() > 0  && dataSource.getName() != null )
         {
+            if ( dataSource.getOrgName() == null || dataSource.getOrgName().trim().isEmpty())
+            {
+                GrafanaOrg org = getOrgInfo(driver, String.valueOf(dataSource.getOrgId()));
+                if ( org != null )
+                {
+                    dataSource.setOrgName(org.getName());
+                }
+            }
             headers.put(ORG_HEADER, String.valueOf(dataSource.getOrgId()));
             if (dataSource.getBasicAuth() == null )
             {
                 dataSource.setBasicAuth(true);
             }
 
-            if ( dataSource.getType() == null || dataSource.getType().trim().length() == 0)
+            if ( dataSource.getType() == null || dataSource.getType().trim().isEmpty())
             {
                 dataSource.setType("loki");
             }
 
             if ( dataSource.getBasicAuth()  )
             {
-                if ( dataSource.getBasicAuthUser() == null || dataSource.getBasicAuthUser().trim().length() == 0 )
+                if ( dataSource.getBasicAuthUser() == null || dataSource.getBasicAuthUser().trim().isEmpty())
                 {
                     dataSource.setBasicAuthUser(driver.getConfiguration().getLokiUser());
                 }
                 if ( dataSource.getBasicAuthPassword() == null
-                        || dataSource.getBasicAuthPassword().trim().length() == 0 )
+                        || dataSource.getBasicAuthPassword().trim().isEmpty())
                 {
                     if ( dataSource.getType() != null && dataSource.getType().equalsIgnoreCase("loki"))
                     {
@@ -152,20 +162,56 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                 }
             }
 
-            if ( dataSource.getUrl() == null || dataSource.getUrl().trim().length() == 0 )
+            if ( dataSource.getJsonData() == null || dataSource.getJsonData().isEmpty())
+            {
+                Map<String, String> jsonData = new HashMap<>();
+                jsonData.put("httpHeaderName1", "X-Scope-OrgID");
+                dataSource.setJsonData(jsonData);
+            }
+            else {
+                dataSource.getJsonData().putIfAbsent("httpHeaderName1", "X-Scope-OrgID");
+            }
+
+            if ( dataSource.getDashboardTemplateName() != null && !dataSource.getDashboardTemplateName().trim().isEmpty())
+            {
+                dataSource.getJsonData().putIfAbsent(DASHBOARD_TEMPLATE_NAME, dataSource.getDashboardTemplateName());
+            }
+
+            if ( dataSource.getOrgName() != null && !dataSource.getOrgName().trim().isEmpty())
+            {
+                dataSource.getJsonData().putIfAbsent("orgName", dataSource.getOrgName());
+            }
+
+            if ( dataSource.getSecureJsonData() == null || dataSource.getSecureJsonData().isEmpty())
+            {
+                Map<String, String> secureJsonData = new HashMap<>();
+                dataSource.setSecureJsonData(secureJsonData);
+            }
+
+            dataSource.getSecureJsonData().putIfAbsent("httpHeaderValue1", dataSource.getOrgName());
+
+            if ( dataSource.getUrl() == null || dataSource.getUrl().trim().isEmpty())
             {
                 dataSource.setUrl(driver.getConfiguration().getLokiURL());
             }
 
-            if ( dataSource.getAccess() == null || dataSource.getAccess().trim().length() == 0)
+            if ( dataSource.getAccess() == null || dataSource.getAccess().trim().isEmpty())
             {
                 dataSource.setAccess("proxy");
             }
+
             if ( dataSource.getDefault() == null )
             {
-                dataSource.setDefault(true);
+                if (dataSource.getJsonData().get(DASHBOARD_TEMPLATE_NAME) == null
+                        || dataSource.getJsonData().get(DASHBOARD_TEMPLATE_NAME).trim().equalsIgnoreCase("default"))
+                {
+                    dataSource.setDefault(true);
+                } else {
+                    dataSource.setDefault(false);
+                }
             }
-            String message = String.format("Creating Datasource  with name %s for Org %s", dataSource.getName(), dataSource.getOrgId());
+
+            String message = String.format("Creating Datasource with name %s for Org %s", dataSource.getName(), dataSource.getOrgId());
             LOG.info(message);
         }
         else
@@ -183,10 +229,10 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
 
         createInfo = response.getResponseObject();
 
-        if ( createInfo == null || createInfo.getId() == null || createInfo.getId().trim().length() == 0 )
+        if ( createInfo == null || createInfo.getId() == null || createInfo.getId().trim().isEmpty())
         {
             String message = "HTTP " + response.getResponseStatusCode() +
-                    ". Failed to create Global Grafana User: " + createInfo.getMessage() ;
+                    ". Failed to create Grafana Datasource: " + createInfo.getMessage() ;
             LOG.warn( message);
             throw new ConnectorException(message);
         }
@@ -197,7 +243,16 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
 
             // If a datasource is created, also create a dashboard for that datasource using the existing
             // dashboard template and then set the org preferences
-            updateDashboardAndPreferences(driver, String.valueOf(createInfo.getDatasource().getOrgId()), createInfo.getDatasource().getUid());
+            GrafanaDashboardResponse dbResponse =  updateDashboardAndPreferences(driver,
+                    String.valueOf(createInfo.getDatasource().getOrgId()),
+                    createInfo.getDatasource().getUid(),
+                    dataSource.getOrgName(),
+                    dataSource.getDashboardTemplateName());
+            if ( dbResponse != null )
+            {
+                dataSource.getJsonData().put(DASHBOARD_UID, dbResponse.getUid());
+                update(driver, UID, dataSource);
+            }
         }
 
         return UID;
@@ -207,15 +262,14 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
      * @param driver The Grafana Driver
      * @param id The Identity of the Grafana Datasource to update
      * @param dataSource The changes in the Datasource
-     * @throws ConnectorException
+     * @throws ConnectorException when a failure occurs
      */
     @Override
     public void update(GrafanaDriver driver, String id, GrafanaDataSource dataSource) throws ConnectorException
     {
         Map<String, String> headers = driver.getAdminHeaders();
         LOG.info(String.format("Processing request to update Grafana Datasource uid %s", id));
-        GrafanaDataSource actual = getOne(driver, id, null);
-        if ( actual != null && id != null && id.trim().length() > 0 )
+        if ( id != null && !id.trim().isEmpty())
         {
             String[] ids = decomposeID(id);
             if ( ids != null && ids.length == 2)
@@ -223,13 +277,24 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                 if (StringUtils.isNumeric(ids[0]))
                 {
                     String orgId = ids[0];
-                    String idDatasource = ids[1];
+                    String uid = ids[1];
+                    GrafanaDataSource actual = getDatasourceByUid(driver, orgId, uid);
+                    if ( actual == null )
+                    {
+                        LOG.warn("Grafana Datasource {0} for Org {1} not found", uid, orgId);
+                        return;
+                    }
                     dataSource.setOrgId(Integer.valueOf(orgId));
-                    if ( dataSource.getName() == null || dataSource.getName().trim().length() == 0 )
+                    GrafanaOrg org = getOrgInfo(driver, orgId);
+                    if ( org != null )
+                    {
+                        dataSource.setOrgName(org.getName());
+                    }
+                    if ( dataSource.getName() == null || dataSource.getName().trim().isEmpty())
                     {
                         dataSource.setName(actual.getName());
                     }
-                    if ( dataSource.getUid() == null || dataSource.getUid().trim().length() == 0 )
+                    if ( dataSource.getUid() == null || dataSource.getUid().trim().isEmpty())
                     {
                         dataSource.setUid(actual.getUid());
                     }
@@ -247,37 +312,45 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                         // id not required on update but setting anyway
                         dataSource.setId(actual.getId());
                     }
-                    if ( dataSource.getAccess() == null || dataSource.getAccess().trim().length() == 0 )
+                    if ( dataSource.getAccess() == null || dataSource.getAccess().trim().isEmpty())
                     {
                         // access is required on update
                         dataSource.setAccess(actual.getAccess());
                     }
-                    if ( dataSource.getType() == null || dataSource.getType().trim().length() == 0 )
+                    if ( dataSource.getType() == null || dataSource.getType().trim().isEmpty())
                     {
                         // type is required on update
                         dataSource.setType(actual.getType());
                     }
-                    if ( dataSource.getUrl() == null || dataSource.getUrl().trim().length() == 0 )
+                    if ( dataSource.getUrl() == null || dataSource.getUrl().trim().isEmpty())
                     {
                         // url is required on update
                         dataSource.setUrl(actual.getUrl());
                     }
 
-                    if ( dataSource.getJsonData() == null || dataSource.getJsonData().size() == 0 )
+                    if ( dataSource.getJsonData() == null || dataSource.getJsonData().isEmpty())
                     {
                         dataSource.setJsonData(actual.getJsonData());
                     }
-                    else if ( actual.getJsonData() != null && actual.getJsonData().size() > 0 )
+                    else if ( actual.getJsonData() != null && !actual.getJsonData().isEmpty())
                     {
                         actual.getJsonData().putAll(dataSource.getJsonData());
                         dataSource.setJsonData(actual.getJsonData());
                     }
 
-                    if ( dataSource.getSecureJsonData() == null || dataSource.getSecureJsonData().size() == 0 )
+                    if ( dataSource.getDashboardTemplateName() == null || dataSource.getDashboardTemplateName().trim().isEmpty())
+                    {
+                        if ( dataSource.getJsonData().get(DASHBOARD_TEMPLATE_NAME) != null && !dataSource.getJsonData().get(DASHBOARD_TEMPLATE_NAME).trim().isEmpty())
+                        {
+                            dataSource.setDashboardTemplateName(dataSource.getJsonData().get(DASHBOARD_TEMPLATE_NAME));
+                        }
+                    }
+
+                    if ( dataSource.getSecureJsonData() == null || dataSource.getSecureJsonData().isEmpty())
                     {
                         dataSource.setSecureJsonData(actual.getSecureJsonData());
                     }
-                    else if ( actual.getSecureJsonData() != null && actual.getSecureJsonData().size() > 0 )
+                    else if ( actual.getSecureJsonData() != null && !actual.getSecureJsonData().isEmpty())
                     {
                         actual.getSecureJsonData().putAll(dataSource.getSecureJsonData());
                         dataSource.setSecureJsonData(actual.getSecureJsonData());
@@ -288,12 +361,12 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                         dataSource.setBasicAuth(actual.getBasicAuth());
                     }
 
-                    if ( dataSource.getBasicAuthUser() == null || dataSource.getBasicAuthUser().trim().length() == 0 )
+                    if ( dataSource.getBasicAuthUser() == null || dataSource.getBasicAuthUser().trim().isEmpty())
                     {
                         dataSource.setBasicAuthUser(actual.getBasicAuthUser());
                     }
 
-                    if ( dataSource.getBasicAuthPassword()== null || dataSource.getBasicAuthPassword().trim().length()==0)
+                    if ( dataSource.getBasicAuthPassword()== null || dataSource.getBasicAuthPassword().trim().isEmpty())
                     {
                         dataSource.setBasicAuthPassword(actual.getBasicAuthPassword());
                     }
@@ -302,33 +375,13 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                     {
                         dataSource.setDefault(actual.getDefault());
                     }
-/*
-                    if ( dataSource.getReadOnly() == null )
-                    {
-                        dataSource.setReadOnly(actual.getReadOnly());
-                    }
 
-                    if ( dataSource.getVersion() == null || dataSource.getVersion().trim().length() == 0)
-                    {
-                        String version = actual.getVersion();
-                        if ( actual.getVersion() !=  null && StringUtils.isNumeric(actual.getVersion().trim()))
-                        {
-                            Integer ver = Integer.valueOf(actual.getVersion().trim());
-                            if ( ver != null)
-                            {
-                                ver += 1;
-                                version = String.valueOf(ver);
-                            }
-                        }
-                        dataSource.setVersion(version);
-                    }
-*/
-                    if ( dataSource.getDatabase() == null || dataSource.getDatabase().trim().length()==0 )
+                    if ( dataSource.getDatabase() == null || dataSource.getDatabase().trim().isEmpty())
                     {
                         dataSource.setDatabase(actual.getDatabase());
                     }
 
-                    if ( dataSource.getTypeLogoURL() == null || dataSource.getTypeLogoURL().trim().length()==0 )
+                    if ( dataSource.getTypeLogoURL() == null || dataSource.getTypeLogoURL().trim().isEmpty())
                     {
                         dataSource.setTypeLogoURL(actual.getTypeLogoURL());
                     }
@@ -337,9 +390,9 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                     RestResponseData<GrafanaDatasourceResponse> rd;
                     if ( !id.equalsIgnoreCase(actual.getIdentityIdValue()))
                     {
-                        idDatasource = actual.getUid();
+                        uid = actual.getUid();
                     }
-                    rd = driver.executePutRequest("/datasources/uid/" + idDatasource,
+                    rd = driver.executePutRequest("/datasources/uid/" + uid,
                             GrafanaDatasourceResponse.class,
                             dataSource,
                             headers);
@@ -347,7 +400,11 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                     LOG.info(String.format("Grafana Datasource Update response status %d for uid %s", rd.getResponseStatusCode(), id));
                     if ( rd.getResponseStatusCode() == 200 )
                     {
-                        updateDashboardAndPreferences(driver, String.valueOf(dataSource.getOrgId()), dataSource.getUid());
+                        updateDashboardAndPreferences(driver,
+                                String.valueOf(dataSource.getOrgId()),
+                                dataSource.getUid(),
+                                dataSource.getOrgName(),
+                                dataSource.getDashboardTemplateName());
                     }
                 }
                 else
@@ -362,7 +419,7 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
         }
         else
         {
-            throw new ConnectorException("Grafana DataSource ID not found");
+            throw new ConnectorException("Grafana DataSource ID not specified");
         }
     }
 
@@ -370,30 +427,67 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
      * Delete a Grafana Datasource
      * @param driver The Grafana REST Driver
      * @param id The composed ID of the datasource prefixed by orgId adn sepat
-     * @throws ConnectorException
+     * @throws ConnectorException on failure
      */
     @Override
     public void delete(GrafanaDriver driver, String id) throws ConnectorException
     {
         LOG.info(String.format("Processing request to Delete Grafana Datasource uid %s", id));
+        if ( id != null && !id.trim().isEmpty())
+        {
+            String[] ids = decomposeID(id);
+            if (ids != null && ids.length == 2)
+            {
+                if (StringUtils.isNumeric(ids[0]))
+                {
+                    String orgId = ids[0];
+                    String uid = ids[1];
+                    GrafanaDataSource dataSource = getDatasourceByUid(driver, orgId, uid);
+                    if ( dataSource != null )
+                    {
+                        String name = dataSource.getName();
+                        Map<String, String> headers = driver.getAdminHeaders();
+                        headers.put(ORG_HEADER, orgId);
+                        RestResponseData<GrafanaStandardResponse> rd;
+                        rd = driver.executeDeleteRequest("/datasources/name/" + name,
+                                GrafanaStandardResponse.class,
+                                headers);
+                        GrafanaStandardResponse response = rd.getResponseObject();
+                        String message = response.getMessage();
+                    }
+                    else
+                    {
+                        LOG.warn(String.format("Grafana Datasource %s not found", id));
+                    }
+                }
+                else {
+                    LOG.warn(String.format("Grafana Datasource OrgId %s is not numeric", ids[0]));
+                }
+            }
+            else {
+                LOG.warn(String.format("Grafana Datasource Id %s not well formed", id));
+            }
+        }
+        else {
+            LOG.warn(String.format("Grafana Datasource %s not specified", id));
+        }
+    }
+
+    public static List<GrafanaDataSource> findByOrg(GrafanaDriver driver, String orgId)
+            throws ConnectorException
+    {
+        GrafanaDataSource[] dataSourceArray;
+        List<GrafanaDataSource> dataSources = null;
+        RestResponseData<GrafanaDataSource[]> rd;
         Map<String, String> headers = driver.getAdminHeaders();
-        GrafanaDataSource dataSource = getOne(driver, id, null);
-        if ( dataSource != null )
+        if ( orgId != null && !orgId.trim().isEmpty())
         {
-            Integer orgId = dataSource.getOrgId();
-            String name = dataSource.getName();
-            headers.put(ORG_HEADER, orgId.toString());
-            RestResponseData<GrafanaStandardResponse> rd;
-            rd = driver.executeDeleteRequest("/datasources/name/" + name,
-                    GrafanaStandardResponse.class,
-                    headers);
-            GrafanaStandardResponse response = rd.getResponseObject();
-            String message = response.getMessage();
+            headers.put(ORG_HEADER, orgId); // orgId is a number
+            rd = driver.executeGetRequest("/datasources", GrafanaDataSource[].class, headers);
+            dataSourceArray = rd.getResponseObject();
+            dataSources = Arrays.asList(dataSourceArray);
         }
-        else
-        {
-            LOG.warn(String.format("Grafana Datasource %s not found", id));
-        }
+        return dataSources;
     }
 
     /**
@@ -450,6 +544,20 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
         return dataSources;
     }
 
+    public static GrafanaDataSource getDatasourceByUid(GrafanaDriver driver, String orgId, String uid)
+            throws ConnectorException
+    {
+        GrafanaDataSource dataSource = null;
+        Map<String, String> headers = driver.getAdminHeaders();
+        headers.put(ORG_HEADER, orgId);
+        RestResponseData<GrafanaDataSource> rd;
+        rd = driver.executeGetRequest("/datasources/uid/" + uid,
+                GrafanaDataSource.class,
+                headers);
+        dataSource = rd.getResponseObject();
+        return dataSource;
+    }
+
     @Override
     public GrafanaDataSource getOne(GrafanaDriver driver, String id, Map<String, Object> map) throws ConnectorException
     {
@@ -471,16 +579,25 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                             GrafanaDataSource.class,
                             headers);
                     datasource = rd.getResponseObject();
-                    if ( datasource == null )
-                    {
-                        String path = "/datasources/name/" + idDatasource.trim();
-                        path = driver.encodeURIPath(path);
-                        rd = driver.executeGetRequest(path, GrafanaDataSource.class, headers);
-                        datasource = rd.getResponseObject();
-                    }
                     if ( datasource != null )
                     {
-                        updateDashboardAndPreferences(driver, orgId, datasource.getUid());
+                        GrafanaOrg org = getOrgInfo(driver, orgId);
+                        if ( org != null )
+                        {
+                            datasource.setOrgName(org.getName());
+                        }
+                        if ( datasource.getJsonData() != null && datasource.getJsonData().get(DASHBOARD_TEMPLATE_NAME) != null )
+                        {
+                            datasource.setDashboardTemplateName(datasource.getJsonData().get(DASHBOARD_TEMPLATE_NAME));
+                        }
+                        if ( datasource.getJsonData() != null && datasource.getJsonData().get(DASHBOARD_UID) != null )
+                        {
+                            datasource.setDashboardUid(datasource.getJsonData().get(DASHBOARD_UID));
+                        }
+                    }
+                    else
+                    {
+                        LOG.warn(String.format("Failed Lookup Grafana Datasource by uid %s for org %s", idDatasource, orgId));
                     }
                 }
                 else
@@ -537,7 +654,19 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                     }
                     if ( datasource != null )
                     {
-                        updateDashboardAndPreferences(driver, orgId, datasource.getUid());
+                        GrafanaOrg org = getOrgInfo(driver, orgId);
+                        if ( org != null )
+                        {
+                            datasource.setOrgName(org.getName());
+                        }
+                        if ( datasource.getJsonData() != null && datasource.getJsonData().get(DASHBOARD_TEMPLATE_NAME) != null )
+                        {
+                            datasource.setDashboardTemplateName(datasource.getJsonData().get(DASHBOARD_TEMPLATE_NAME));
+                        }
+                        if ( datasource.getJsonData() != null && datasource.getJsonData().get(DASHBOARD_UID) != null )
+                        {
+                            datasource.setDashboardUid(datasource.getJsonData().get(DASHBOARD_UID));
+                        }
                     }
                 }
                 else
@@ -555,5 +684,28 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
             throw new ConnectorException("Grafana DataSource name not specified");
         }
         return datasource;
+    }
+
+    /**
+     * Get a Single Org from the Grafana Service
+     * @param driver The Rest Driver for the Connector
+     * @param id the unique id of the Organisation
+     * @return A Single Org or null
+     * @throws ConnectorException when a failure occurs
+     */
+    public static GrafanaOrg getOrgInfo(GrafanaDriver driver, String id) throws ConnectorException
+    {
+        GrafanaOrg org = null;
+
+        if ( id != null && id.trim().length() > 0 && StringUtils.isNumeric(id.trim()) )
+        {
+            LOG.info("Lookup Org with ID {0} ", id);
+            RestResponseData<GrafanaOrg> rd;
+            rd = driver.executeGetRequest("/orgs/" + id.trim(),
+                    GrafanaOrg.class,
+                    driver.getAdminHeaders());
+            org = rd.getResponseObject();
+        }
+        return org;
     }
 }

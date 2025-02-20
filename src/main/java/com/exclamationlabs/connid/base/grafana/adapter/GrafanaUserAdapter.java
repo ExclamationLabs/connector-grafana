@@ -10,10 +10,7 @@ import com.exclamationlabs.connid.base.grafana.configuration.GrafanaConfiguratio
 import com.exclamationlabs.connid.base.grafana.model.GrafanaUser;
 import org.apache.commons.lang3.StringUtils;
 import org.identityconnectors.common.logging.Log;
-import org.identityconnectors.framework.common.objects.Attribute;
-import org.identityconnectors.framework.common.objects.AttributeBuilder;
-import org.identityconnectors.framework.common.objects.AttributeUtil;
-import org.identityconnectors.framework.common.objects.ObjectClass;
+import org.identityconnectors.framework.common.objects.*;
 
 import java.util.*;
 
@@ -38,6 +35,7 @@ public class GrafanaUserAdapter extends BaseAdapter<GrafanaUser, GrafanaConfigur
     protected Set<Attribute> constructAttributes(GrafanaUser user)
     {
         Set<Attribute> attributes = new HashSet<>();
+
         attributes.add(AttributeBuilder.build(avatarUrl.name(), user.getAvatarUrl()));
         attributes.add(AttributeBuilder.build(disabled.name(), user.getIsDisabled()));
         attributes.add(AttributeBuilder.build(email.name(), user.getEmail()));

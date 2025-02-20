@@ -18,5 +18,8 @@ public enum GrafanaDataSourceAttribute
     user,
     password,
     dataSourceId,
-    database
+    database,
+    secureJsonFields,
+    dashboardTemplateName,
+    dashboardUid,
 }
