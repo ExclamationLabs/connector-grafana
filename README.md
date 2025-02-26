@@ -9,13 +9,13 @@ Leverages the Connector Base Framework located at [https://github.com/Exclamatio
 
 Developed and tested in [Midpoint](https://evolveum.com/midpoint/), but also could be utilized in any [ConnId](https://connid.tirasa.net/) framework.
 
-The Grafana software allows you to Query, visualize, alert on, and understand data no matter where it’s stored.
+The Grafana software allows you to query, visualize, alert on, and understand data no matter where it’s stored.
 
 This connector allows an IAM system to Create, Read, Update, and Delete information from Grafana Open Source or Grafana Enterprise systems for automated provisioning of Users, Organizations, Data Sources, and Dashboards.
 
-The current release was tested on Midpoint 4.4 and 4.6 with Grafana 9.0 and 9.3
+The current release was tested on Midpoint 4.8 and 4.9 with Grafana 10.4
 
-This software is Copyright 2023 Exclamation Graphics.  Licensed under the Apache License, Version 2.0.
+This software is Copyright 2025 Exclamation Graphics.  Licensed under the Apache License, Version 2.0.
 
 
 # 2	Features
@@ -25,15 +25,17 @@ The Grafana connector has the following features:
 
 
 * The connector configuration is specified in the user interface
-* The connector supports 3 types related to Grafana. These are Users, Organizations, and Datasources. There is a provision to update Dashboards which has not been implemented.
+* The connector supports 4 Object types related to Grafana. These are Users, Organizations, Datasources, and Dashboards.
+* There is a provision to create or update Dashboards when a data source is created or updated.
 * A User can be associated with one or more Grafana Organizations.
 * A Grafana Organization may be associated with one or more DataSources such as Grafana Loki
 * The connector can Create, Update, Delete and Search Grafana Users. These users can be added or removed from a Grafana Organization.
 * The connector can Create Update, Delete and Search Grafana Organizations.
 * The connector can Create, Update, Delete, and Retrieve information about Grafana Datasources.
-* The connector supports automatic creation of Grafana Data Sources through Configuration
+* The connector can Create, Update, Delete, and Retrieve information about Grafana DataSources
+* The connector supports automatic updates of Grafana Dashboards through a Configuration setting when an organization is imported.
 * The connector supports automatic creation of a Grafana Dashboard when a Data Source is created. This is done through a Dashboard template defined in the  connector configuration.
-* A dashboard created by this connector will become the home dashboard for Grafana
+* A dashboard created by this connector can become the home dashboard for a Grafana Organization when the default dashboard template is used.
 
 
 # 3	Getting Started
@@ -142,7 +144,7 @@ The actual method of configuring a connector is largely dependent on the interfa
    </td>
    <td>No
    </td>
-   <td>When a dashboard template is supplied the connector will attempt to create a new Grafana Dashboard for an organization containing the uid of the newly created or updated Datasource. This is done through substitution of any string sequence “&lt;DataSourceUID>” or “__DataSourceUID__” with the actual UID of the newly created Datasource.  
+   <td>When a dashboard template is supplied the connector will attempt to create a new Grafana Dashboard for an organization containing the UID of the newly created or updated Datasource. This is done through substitution of any string sequence “__DataSourceUID__” with the actual UID of the newly created Datasource.
    </td>
   </tr>
   <tr>
@@ -189,6 +191,54 @@ The actual method of configuring a connector is largely dependent on the interfa
 
 
 
+## Grafana Dashboard Templates
+
+The connector configuration supports multiple grafana dashboard templates. Each template is a JSON string containing the information needed to create the dashboard. The JSON string is immediately prefixed by the template name. for example “&lt;aName>{&lt;GrafanaDashboardTemplate>}” where &lt;aName> is the Dashboard template name.
+
+The API used for dashboard create and update operations can be found at [https://grafana.com/docs/grafana/latest/developers/http_api/dashboard/#create--update-dashboard](https://grafana.com/docs/grafana/latest/developers/http_api/dashboard/#create--update-dashboard)
+
+We have supplied sample dashboard templates in the repository [test resources](https://github.com/ExclamationLabs/connector-grafana/tree/main/src/test/resources)  We support the following substitution values within the Grafana Dashboard Template. These are:
+
+
+<table>
+  <tr>
+   <td>Substitution Name
+   </td>
+   <td>Description
+   </td>
+  </tr>
+  <tr>
+   <td>“__DatasourceUID__”
+   </td>
+   <td>The data source UID represents the data to be presented to the user.
+   </td>
+  </tr>
+  <tr>
+   <td>“__DashboardId__”
+   </td>
+   <td>The dashboard Id is usually null when the dashboard is created and a number when the dashboard is being updated
+   </td>
+  </tr>
+  <tr>
+   <td>“__DashboardUid__”
+   </td>
+   <td>The dashboard UID is usually null when the dashboard is created and a UID when the dashboard is being updated. The connector will use the data source UID at creation time if a dashboard UID is not supplied. 
+   </td>
+  </tr>
+  <tr>
+   <td>“__OrgName__”
+   </td>
+   <td>The organization name associated with the dashboard. The connector will lookup the organization name if it is not supplied. The organization name is typically substituted into the title field of the dashboard.  
+   </td>
+  </tr>
+</table>
+
+
+**An organization cannot have 2 dashboards with the same title. Be careful when creating templates that you use a different title for each dashboard template. Like titles, an organization cannot have 2 dashboards with the same UID.**
+
+When a dashboard template does not have a name it is considered to be the default template. Like wise, a dashboard template with the name default is considered to be the default template.
+
+
 # 5	Connector Operations
 
 The Grafana connector implements the following connId SPI operations:
@@ -201,6 +251,7 @@ The Grafana connector implements the following connId SPI operations:
 * **CreateOp** - Allows the connector to create Grafana Users, Grafana Organizations, and Grafana Datasources
 * **DeleteOp** - Allows the connector to delete Grafana Users, Grafana Organizations, and Grafana Datasources
 * **UpdateDeltaOp** - Allows for updates of the supported Object Types. Grafana Users, Grafana Organizations, and Grafana Datasources
+* **DiscoverConfigurationOp** - Allows the connector to suggest configuration values in the user interface at creation time.
 
 
 ## Deep Get Explained
@@ -225,7 +276,7 @@ Separate org association is used when a new user is created. When **false** the 
 
 # 6	Connector Schema
 
-As mentioned in an earlier section, the Grafana connector supports 3 object classes. These are User Objects, OrganizationObjects, and DataSource Objects.
+As mentioned in an earlier section, the Grafana connector supports 4 object classes. These are User Objects, Organization Objects, DataSource Objects, and Dashboard Objects.
 
 
 ## GrafanaUser Objects
@@ -469,7 +520,7 @@ ConnId Name -> name
    </td>
    <td>String
    </td>
-   <td>The datasource URL. When not specified on create the connector uses the configured value
+   <td>The datasource URL. When not specified on create, the connector uses the configured value
    </td>
   </tr>
   <tr>
@@ -509,7 +560,7 @@ ConnId Name -> name
    </td>
    <td>String
    </td>
-   <td>The data source user name. Not used by Loki but supports other types of datasources
+   <td>The data source user name. Not used by Loki but supports other types of data sources
    </td>
   </tr>
   <tr>
@@ -544,6 +595,22 @@ ConnId Name -> name
    <td>Used to provide data which Grafana should encrypt internally. This information is not returned on read operations. In later versions Grafana returns secureJsonFields
    </td>
   </tr>
+  <tr>
+   <td>secureJsonFields
+   </td>
+   <td>String
+   </td>
+   <td>A JSON string containing the names of the fields in the SecureJsonData attribute. 
+   </td>
+  </tr>
+  <tr>
+   <td>dashboardTemplateName
+   </td>
+   <td>String
+   </td>
+   <td>The name of a dashboard template to be used when creating a dashboard for the data source.
+   </td>
+  </tr>
 </table>
 
 
@@ -551,10 +618,176 @@ ConnId UID -> orgId + “_” + uid
 
 ConnId Name -> orgId + “_” + name
 
+The connector will automatically store the organization Name, dashboard template name, and the dashboard uid inside of the jsonData attribute if they are supplied at create or update time.
 
-## Grafana Dashboards
 
-There is no particular schema for grafana dashboards except that the data is supplied from a configuration
+## 
+
+
+## Grafana Dashboard Objects
+
+Grafana dashboards can be created from a dashboard template whenever the data source is created or updated.
+
+
+<table>
+  <tr>
+   <td><strong>Attribute </strong>
+   </td>
+   <td><strong>Type</strong>
+   </td>
+   <td><strong>Comment</strong>
+   </td>
+  </tr>
+  <tr>
+   <td>dashboard
+   </td>
+   <td>String 
+   </td>
+   <td>On inbound from the grafana server this value can contain the raw dashboard result. On outbound to the server this value can be used as the dashboard template 
+   </td>
+  </tr>
+  <tr>
+   <td>dataSourceUid
+   </td>
+   <td>String
+   </td>
+   <td>The uid of a data source whose data will be presented in the dashboard or which is associated with the dashboard. 
+   </td>
+  </tr>
+  <tr>
+   <td>id
+   </td>
+   <td>String
+   </td>
+   <td>The id number specified by the grafana when a dashboard is created
+   </td>
+  </tr>
+  <tr>
+   <td>isStarred
+   </td>
+   <td>Boolean
+   </td>
+   <td>When the dashboard is marked as a favorite it will be included in search results when the query <em>starred=true</em> is used. The connector does not currently support starred searches.
+   </td>
+  </tr>
+  <tr>
+   <td>meta
+   </td>
+   <td>String
+   </td>
+   <td>Non Used
+   </td>
+  </tr>
+  <tr>
+   <td>orgId
+   </td>
+   <td>String
+   </td>
+   <td>The Grafana Organization ID associated with a Grafana Dashboard
+   </td>
+  </tr>
+  <tr>
+   <td>orgName
+   </td>
+   <td>String
+   </td>
+   <td>The name of the organization associated with Dashboard
+   </td>
+  </tr>
+  <tr>
+   <td>properties
+   </td>
+   <td>String
+   </td>
+   <td>A JSON string with name value pairs that can be substituted into a dashboard template. This attribute is holding for the next version
+   </td>
+  </tr>
+  <tr>
+   <td>slug
+   </td>
+   <td>String
+   </td>
+   <td>A legacy attribute. 
+   </td>
+  </tr>
+  <tr>
+   <td>sortMeta
+   </td>
+   <td>String
+   </td>
+   <td>Returned as a number
+   </td>
+  </tr>
+  <tr>
+   <td>status
+   </td>
+   <td>String
+   </td>
+   <td>Returned when a dashboard is updated
+   </td>
+  </tr>
+  <tr>
+   <td>tags
+   </td>
+   <td>String[]
+   </td>
+   <td>Multivalued string array of tags associated with the dashboard.
+   </td>
+  </tr>
+  <tr>
+   <td>templateName
+   </td>
+   <td>String
+   </td>
+   <td>The name of the dashboard template defined in the connector configuration.
+   </td>
+  </tr>
+  <tr>
+   <td>title
+   </td>
+   <td>String
+   </td>
+   <td>The title of the Dashboard 
+   </td>
+  </tr>
+  <tr>
+   <td>type
+   </td>
+   <td>String
+   </td>
+   <td>The dashboard type is literally “dash-db”
+   </td>
+  </tr>
+  <tr>
+   <td>uid
+   </td>
+   <td>String
+   </td>
+   <td>The uid of a Grafana Dashboard. This value is creatable. The datasource uid is used when it is supplied during a create event.   
+   </td>
+  </tr>
+  <tr>
+   <td>uri
+   </td>
+   <td>String
+   </td>
+   <td>The dashboard’s uri or resource name
+   </td>
+  </tr>
+  <tr>
+   <td>url
+   </td>
+   <td>String
+   </td>
+   <td>The dashboard URL relative to the grafana server hosting the dashboard.
+   </td>
+  </tr>
+</table>
+
+
+ConnId UID -> orgId + “_” + uid
+
+ConnId Name -> orgId + “_” + uid
 
 
 # 7	Connector Query Capabilities
@@ -594,14 +827,25 @@ The Grafana Connector supports the following Query Operations
 * Get all Data Sources
 
 
+## Grafana Dashboard
+
+
+
+* Get Dashboard by ConnId UID
+* Get Dashboard by ConnId Name
+* Get list of Dashboards by Organization Id (orgId)
+* Get list of Dashboards by zero based page number and page size
+* Get all Data Sources
+
+
 # 8 Connector Create and Update Operations
 
 This section describes the specific details of the Grafana Connector Create and Update operation.
 
 
-## Importing Organization’s
+## Importing Organizations
 
-In addition to reading the organization **id** and the organization **name**, the grafana connector also imports the dashboard and the home dashboard set in org preferences. When the organization’s preferred home dashboard is not set, the current dashboard UID will be used to set the homeDashboardUID during the import procedure.
+In addition to reading the organization **id** and the organization **name**, the grafana connector also imports the dashboard and the home dashboard set in org preferences. When the organization’s preferred home dashboard is not set, the current default dashboard UID will be used to set the homeDashboardUID during the import procedure.
 
 
 ## Creating a Grafana Organization
@@ -626,7 +870,7 @@ On update the name, login, email address, and avatarUrl may be changed. Also the
 
 ## Creating a Grafana DataSource
 
-Grafana Data sources are required to be associated with an Organization. As such an organization and a name must be supplied on creation. The Connector uses the configuration to supply values for automatically creating a loki datasource when other details are not supplied.  In this way an administrator can use specific values on creation to specify other types of datasource besides loki.
+Grafana Data sources are required to be associated with an Organization. As such an organization and a name must be supplied on creation. The Connector uses the configuration to supply values for automatically creating a loki data source when other details are not supplied.  In this way an administrator can use specific values on creation to specify other types of data source besides loki.
 
 See [https://grafana.com/docs/grafana/latest/developers/http_api/data_source/](https://grafana.com/docs/grafana/latest/developers/http_api/data_source/) for details.
 
@@ -638,12 +882,12 @@ The Grafana Datasource api does not support a delta update operation by default.
 
 ## Creating a Grafana Dashboard
 
-A grafana dashboard is automatically created when a datasource is created and the connector configuration contains a dashboard template. The connector will make a case sensitive substitution of  “&lt;DataSourceUID>” or “__DataSourceUID__” in the template with the uid of the Datasource. The dashboard is actually associated with an organization so the value is stored in the organization schema. When a dashboard is created it is set as the organization’s preferred home dashboard.
+A grafana dashboard is automatically created when a data source is created and the connector configuration contains a dashboard template. The connector will make a case sensitive substitution of  “__DataSourceUID__” in the template with the uid of the Datasource. The dashboard is actually associated with an organization so the value is stored in the organization schema. When a default dashboard is created it is set as the organization’s preferred home dashboard.
 
 
 ## Updating a Grafana Dashboard
 
-The connector will update the Grafana Dashboard for a Datasource whenever the Datasource is updated, The Dashboard Template exists, and the Dashboard Update option is set to true.  When a dashboard is updated the organization's preference for home dashboard is also updated to the dashboard UID.
+The connector will update the Grafana Dashboard for a Datasource whenever the Organization is imported, The Dashboard Template exists, and the Dashboard Update option is set to true.  When a dashboard is updated the organization's preference for home dashboard is also updated to the dashboard UID.
 
 
 
@@ -661,7 +905,7 @@ This document describes the expected configuration within midPoint to manifest t
 
 # Initial Design Consideration
 
-Organization focus objects are used in this solution to represent Grafana “viewer” administrator lists within midPoint. It is advised that consideration be given to a design for management of these organization objects. For example, the simplest approach would be to store all organization objects under one root in an org hierarchy.  However, this simplest of approaches may not meet your needs if you are administering one midPoint instance that manages multiple Grafana Data sources’ lists or that manages orgs which aren’t Grafana lists at all.  In this scenario, it would not be uncommon to adopt a design where each Grafana datasource will be represented as organization objects to be managed under a distinct org root: one org root for each kind of datasource. It bears repeating that it may be important to also consider discerning orgs between those representing Grafana lists and orgs that have nothing to do with Grafana. The choice is yours to make in order to best meet your enterprise’s needs.  If you are indeed managing multiple Grafana Data sources and prefer to hierarchically manage the organization focus objects under a single root, then please consider making use of midPoint’s “intent” feature along with use of org attribute(s) that convey each org’s Grafana datasource.
+Organization focus objects are used in this solution to represent Grafana “viewer” administrator lists within midPoint. It is advised that consideration be given to a design for management of these organization objects. For example, the simplest approach would be to store all organization objects under one root in an org hierarchy.  However, this simplest of approaches may not meet your needs if you are administering one midPoint instance that manages multiple Grafana Data sources’ lists or that manages orgs which aren’t Grafana lists at all.  In this scenario, it would not be uncommon to adopt a design where each Grafana data source will be represented as organization objects to be managed under a distinct org root: one org root for each kind of datasource. It bears repeating that it may be important to also consider discerning orgs between those representing Grafana lists and orgs that have nothing to do with Grafana. The choice is yours to make in order to best meet your enterprise’s needs.  If you are indeed managing multiple Grafana Data sources and prefer to hierarchically manage the organization focus objects under a single root, then please consider making use of midPoint’s “intent” feature along with use of org attribute(s) that convey each org’s Grafana data source.
 
 
 # Grafana: Configuring the midPoint Resource Connection
@@ -717,7 +961,7 @@ Within the objectSynchronization configuration, select “OrgType” for focus o
 ```
 
 
-_Note the q namespace is declared xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3"_
+*Note the q namespace is declared xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3"*
 
 
 ## For the entitlement (DataSource intent) representing GrafanaDatasource
@@ -778,7 +1022,7 @@ Within the synchronization configuration, select “OrgType” for focus object.
 ```
 
 
-_Note the q namespace is declared xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3"_
+*Note the q namespace is declared xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3"*
 
 **For the account (Viewer intent) representing GrafanaUser**
 
