@@ -1,19 +1,12 @@
-<archetype xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oid="ceaecf67-f51f-4063-9802-d5f8cca36859" version="1">
+<archetype xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oid="ceaecf67-f51f-4063-9802-d5f8cca36859">
     <name>eduroam-eSO</name>
-    <extension xmlns:gen537="http://grouper-demo.tier.internet2.edu">
-        <gen537:grouperNamePrefix>app:fm:ref:orgrole:</gen537:grouperNamePrefix>
-        <gen537:midPointNamePrefix>eduroam-eso_</gen537:midPointNamePrefix>
-        <gen537:midPointDisplayNamePrefix>eduroam-eSO Institution: </gen537:midPointDisplayNamePrefix>
+    <extension xmlns:gen225="http://grouper-demo.tier.internet2.edu">
+        <gen225:grouperNamePrefix>app:fm:ref:orgrole:</gen225:grouperNamePrefix>
+        <gen225:ldapRootDn>ou=Eduroam,ou=Groups,dc=internet2,dc=edu</gen225:ldapRootDn>
+        <gen225:midPointNamePrefix>eduroam-eso_</gen225:midPointNamePrefix>
+        <gen225:midPointDisplayNamePrefix>eduroam-eSO Institution: </gen225:midPointDisplayNamePrefix>
     </extension>
-    <assignment id="1">
-        <targetRef oid="0328d903-510f-4cfa-b991-1b004c27dfeb" relation="org:default" type="c:RoleType">
-            <!-- Metarole Grafana Admin -->
-        </targetRef>
-        <activation>
-            <effectiveStatus>enabled</effectiveStatus>
-        </activation>
-    </assignment>
-    <assignment id="4">
+    <assignment>
         <targetRef oid="bcaec940-50c8-44bb-aa37-b2b5bb2d5b90" relation="org:default" type="c:RoleType">
             <!-- metarole-grouper-provided-group -->
         </targetRef>
@@ -21,10 +14,18 @@
             <effectiveStatus>enabled</effectiveStatus>
         </activation>
     </assignment>
+    <assignment>
+        <targetRef oid="8da46694-bd71-4e1e-bfd7-73865ae2ea9a" relation="org:default" type="c:RoleType">
+            <!-- metarole-ldap-group -->
+        </targetRef>
+        <activation>
+            <effectiveStatus>enabled</effectiveStatus>
+        </activation>
+    </assignment>
     <iteration>0</iteration>
     <iterationToken/>
-    <roleMembershipRef oid="0328d903-510f-4cfa-b991-1b004c27dfeb" relation="org:default" type="c:RoleType">
-        <!-- Metarole Grafana Admin -->
+    <roleMembershipRef oid="8da46694-bd71-4e1e-bfd7-73865ae2ea9a" relation="org:default" type="c:RoleType">
+        <!-- metarole-ldap-group -->
     </roleMembershipRef>
     <roleMembershipRef oid="bcaec940-50c8-44bb-aa37-b2b5bb2d5b90" relation="org:default" type="c:RoleType">
         <!-- metarole-grouper-provided-group -->
@@ -33,34 +34,33 @@
         <effectiveStatus>enabled</effectiveStatus>
         <enableTimestamp>2024-12-10T16:41:27.584Z</enableTimestamp>
     </activation>
-    <inducement id="22">
+    <inducement>
         <construction>
-            <resourceRef oid="75e2f666-4c07-46e5-b242-3ad66dc07d17" relation="org:default" type="c:ResourceType">
-                <!-- Target: Grafana -->
+            <resourceRef oid="530210db-af41-4110-8f77-2a78fc9ee581" relation="org:default" type="c:ResourceType">
+                <!-- Target : Grafana -->
             </resourceRef>
             <kind>entitlement</kind>
             <intent>group</intent>
         </construction>
-        <order>2</order>
+        <order>1</order>
         <condition>
             <expression>
                 <script>
                     <code>
-                        // assignmentPath[0]?.target?.identifier?.endsWith('eduroamadmin')f
                         true
                     </code>
                 </script>
             </expression>
         </condition>
     </inducement>
-    <inducement id="23">
+    <inducement>
         <construction>
-            <resourceRef oid="75e2f666-4c07-46e5-b242-3ad66dc07d17" relation="org:default" type="c:ResourceType">
-                <!-- Target: Grafana -->
+            <resourceRef oid="530210db-af41-4110-8f77-2a78fc9ee581" relation="org:default" type="c:ResourceType">
+                <!-- Target : Grafana -->
             </resourceRef>
             <kind>account</kind>
             <intent>viewer</intent>
-            <association id="24">
+            <association>
                 <ref>ri:belongsTo</ref>
                 <outbound>
                     <strength>strong</strength>
@@ -76,16 +76,16 @@
                 </outbound>
             </association>
         </construction>
-        <order>3</order>
+        <order>2</order>
     </inducement>
-    <inducement id="25">
+    <inducement>
         <construction>
-            <resourceRef oid="75e2f666-4c07-46e5-b242-3ad66dc07d17" relation="org:default" type="c:ResourceType">
-                <!-- Target: Grafana -->
+            <resourceRef oid="530210db-af41-4110-8f77-2a78fc9ee581" relation="org:default" type="c:ResourceType">
+                <!-- Target : Grafana -->
             </resourceRef>
             <kind>entitlement</kind>
             <intent>eSODataSource</intent>
-            <association id="26">
+            <association>
                 <ref>ri:isTheDatasourceFor</ref>
                 <outbound>
                     <strength>strong</strength>
@@ -101,7 +101,74 @@
                 </outbound>
             </association>
         </construction>
-        <order>2</order>
+        <order>1</order>
+        <condition>
+            <expression>
+                <script>
+                    <code>
+                        if(focus == null){ return false }
+                        
+                        // Creation will fail on import due to trying to create it before an orgId has been generated
+                        orgId = basic.getExtensionPropertyValue(focus, 'grafanaOrgId')
+                        if(orgId == null){ return false }
+                        
+                        return true
+                    </code>
+                </script>
+            </expression>
+        </condition>
+    </inducement>
+    <inducement>
+        <targetRef oid="a86dbf3b-74a4-46a8-a225-488056d8fccb" relation="org:default" type="c:OrgType">
+            <!-- eduroam institutions -->
+        </targetRef>
+    </inducement>
+    <inducement>
+        <construction>
+            <resourceRef oid="530210db-af41-4110-8f77-2a78fc9ee581" relation="org:default" type="c:ResourceType">
+                <!-- Target : Grafana -->
+            </resourceRef>
+            <kind>entitlement</kind>
+            <intent>StandardDataSource</intent>
+            <association>
+                <ref>ri:isTheDatasourceFor</ref>
+                <outbound>
+                    <strength>strong</strength>
+                    <expression>
+                        <associationFromLink>
+                            <projectionDiscriminator xsi:type="c:ShadowDiscriminatorType">
+                                <kind>entitlement</kind>
+                                <intent>group</intent>
+                            </projectionDiscriminator>
+                            <assignmentPathIndex>1</assignmentPathIndex>
+                        </associationFromLink>
+                    </expression>
+                </outbound>
+            </association>
+        </construction>
+        <order>1</order>
+        <condition>
+            <expression>
+                <script>
+                    <code>
+                        if(focus == null){ return false }
+                        
+                        // Creation will fail on import due to trying to create it before an orgId has been generated
+                        orgId = basic.getExtensionPropertyValue(focus, 'grafanaOrgId')
+                        if(orgId == null){ return false }
+                        
+                        // This inducement is only for groups with eSO + another eduroam_subscription_type
+                        eduroamSubscriptionType = basic.getExtensionPropertyValue(focus, 'eduroam_subscription_type')
+                        if(eduroamSubscriptionType != null &amp;&amp; eduroamSubscriptionType != ''){
+                           if(eduroamSubscriptionType.contains('+')){
+                              return true
+                           }
+                        }
+                        return false
+                    </code>
+                </script>
+            </expression>
+        </condition>
     </inducement>
     <archetypePolicy>
         <display>

@@ -1,19 +1,12 @@
-<archetype xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oid="f09cdfcf-a153-42e8-90e8-f55a0835e17d" version="3">
+<archetype xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oid="f09cdfcf-a153-42e8-90e8-f55a0835e17d">
     <name>eduroam</name>
-    <extension xmlns:gen537="http://grouper-demo.tier.internet2.edu">
-        <gen537:grouperNamePrefix>app:fm:ref:orgrole:</gen537:grouperNamePrefix>
-        <gen537:midPointNamePrefix>eduroam_</gen537:midPointNamePrefix>
-        <gen537:midPointDisplayNamePrefix>Eduroam Institution: </gen537:midPointDisplayNamePrefix>
+    <extension xmlns:gen225="http://grouper-demo.tier.internet2.edu">
+        <gen225:grouperNamePrefix>app:fm:ref:orgrole:</gen225:grouperNamePrefix>
+        <gen225:ldapRootDn>ou=Eduroam,ou=Groups,dc=internet2,dc=edu</gen225:ldapRootDn>
+        <gen225:midPointNamePrefix>eduroam_</gen225:midPointNamePrefix>
+        <gen225:midPointDisplayNamePrefix>Eduroam Institution: </gen225:midPointDisplayNamePrefix>
     </extension>
-    <assignment id="1">
-        <targetRef oid="0328d903-510f-4cfa-b991-1b004c27dfeb" relation="org:default" type="c:RoleType">
-            <!-- Metarole Grafana Admin -->
-        </targetRef>
-        <activation>
-            <effectiveStatus>enabled</effectiveStatus>
-        </activation>
-    </assignment>
-    <assignment id="4">
+    <assignment>
         <targetRef oid="bcaec940-50c8-44bb-aa37-b2b5bb2d5b90" relation="org:default" type="c:RoleType">
             <!-- metarole-grouper-provided-group -->
         </targetRef>
@@ -21,46 +14,76 @@
             <effectiveStatus>enabled</effectiveStatus>
         </activation>
     </assignment>
+    <assignment>
+        <targetRef oid="8da46694-bd71-4e1e-bfd7-73865ae2ea9a" relation="org:default" type="c:RoleType">
+            <!-- metarole-ldap-group -->
+        </targetRef>
+        <activation>
+            <effectiveStatus>enabled</effectiveStatus>
+        </activation>
+    </assignment>
     <iteration>0</iteration>
     <iterationToken/>
+    <roleMembershipRef oid="8da46694-bd71-4e1e-bfd7-73865ae2ea9a" relation="org:default" type="c:RoleType">
+        <!-- metarole-ldap-group -->
+        <_metadata>
+            <storage>
+                <createTimestamp>2025-02-26T18:35:30.650Z</createTimestamp>
+            </storage>
+            <provenance>
+                <assignmentPath>
+                    <sourceRef oid="f09cdfcf-a153-42e8-90e8-f55a0835e17d" relation="org:default" type="c:ArchetypeType"/>
+                    <segment>
+                        <segmentOrder>1</segmentOrder>
+                        <assignmentId>28</assignmentId>
+                        <targetRef oid="8da46694-bd71-4e1e-bfd7-73865ae2ea9a" relation="org:default" type="c:RoleType"/>
+                        <matchingOrder>true</matchingOrder>
+                    </segment>
+                </assignmentPath>
+            </provenance>
+        </_metadata>
+    </roleMembershipRef>
     <roleMembershipRef oid="bcaec940-50c8-44bb-aa37-b2b5bb2d5b90" relation="org:default" type="c:RoleType">
         <!-- metarole-grouper-provided-group -->
-    </roleMembershipRef>
-    <roleMembershipRef oid="0328d903-510f-4cfa-b991-1b004c27dfeb" relation="org:default" type="c:RoleType">
-        <!-- Metarole Grafana Admin -->
+        <_metadata>
+            <storage>
+                <createTimestamp>2023-04-05T19:24:14.023Z</createTimestamp>
+            </storage>
+            <provenance>
+                <assignmentPath>
+                    <sourceRef oid="f09cdfcf-a153-42e8-90e8-f55a0835e17d" relation="org:default" type="c:ArchetypeType"/>
+                    <segment>
+                        <segmentOrder>1</segmentOrder>
+                        <assignmentId>4</assignmentId>
+                        <targetRef oid="bcaec940-50c8-44bb-aa37-b2b5bb2d5b90" relation="org:default" type="c:RoleType"/>
+                        <matchingOrder>true</matchingOrder>
+                    </segment>
+                </assignmentPath>
+            </provenance>
+        </_metadata>
     </roleMembershipRef>
     <activation>
         <effectiveStatus>enabled</effectiveStatus>
         <enableTimestamp>2023-02-21T22:01:02.561Z</enableTimestamp>
     </activation>
-    <inducement id="23">
+    <inducement>
         <construction>
-            <resourceRef oid="75e2f666-4c07-46e5-b242-3ad66dc07d17" relation="org:default" type="c:ResourceType">
-                <!-- Target: Grafana -->
+            <resourceRef oid="530210db-af41-4110-8f77-2a78fc9ee581" relation="org:default" type="c:ResourceType">
+                <!-- Target : Grafana -->
             </resourceRef>
             <kind>entitlement</kind>
             <intent>group</intent>
         </construction>
-        <order>2</order>
-        <condition>
-            <expression>
-                <script>
-                    <code>
-                        // assignmentPath[0]?.target?.identifier?.endsWith('eduroamadmin')f
-                        true
-                    </code>
-                </script>
-            </expression>
-        </condition>
+        <order>1</order>
     </inducement>
-    <inducement id="24">
+    <inducement>
         <construction>
-            <resourceRef oid="75e2f666-4c07-46e5-b242-3ad66dc07d17" relation="org:default" type="c:ResourceType">
-                <!-- Target: Grafana -->
+            <resourceRef oid="530210db-af41-4110-8f77-2a78fc9ee581" relation="org:default" type="c:ResourceType">
+                <!-- Target : Grafana -->
             </resourceRef>
             <kind>account</kind>
             <intent>viewer</intent>
-            <association id="25">
+            <association>
                 <ref>ri:belongsTo</ref>
                 <outbound>
                     <strength>strong</strength>
@@ -76,16 +99,16 @@
                 </outbound>
             </association>
         </construction>
-        <order>3</order>
+        <order>2</order>
     </inducement>
-    <inducement id="26">
+    <inducement>
         <construction>
-            <resourceRef oid="75e2f666-4c07-46e5-b242-3ad66dc07d17" relation="org:default" type="c:ResourceType">
-                <!-- Target: Grafana -->
+            <resourceRef oid="530210db-af41-4110-8f77-2a78fc9ee581" relation="org:default" type="c:ResourceType">
+                <!-- Target : Grafana -->
             </resourceRef>
             <kind>entitlement</kind>
             <intent>StandardDataSource</intent>
-            <association id="27">
+            <association>
                 <ref>ri:isTheDatasourceFor</ref>
                 <outbound>
                     <strength>strong</strength>
@@ -101,7 +124,27 @@
                 </outbound>
             </association>
         </construction>
-        <order>2</order>
+        <order>1</order>
+		<condition>
+            <expression>
+                <script>
+                    <code>
+                        if(focus == null){ return false }
+                        
+                        // Creation will fail on import due to trying to create it before an orgId has been generated
+                        orgId = basic.getExtensionPropertyValue(focus, 'grafanaOrgId')
+                        if(orgId == null){ return false }
+                        
+                        return true
+                    </code>
+                </script>
+            </expression>
+        </condition>
+    </inducement>
+    <inducement>
+        <targetRef oid="a86dbf3b-74a4-46a8-a225-488056d8fccb" relation="org:default" type="c:OrgType">
+            <!-- eduroam institutions -->
+        </targetRef>
     </inducement>
     <archetypePolicy>
         <display>
