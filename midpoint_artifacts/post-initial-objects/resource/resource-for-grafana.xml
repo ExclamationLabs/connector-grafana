@@ -1,13 +1,10 @@
-<resource xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oid="530210db-af41-4110-8f77-2a78fc9ee581" version="12">
+<resource xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oid="530210db-af41-4110-8f77-2a78fc9ee581" version="16">
     <name>Target : Grafana</name>
     <lifecycleState>active</lifecycleState>
     <iteration>0</iteration>
     <iterationToken/>
-    <connectorRef relation="org:default" type="c:ConnectorType">
+    <connectorRef oid="07324bf6-ef39-410e-a098-ff3f6960efad" relation="org:default" type="c:ConnectorType">
         <!-- ConnId com.exclamationlabs.connid.base.grafana.GrafanaConnector v2.0.2 -->
-		<filter>
-            <q:text>connectorType = 'com.exclamationlabs.connid.base.grafana.GrafanaConnector' and connectorVersion = '2.0.2'</q:text>
-        </filter>
     </connectorRef>
     <connectorConfiguration xmlns:icfc="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/connector-schema-3">
         <icfc:configurationProperties xmlns:gen276="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/connector-grafana/com.exclamationlabs.connid.base.grafana.GrafanaConnector">
@@ -23,7 +20,7 @@
             <gen276:separateOrgAssociation>false</gen276:separateOrgAssociation>
             <gen276:defaultOrgRole>Viewer</gen276:defaultOrgRole>
             <gen276:defaultTimeZone>UTC</gen276:defaultTimeZone>
-            <gen276:updateDashBoards>false</gen276:updateDashBoards>
+            <gen276:updateDashBoards>true</gen276:updateDashBoards>
             <gen276:dashboardTemplate xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/connector-grafana/com.exclamationlabs.connid.base.grafana.GrafanaConnector">{"dashboard":{"id":__DashboardId__,"uid":__DashboardUid__,"title":"__OrgName__ eduroam RADIUS Logs","schemaVersion":35,"version":2,"timezone":"browser","annotations":{"list":[{"builtIn":1,"datasource":"-- Grafana --","enable":true,"hide":true,"iconColor":"rgba(0, 211, 255, 1)","name":"Annotations &amp; Alerts","target":{"limit":100,"matchAny":false,"tags":[],"type":"dashboard"},"type":"dashboard"}]},"editable":true,"fiscalYearStartMonth":0,"graphTooltip":0,"links":[],"liveNow":false,"panels":[{"description":"","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"custom":{"align":"auto","displayMode":"auto","filterable":true},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":""},{"color":"red","value":80}]}},"overrides":[{"matcher":{"id":"byName","options":"TIMESTAMP"},"properties":[{"id":"custom.width","value":193}]}]},"gridPos":{"h":11,"w":23,"x":0,"y":0},"id":13,"options":{"footer":{"fields":"","reducer":["sum"],"show":false},"showHeader":true,"sortBy":[{"desc":true,"displayName":"TIMESTAMP"}]},"pluginVersion":"8.4.3","targets":[{"datasource":{"type":"loki","uid":"__DataSourceUID__"},"expr":"{record_type=\"fticks\"}","maxLines":5000,"refId":"A"}],"title":"Authentication Logs","transformations":[{"id":"merge","options":{}},{"id":"extractFields","options":{"format":"auto","replace":false,"source":"line"}},{"id":"organize","options":{"excludeByName":{"FAILURE":false,"NEXTHOP":false,"REALM":false,"REGION":true,"TIMESTAMP":true,"Time":false,"Time ns":true,"UTC":true,"VISINST":true,"id":true,"line":true,"line {record_type=\"fticks\", side=\"rp\"}":true,"ts":false,"tsNs":true},"indexByName":{"14":14,"15":15,"2022":16,"CSI":9,"EAPTYPE":8,"FAILURE":6,"NEXTHOP":4,"REALM":3,"REGION":12,"RESULT":5,"Realm":19,"TIMESTAMP":1,"UTC":13,"VISCOUNTRY":7,"VISINST":10,"VISINSTID":2,"at":23,"does":20,"dot":26,"have":22,"id":11,"least":24,"line":17,"not":21,"one":25,"separator":27,"ts":0,"tsNs":18},"renameByName":{"Time":"TIMESTAMP","ts":"TIMESTAMP"}}},{"id":"filterFieldsByName","options":{"include":{"names":["VISINSTID","REALM","NEXTHOP","RESULT","FAILURE","VISCOUNTRY","EAPTYPE","CSI","TIMESTAMP"]}}}],"type":"table"},{"gridPos":{"h":12,"w":23,"x":0,"y":11},"id":6,"options":{"dedupStrategy":"none","enableLogDetails":true,"prettifyLogMessage":false,"showCommonLabels":false,"showLabels":false,"showTime":true,"sortOrder":"Descending","wrapLogMessage":false},"targets":[{"datasource":{"type":"loki","uid":"__DataSourceUID__"},"expr":"{record_type=\"stdout\"}","maxLines":5000,"refId":"A"}],"title":"RADIUS Server Logs","type":"logs"}],"style":"dark","tags":[],"templating":{"list":[]},"time":{"from":"now-15m","to":"now"},"timepicker":{},"weekStart":""},"folderId":0,"overwrite":true}</gen276:dashboardTemplate>
             <gen276:dashboardTemplate xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/connector-grafana/com.exclamationlabs.connid.base.grafana.GrafanaConnector">eso{"dashboard":{"id":__DashboardId__,"uid":__DashboardUid__,"title":"__OrgName__ ESO eduroam RADIUS Logs","schemaVersion":35,"version":2,"timezone":"browser","annotations":{"list":[{"builtIn":1,"datasource":"-- Grafana --","enable":true,"hide":true,"iconColor":"rgba(0, 211, 255, 1)","name":"Annotations &amp; Alerts","target":{"limit":100,"matchAny":false,"tags":[],"type":"dashboard"},"type":"dashboard"}]},"editable":true,"fiscalYearStartMonth":0,"graphTooltip":0,"links":[],"liveNow":false,"panels":[{"description":"","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"custom":{"align":"auto","displayMode":"auto","filterable":true},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":""},{"color":"red","value":80}]}},"overrides":[{"matcher":{"id":"byName","options":"TIMESTAMP"},"properties":[{"id":"custom.width","value":193}]}]},"gridPos":{"h":11,"w":23,"x":0,"y":0},"id":13,"options":{"footer":{"fields":"","reducer":["sum"],"show":false},"showHeader":true,"sortBy":[{"desc":true,"displayName":"TIMESTAMP"}]},"pluginVersion":"8.4.3","targets":[{"datasource":{"type":"loki","uid":"__DataSourceUID__"},"expr":"{record_type=\"fticks\"}","maxLines":5000,"refId":"A"}],"title":"Authentication Logs","transformations":[{"id":"merge","options":{}},{"id":"extractFields","options":{"format":"auto","replace":false,"source":"line"}},{"id":"organize","options":{"excludeByName":{"FAILURE":false,"NEXTHOP":false,"REALM":false,"REGION":true,"TIMESTAMP":true,"Time":false,"Time ns":true,"UTC":true,"VISINST":true,"id":true,"line":true,"line {record_type=\"fticks\", side=\"rp\"}":true,"ts":false,"tsNs":true},"indexByName":{"14":14,"15":15,"2022":16,"CSI":9,"EAPTYPE":8,"FAILURE":6,"NEXTHOP":4,"REALM":3,"REGION":12,"RESULT":5,"Realm":19,"TIMESTAMP":1,"UTC":13,"VISCOUNTRY":7,"VISINST":10,"VISINSTID":2,"at":23,"does":20,"dot":26,"have":22,"id":11,"least":24,"line":17,"not":21,"one":25,"separator":27,"ts":0,"tsNs":18},"renameByName":{"Time":"TIMESTAMP","ts":"TIMESTAMP"}}},{"id":"filterFieldsByName","options":{"include":{"names":["VISINSTID","REALM","NEXTHOP","RESULT","FAILURE","VISCOUNTRY","EAPTYPE","CSI","TIMESTAMP"]}}}],"type":"table"},{"gridPos":{"h":12,"w":23,"x":0,"y":11},"id":6,"options":{"dedupStrategy":"none","enableLogDetails":true,"prettifyLogMessage":false,"showCommonLabels":false,"showLabels":false,"showTime":true,"sortOrder":"Descending","wrapLogMessage":false},"targets":[{"datasource":{"type":"loki","uid":"__DataSourceUID__"},"expr":"{record_type=\"stdout\"}","maxLines":5000,"refId":"A"}],"title":"RADIUS Server Logs","type":"logs"}],"style":"dark","tags":[],"templating":{"list":[]},"time":{"from":"now-15m","to":"now"},"timepicker":{},"weekStart":""},"folderId":0,"overwrite":true}</gen276:dashboardTemplate>
             <gen276:lokiURL xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/connector-grafana/com.exclamationlabs.connid.base.grafana.GrafanaConnector">http://loki.dev.infra.eduroam.us/</gen276:lokiURL>
@@ -969,6 +966,9 @@
                         <script>
                             <code>
                                 theWorkingName = identifier
+                                if(identifier.contains('eduroamadmin')){
+                                    theWorkingName = identifier.split(':')[0]
+                                }
                                 return grafanaOrgId + "_" + theWorkingName.replace("_",".")
                             </code>
                         </script>
@@ -1071,6 +1071,9 @@
                         <script>
                             <code>
                                 theWorkingName = identifier
+                                if(identifier.contains('eduroamadmin')){
+                                    theWorkingName = identifier.split(':')[0]
+                                }
                                 return '{"httpHeaderValue1": "' + theWorkingName.replace("_",".") + '"}'
                             </code>
                         </script>
@@ -1209,7 +1212,10 @@
                         <script>
                             <code>
                                 theWorkingName = identifier
-                                return "eSO_" + grafanaOrgId + "_" + theWorkingName.replace("_",".")
+                                if(identifier.contains('eduroamadmin')){
+                                    theWorkingName = identifier.split(':')[0]
+                                }
+                                return grafanaOrgId + "_eSO_" + theWorkingName.replace("_",".")
                             </code>
                         </script>
                     </expression>
@@ -1311,6 +1317,9 @@
                         <script>
                             <code>
                                 theWorkingName = identifier
+                                if(identifier.contains('eduroamadmin')){
+                                    theWorkingName = identifier.split(':')[0]
+                                }
                                 return '{"httpHeaderValue1": "' + theWorkingName.replace("_",".") + '"}'
                             </code>
                         </script>
