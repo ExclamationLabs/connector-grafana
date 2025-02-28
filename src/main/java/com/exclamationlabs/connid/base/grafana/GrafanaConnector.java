@@ -1,6 +1,7 @@
 package com.exclamationlabs.connid.base.grafana;
 
 import com.exclamationlabs.connid.base.connector.BaseFullAccessConnector;
+import com.exclamationlabs.connid.base.grafana.adapter.GrafanaDashboardAdapter;
 import com.exclamationlabs.connid.base.grafana.adapter.GrafanaDataSourceAdapter;
 import com.exclamationlabs.connid.base.grafana.adapter.GrafanaOrgAdapter;
 import com.exclamationlabs.connid.base.grafana.adapter.GrafanaUserAdapter;
@@ -113,6 +114,6 @@ public class GrafanaConnector extends BaseFullAccessConnector<GrafanaConfigurati
     {
         super(GrafanaConfiguration.class);
         setDriver(new GrafanaDriver());
-        setAdapters(new GrafanaUserAdapter(), new GrafanaOrgAdapter(), new GrafanaDataSourceAdapter());
+        setAdapters(new GrafanaUserAdapter(), new GrafanaOrgAdapter(), new GrafanaDataSourceAdapter(), new GrafanaDashboardAdapter());
     }
 }

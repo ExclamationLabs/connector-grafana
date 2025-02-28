@@ -101,7 +101,7 @@
           {
             "datasource": {
               "type": "loki",
-              "uid": "<DataSourceUID>"
+              "uid": "__DataSourceUID__"
             },
             "expr": "{record_type=\"fticks\"}",
             "maxLines": 5000,
@@ -220,7 +220,7 @@
           {
             "datasource": {
               "type": "loki",
-              "uid": "<DataSourceUID>"
+              "uid": "__DataSourceUID__"
             },
             "expr": "{record_type=\"stdout\"}",
             "maxLines": 5000,
