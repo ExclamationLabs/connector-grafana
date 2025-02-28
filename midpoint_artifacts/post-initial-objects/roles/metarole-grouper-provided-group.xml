@@ -1,0 +1,51 @@
+<role xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oid="bcaec940-50c8-44bb-aa37-b2b5bb2d5b90">
+    <name>metarole-grouper-provided-group</name>
+    <description>A metarole for archetyped Grouper-provided groups</description>
+    <iteration>0</iteration>
+    <iterationToken/>
+    <inducement>
+        <focusMappings>
+            <mapping>
+                <name>identifier</name>
+                <description>This mapping fills-in org identifier (e.g. 'member') from extension/grouperName (e.g. 'ref:affiliation:member').
+                It uses extension/grouperNamePrefix information from the archetype (e.g. 'ref:affiliation:' defined in affiliation archetype)</description>
+                <strength>strong</strength>
+                <source>
+                    <path>extension/grouperName</path>
+                </source>
+                <expression>
+                    <script>
+                        <code>
+                            if (grouperName == null) {
+                                null
+                            } else {
+                                archetype = assignmentPath[-2].source       // e.g. archetype affiliation
+                                log.info('archetype = {}', archetype)
+                                if (archetype == null) {
+                                    throw new IllegalStateException('No archetype in assignment path: ' + assignmentPath)
+                                }
+                                grouperNamePrefix = basic.getExtensionPropertyValue(archetype, 'grouperNamePrefix')      // e.g. 'ref:affiliation:'
+                                if (grouperNamePrefix == null) {
+                                    throw new IllegalStateException('No grouper name prefix in archetype ' + archetype)
+                                }
+                                // grouperName is e.g. 'ref:affiliation:member'
+                                if (grouperName.startsWith(grouperNamePrefix)) {
+                                    if(grouperName.contains('eduroamadmin')){
+                                       return grouperName.substring(grouperNamePrefix.length()).split(':')[0]  // remove eduroamadmin
+                                    }
+                                    return grouperName.substring(grouperNamePrefix.length())       // returning e.g. 'member'                                
+                                } else {
+                                    throw new IllegalStateException('Grouper name ' + grouperName + ' does not match the expected prefix: ' + grouperNamePrefix)
+                                }
+                            }
+                        </code>
+                    </script>
+                </expression>
+                <target>
+                    <path>identifier</path>
+                </target>
+            </mapping>
+        </focusMappings>
+        <order>2</order>
+    </inducement>
+</role>
