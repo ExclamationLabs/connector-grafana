@@ -2,20 +2,9 @@
 <objects xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
 	xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
 	xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3">
-	<org xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oid="a86dbf3b-74a4-46a8-a225-488056d8fccb" version="0">
+	<org xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oid="a86dbf3b-74a4-46a8-a225-488056d8fccb">
     <name>eduroam institutions</name>
     <documentation>eduroam institutions</documentation>
-    <metadata>
-        <requestTimestamp>2023-04-05T19:21:18.360Z</requestTimestamp>
-        <requestorRef oid="e897468f-20bd-419c-8fc5-1fe60e2600de" relation="org:default" type="c:UserType">
-            <!-- banderson -->
-        </requestorRef>
-        <createTimestamp>2023-04-05T19:21:18.375Z</createTimestamp>
-        <creatorRef oid="e897468f-20bd-419c-8fc5-1fe60e2600de" relation="org:default" type="c:UserType">
-            <!-- banderson -->
-        </creatorRef>
-        <createChannel>http://midpoint.evolveum.com/xml/ns/public/common/channels-3#user</createChannel>
-    </metadata>
     <iteration>0</iteration>
     <iterationToken/>
     <activation>

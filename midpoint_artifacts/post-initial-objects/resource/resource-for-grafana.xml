@@ -1,76 +1,276 @@
-<resource xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oid="75e2f666-4c07-46e5-b242-3ad66dc07d17" version="159">
-    <name>Target: Grafana</name>
-    <metadata>
-        <modifyTimestamp>2023-04-27T17:55:33.357Z</modifyTimestamp>
-        <modifierRef oid="e897468f-20bd-419c-8fc5-1fe60e2600de" relation="org:default" type="c:UserType">
-            <!-- banderson -->
-        </modifierRef>
-        <modifyChannel>http://midpoint.evolveum.com/xml/ns/public/common/channels-3#user</modifyChannel>
-    </metadata>
+<resource xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oid="530210db-af41-4110-8f77-2a78fc9ee581" version="16">
+    <name>Target : Grafana</name>
+    <lifecycleState>active</lifecycleState>
     <iteration>0</iteration>
     <iterationToken/>
-    <operationalState>
-        <lastAvailabilityStatus>up</lastAvailabilityStatus>
-        <message>Status set to UP because resource test was successful</message>
-        <timestamp>2023-04-24T21:22:11.980Z</timestamp>
-        <nodeId>DefaultNode</nodeId>
-    </operationalState>
-    <operationalStateHistory id="107">
-        <lastAvailabilityStatus>up</lastAvailabilityStatus>
-        <message>Status set to UP because resource test was successful</message>
-        <timestamp>2023-04-24T21:22:11.980Z</timestamp>
-        <nodeId>DefaultNode</nodeId>
-    </operationalStateHistory>
-    <connectorRef oid="2bdbfab0-3f1b-4538-b895-e99fcdb48025" relation="org:default" type="c:ConnectorType">
-        <!-- ConnId com.exclamationlabs.connid.base.grafana.GrafanaConnector v1.6.7 -->
+    <connectorRef oid="07324bf6-ef39-410e-a098-ff3f6960efad" relation="org:default" type="c:ConnectorType">
+        <!-- ConnId com.exclamationlabs.connid.base.grafana.GrafanaConnector v2.0.2 -->
     </connectorRef>
     <connectorConfiguration xmlns:icfc="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/connector-schema-3">
-        <icfc:resultsHandlerConfiguration>
-            <icfc:enableNormalizingResultsHandler>false</icfc:enableNormalizingResultsHandler>
-            <icfc:enableFilteredResultsHandler>false</icfc:enableFilteredResultsHandler>
-            <icfc:filteredResultsHandlerInValidationMode>true</icfc:filteredResultsHandlerInValidationMode>
-            <icfc:enableCaseInsensitiveFilter>false</icfc:enableCaseInsensitiveFilter>
-            <icfc:enableAttributesToGetSearchResultsHandler>false</icfc:enableAttributesToGetSearchResultsHandler>
-        </icfc:resultsHandlerConfiguration>
-        <icfc:configurationProperties xmlns:gen415="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/connector-grafana/com.exclamationlabs.connid.base.grafana.GrafanaConnector">
-            <gen415:defaultOrgRole>Viewer</gen415:defaultOrgRole>
-            <gen415:lokiURL xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/connector-grafana/com.exclamationlabs.connid.base.grafana.GrafanaConnector">http://loki.dev.infra.eduroam.us/</gen415:lokiURL>
-            <gen415:lokiUser>grafana</gen415:lokiUser>
-            <gen415:lokiPassword>foo</gen415:lokiPassword>
-            <gen415:updateDashBoards>false</gen415:updateDashBoards>
-            <gen415:ioErrorRetries>3</gen415:ioErrorRetries>
-            <gen415:deepGet>false</gen415:deepGet>
-            <gen415:deepImport>false</gen415:deepImport>
-            <gen415:pagination>true</gen415:pagination>
-            <gen415:serviceUrl xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/connector-grafana/com.exclamationlabs.connid.base.grafana.GrafanaConnector" xmlns:s="http://midpoint.evolveum.com/xml/ns/public/model/scripting-3">https://logs.dev.infra.eduroam.us/provisioner_api</gen415:serviceUrl>
-            <gen415:duplicateErrorReturnsId>false</gen415:duplicateErrorReturnsId>
-            <gen415:basicUsername>grafana_provisioner</gen415:basicUsername>
-            <gen415:basicPassword>
-                <t:encryptedData>
-                    <t:encryptionMethod>
-                        <t:algorithm xmlns="http://prism.evolveum.com/xml/ns/public/types-3">http://www.w3.org/2001/04/xmlenc#aes256-cbc</t:algorithm>
-                    </t:encryptionMethod>
-                    <t:keyInfo>
-                        <t:keyName>/QWadwACIyKn6vICM+X1bx1TxGA=</t:keyName>
-                    </t:keyInfo>
-                    <t:cipherData>
-                        <t:cipherValue>kN1pgldOWKgnGZF2+GaQgH7OaPNY+y4tSEgwKuyrzOzJaAS6WqDPxZ0DKlZSeoE5</t:cipherValue>
-                    </t:cipherData>
-                </t:encryptedData>
-            </gen415:basicPassword>
-            <gen415:separateOrgAssociation>false</gen415:separateOrgAssociation>
+        <icfc:configurationProperties xmlns:gen276="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/connector-grafana/com.exclamationlabs.connid.base.grafana.GrafanaConnector">
+            <gen276:ioErrorRetries>5</gen276:ioErrorRetries>
+            <gen276:deepGet>true</gen276:deepGet>
+            <gen276:deepImport>true</gen276:deepImport>
+            <gen276:importBatchSize>50</gen276:importBatchSize>
+            <gen276:pagination>true</gen276:pagination>
+            <gen276:serviceUrl xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/connector-grafana/com.exclamationlabs.connid.base.grafana.GrafanaConnector" xmlns:s="http://midpoint.evolveum.com/xml/ns/public/model/scripting-3">https://logs.dev.infra.eduroam.us/provisioner_api</gen276:serviceUrl>
+            <gen276:duplicateErrorReturnsId>false</gen276:duplicateErrorReturnsId>
+            <gen276:basicUsername>grafana_provisioner</gen276:basicUsername>
+            <gen276:basicPassword>grafana_password</gen276:basicPassword>
+            <gen276:separateOrgAssociation>false</gen276:separateOrgAssociation>
+            <gen276:defaultOrgRole>Viewer</gen276:defaultOrgRole>
+            <gen276:defaultTimeZone>UTC</gen276:defaultTimeZone>
+            <gen276:updateDashBoards>true</gen276:updateDashBoards>
+            <gen276:dashboardTemplate xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/connector-grafana/com.exclamationlabs.connid.base.grafana.GrafanaConnector">{"dashboard":{"id":__DashboardId__,"uid":__DashboardUid__,"title":"__OrgName__ eduroam RADIUS Logs","schemaVersion":35,"version":2,"timezone":"browser","annotations":{"list":[{"builtIn":1,"datasource":"-- Grafana --","enable":true,"hide":true,"iconColor":"rgba(0, 211, 255, 1)","name":"Annotations &amp; Alerts","target":{"limit":100,"matchAny":false,"tags":[],"type":"dashboard"},"type":"dashboard"}]},"editable":true,"fiscalYearStartMonth":0,"graphTooltip":0,"links":[],"liveNow":false,"panels":[{"description":"","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"custom":{"align":"auto","displayMode":"auto","filterable":true},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":""},{"color":"red","value":80}]}},"overrides":[{"matcher":{"id":"byName","options":"TIMESTAMP"},"properties":[{"id":"custom.width","value":193}]}]},"gridPos":{"h":11,"w":23,"x":0,"y":0},"id":13,"options":{"footer":{"fields":"","reducer":["sum"],"show":false},"showHeader":true,"sortBy":[{"desc":true,"displayName":"TIMESTAMP"}]},"pluginVersion":"8.4.3","targets":[{"datasource":{"type":"loki","uid":"__DataSourceUID__"},"expr":"{record_type=\"fticks\"}","maxLines":5000,"refId":"A"}],"title":"Authentication Logs","transformations":[{"id":"merge","options":{}},{"id":"extractFields","options":{"format":"auto","replace":false,"source":"line"}},{"id":"organize","options":{"excludeByName":{"FAILURE":false,"NEXTHOP":false,"REALM":false,"REGION":true,"TIMESTAMP":true,"Time":false,"Time ns":true,"UTC":true,"VISINST":true,"id":true,"line":true,"line {record_type=\"fticks\", side=\"rp\"}":true,"ts":false,"tsNs":true},"indexByName":{"14":14,"15":15,"2022":16,"CSI":9,"EAPTYPE":8,"FAILURE":6,"NEXTHOP":4,"REALM":3,"REGION":12,"RESULT":5,"Realm":19,"TIMESTAMP":1,"UTC":13,"VISCOUNTRY":7,"VISINST":10,"VISINSTID":2,"at":23,"does":20,"dot":26,"have":22,"id":11,"least":24,"line":17,"not":21,"one":25,"separator":27,"ts":0,"tsNs":18},"renameByName":{"Time":"TIMESTAMP","ts":"TIMESTAMP"}}},{"id":"filterFieldsByName","options":{"include":{"names":["VISINSTID","REALM","NEXTHOP","RESULT","FAILURE","VISCOUNTRY","EAPTYPE","CSI","TIMESTAMP"]}}}],"type":"table"},{"gridPos":{"h":12,"w":23,"x":0,"y":11},"id":6,"options":{"dedupStrategy":"none","enableLogDetails":true,"prettifyLogMessage":false,"showCommonLabels":false,"showLabels":false,"showTime":true,"sortOrder":"Descending","wrapLogMessage":false},"targets":[{"datasource":{"type":"loki","uid":"__DataSourceUID__"},"expr":"{record_type=\"stdout\"}","maxLines":5000,"refId":"A"}],"title":"RADIUS Server Logs","type":"logs"}],"style":"dark","tags":[],"templating":{"list":[]},"time":{"from":"now-15m","to":"now"},"timepicker":{},"weekStart":""},"folderId":0,"overwrite":true}</gen276:dashboardTemplate>
+            <gen276:dashboardTemplate xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/connector-grafana/com.exclamationlabs.connid.base.grafana.GrafanaConnector">eso{"dashboard":{"id":__DashboardId__,"uid":__DashboardUid__,"title":"__OrgName__ ESO eduroam RADIUS Logs","schemaVersion":35,"version":2,"timezone":"browser","annotations":{"list":[{"builtIn":1,"datasource":"-- Grafana --","enable":true,"hide":true,"iconColor":"rgba(0, 211, 255, 1)","name":"Annotations &amp; Alerts","target":{"limit":100,"matchAny":false,"tags":[],"type":"dashboard"},"type":"dashboard"}]},"editable":true,"fiscalYearStartMonth":0,"graphTooltip":0,"links":[],"liveNow":false,"panels":[{"description":"","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"custom":{"align":"auto","displayMode":"auto","filterable":true},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":""},{"color":"red","value":80}]}},"overrides":[{"matcher":{"id":"byName","options":"TIMESTAMP"},"properties":[{"id":"custom.width","value":193}]}]},"gridPos":{"h":11,"w":23,"x":0,"y":0},"id":13,"options":{"footer":{"fields":"","reducer":["sum"],"show":false},"showHeader":true,"sortBy":[{"desc":true,"displayName":"TIMESTAMP"}]},"pluginVersion":"8.4.3","targets":[{"datasource":{"type":"loki","uid":"__DataSourceUID__"},"expr":"{record_type=\"fticks\"}","maxLines":5000,"refId":"A"}],"title":"Authentication Logs","transformations":[{"id":"merge","options":{}},{"id":"extractFields","options":{"format":"auto","replace":false,"source":"line"}},{"id":"organize","options":{"excludeByName":{"FAILURE":false,"NEXTHOP":false,"REALM":false,"REGION":true,"TIMESTAMP":true,"Time":false,"Time ns":true,"UTC":true,"VISINST":true,"id":true,"line":true,"line {record_type=\"fticks\", side=\"rp\"}":true,"ts":false,"tsNs":true},"indexByName":{"14":14,"15":15,"2022":16,"CSI":9,"EAPTYPE":8,"FAILURE":6,"NEXTHOP":4,"REALM":3,"REGION":12,"RESULT":5,"Realm":19,"TIMESTAMP":1,"UTC":13,"VISCOUNTRY":7,"VISINST":10,"VISINSTID":2,"at":23,"does":20,"dot":26,"have":22,"id":11,"least":24,"line":17,"not":21,"one":25,"separator":27,"ts":0,"tsNs":18},"renameByName":{"Time":"TIMESTAMP","ts":"TIMESTAMP"}}},{"id":"filterFieldsByName","options":{"include":{"names":["VISINSTID","REALM","NEXTHOP","RESULT","FAILURE","VISCOUNTRY","EAPTYPE","CSI","TIMESTAMP"]}}}],"type":"table"},{"gridPos":{"h":12,"w":23,"x":0,"y":11},"id":6,"options":{"dedupStrategy":"none","enableLogDetails":true,"prettifyLogMessage":false,"showCommonLabels":false,"showLabels":false,"showTime":true,"sortOrder":"Descending","wrapLogMessage":false},"targets":[{"datasource":{"type":"loki","uid":"__DataSourceUID__"},"expr":"{record_type=\"stdout\"}","maxLines":5000,"refId":"A"}],"title":"RADIUS Server Logs","type":"logs"}],"style":"dark","tags":[],"templating":{"list":[]},"time":{"from":"now-15m","to":"now"},"timepicker":{},"weekStart":""},"folderId":0,"overwrite":true}</gen276:dashboardTemplate>
+            <gen276:lokiURL xmlns="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/connector-grafana/com.exclamationlabs.connid.base.grafana.GrafanaConnector">http://loki.dev.infra.eduroam.us/</gen276:lokiURL>
+            <gen276:lokiUser>admin</gen276:lokiUser>
+            <gen276:lokiPassword>loki_password</gen276:lokiPassword>
         </icfc:configurationProperties>
     </connectorConfiguration>
     <schema>
         <cachingMetadata>
-            <retrievalTimestamp>2023-04-27T14:48:22.049Z</retrievalTimestamp>
-            <serialNumber>26b8fc840ae40e03-a4eeec9f532f4b89</serialNumber>
+            <retrievalTimestamp>2025-02-26T15:50:27.121Z</retrievalTimestamp>
+            <serialNumber>c65f2d0e337e64be-3256c6d79f4ede96</serialNumber>
         </cachingMetadata>
+        <generationConstraints>
+            <generateObjectClass>ri:GrafanaOrganization</generateObjectClass>
+            <generateObjectClass>ri:GrafanaDashboard</generateObjectClass>
+            <generateObjectClass>ri:GrafanaUser</generateObjectClass>
+            <generateObjectClass>ri:GrafanaDatasource</generateObjectClass>
+        </generationConstraints>
         <definition>
             <xsd:schema xmlns:a="http://prism.evolveum.com/xml/ns/public/annotation-3" xmlns:ra="http://midpoint.evolveum.com/xml/ns/public/resource/annotation-3" xmlns:tns="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xml:space="preserve">
                 <xsd:import namespace="http://prism.evolveum.com/xml/ns/public/annotation-3"/>
                 <xsd:import namespace="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3"/>
                 <xsd:import namespace="http://midpoint.evolveum.com/xml/ns/public/resource/annotation-3"/>
+                <xsd:complexType name="GrafanaDashboard">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <a:container/>
+                            <ra:resourceObject/>
+                            <ra:identifier>icfs:uid</ra:identifier>
+                            <ra:secondaryIdentifier>icfs:name</ra:secondaryIdentifier>
+                            <ra:displayNameAttribute>icfs:name</ra:displayNameAttribute>
+                            <ra:namingAttribute>icfs:name</ra:namingAttribute>
+                            <ra:nativeObjectClass>GrafanaDashboard</ra:nativeObjectClass>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                    <xsd:sequence>
+                        <xsd:element name="orgId" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>orgId</a:displayName>
+                                    <a:displayOrder>120</a:displayOrder>
+                                    <ra:nativeAttributeName>orgId</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>orgId</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="meta" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>meta</a:displayName>
+                                    <a:displayOrder>130</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:nativeAttributeName>meta</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>meta</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="properties" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>properties</a:displayName>
+                                    <a:displayOrder>140</a:displayOrder>
+                                    <ra:nativeAttributeName>properties</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>properties</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="orgName" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>orgName</a:displayName>
+                                    <a:displayOrder>150</a:displayOrder>
+                                    <ra:nativeAttributeName>orgName</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>orgName</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="uri" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>uri</a:displayName>
+                                    <a:displayOrder>160</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:nativeAttributeName>uri</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>uri</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="slug" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>slug</a:displayName>
+                                    <a:displayOrder>170</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:nativeAttributeName>slug</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>slug</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="isStarred" type="xsd:boolean">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>isStarred</a:displayName>
+                                    <a:displayOrder>180</a:displayOrder>
+                                    <ra:nativeAttributeName>isStarred</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>isStarred</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>false</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="url" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>url</a:displayName>
+                                    <a:displayOrder>190</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:nativeAttributeName>url</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>url</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="uid" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>uid</a:displayName>
+                                    <a:displayOrder>200</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:nativeAttributeName>uid</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>uid</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="status" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>status</a:displayName>
+                                    <a:displayOrder>210</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:nativeAttributeName>status</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>status</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="dashboard" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>dashboard</a:displayName>
+                                    <a:displayOrder>220</a:displayOrder>
+                                    <ra:nativeAttributeName>dashboard</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>dashboard</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="title" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>title</a:displayName>
+                                    <a:displayOrder>230</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:nativeAttributeName>title</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>title</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element ref="icfs:name">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>ConnId Name</a:displayName>
+                                    <a:displayOrder>110</a:displayOrder>
+                                    <ra:frameworkAttributeName>__NAME__</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="templateName" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>templateName</a:displayName>
+                                    <a:displayOrder>240</a:displayOrder>
+                                    <ra:nativeAttributeName>templateName</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>templateName</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="id" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>id</a:displayName>
+                                    <a:displayOrder>250</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <a:access>update</a:access>
+                                    <ra:nativeAttributeName>id</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>id</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="sortMeta" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>sortMeta</a:displayName>
+                                    <a:displayOrder>260</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:nativeAttributeName>sortMeta</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>sortMeta</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="type" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>type</a:displayName>
+                                    <a:displayOrder>270</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:nativeAttributeName>type</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>type</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="dataSourceUid" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>dataSourceUid</a:displayName>
+                                    <a:displayOrder>280</a:displayOrder>
+                                    <ra:nativeAttributeName>dataSourceUid</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>dataSourceUid</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element maxOccurs="unbounded" minOccurs="0" name="tags" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>tags</a:displayName>
+                                    <a:displayOrder>290</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:nativeAttributeName>tags</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>tags</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" ref="icfs:uid">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>ConnId UID</a:displayName>
+                                    <a:displayOrder>100</a:displayOrder>
+                                    <a:access>read</a:access>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
+                    </xsd:sequence>
+                </xsd:complexType>
                 <xsd:complexType name="GrafanaOrganization">
                     <xsd:annotation>
                         <xsd:appinfo>
@@ -84,15 +284,37 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                     <xsd:sequence>
+                        <xsd:element minOccurs="0" name="homeDashboardUID" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>homeDashboardUID</a:displayName>
+                                    <a:displayOrder>120</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:nativeAttributeName>homeDashboardUID</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>homeDashboardUID</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
                         <xsd:element minOccurs="0" name="orgId" type="xsd:string">
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>orgId</a:displayName>
-                                    <a:displayOrder>120</a:displayOrder>
+                                    <a:displayOrder>130</a:displayOrder>
                                     <a:access>create</a:access>
                                     <a:access>read</a:access>
                                     <ra:nativeAttributeName>orgId</ra:nativeAttributeName>
                                     <ra:frameworkAttributeName>orgId</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element maxOccurs="unbounded" minOccurs="0" name="dashboards" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>dashboards</a:displayName>
+                                    <a:displayOrder>140</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:nativeAttributeName>dashboards</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>dashboards</ra:frameworkAttributeName>
                                 </xsd:appinfo>
                             </xsd:annotation>
                         </xsd:element>
@@ -105,11 +327,33 @@
                                 </xsd:appinfo>
                             </xsd:annotation>
                         </xsd:element>
+                        <xsd:element minOccurs="0" name="timezone" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>timezone</a:displayName>
+                                    <a:displayOrder>150</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:nativeAttributeName>timezone</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>timezone</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="homeDashboardId" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>homeDashboardId</a:displayName>
+                                    <a:displayOrder>160</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:nativeAttributeName>homeDashboardId</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>homeDashboardId</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
                         <xsd:element name="name" type="xsd:string">
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>name</a:displayName>
-                                    <a:displayOrder>130</a:displayOrder>
+                                    <a:displayOrder>170</a:displayOrder>
                                     <ra:nativeAttributeName>name</ra:nativeAttributeName>
                                     <ra:frameworkAttributeName>name</ra:frameworkAttributeName>
                                 </xsd:appinfo>
@@ -160,13 +404,35 @@
                                 </xsd:appinfo>
                             </xsd:annotation>
                         </xsd:element>
+                        <xsd:element minOccurs="0" name="dashboardTemplateName" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>dashboardTemplateName</a:displayName>
+                                    <a:displayOrder>140</a:displayOrder>
+                                    <ra:nativeAttributeName>dashboardTemplateName</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>dashboardTemplateName</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>false</ra:returnedByDefault>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
                         <xsd:element minOccurs="0" name="basicAuthPassword" type="xsd:string">
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>basicAuthPassword</a:displayName>
-                                    <a:displayOrder>140</a:displayOrder>
+                                    <a:displayOrder>150</a:displayOrder>
                                     <ra:nativeAttributeName>basicAuthPassword</ra:nativeAttributeName>
                                     <ra:frameworkAttributeName>basicAuthPassword</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="dashboardUid" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>dashboardUid</a:displayName>
+                                    <a:displayOrder>160</a:displayOrder>
+                                    <ra:nativeAttributeName>dashboardUid</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>dashboardUid</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>false</ra:returnedByDefault>
                                 </xsd:appinfo>
                             </xsd:annotation>
                         </xsd:element>
@@ -174,7 +440,7 @@
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>jsonData</a:displayName>
-                                    <a:displayOrder>150</a:displayOrder>
+                                    <a:displayOrder>170</a:displayOrder>
                                     <ra:nativeAttributeName>jsonData</ra:nativeAttributeName>
                                     <ra:frameworkAttributeName>jsonData</ra:frameworkAttributeName>
                                 </xsd:appinfo>
@@ -184,7 +450,7 @@
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>user</a:displayName>
-                                    <a:displayOrder>160</a:displayOrder>
+                                    <a:displayOrder>180</a:displayOrder>
                                     <ra:nativeAttributeName>user</ra:nativeAttributeName>
                                     <ra:frameworkAttributeName>user</ra:frameworkAttributeName>
                                 </xsd:appinfo>
@@ -194,7 +460,7 @@
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>url</a:displayName>
-                                    <a:displayOrder>170</a:displayOrder>
+                                    <a:displayOrder>190</a:displayOrder>
                                     <a:access>create</a:access>
                                     <a:access>read</a:access>
                                     <ra:nativeAttributeName>url</ra:nativeAttributeName>
@@ -206,7 +472,7 @@
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>name</a:displayName>
-                                    <a:displayOrder>180</a:displayOrder>
+                                    <a:displayOrder>200</a:displayOrder>
                                     <ra:nativeAttributeName>name</ra:nativeAttributeName>
                                     <ra:frameworkAttributeName>name</ra:frameworkAttributeName>
                                 </xsd:appinfo>
@@ -216,7 +482,7 @@
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>uid</a:displayName>
-                                    <a:displayOrder>190</a:displayOrder>
+                                    <a:displayOrder>210</a:displayOrder>
                                     <a:access>read</a:access>
                                     <a:access>update</a:access>
                                     <ra:nativeAttributeName>uid</ra:nativeAttributeName>
@@ -228,9 +494,19 @@
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>isDefault</a:displayName>
-                                    <a:displayOrder>200</a:displayOrder>
+                                    <a:displayOrder>220</a:displayOrder>
                                     <ra:nativeAttributeName>isDefault</ra:nativeAttributeName>
                                     <ra:frameworkAttributeName>isDefault</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="database" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>database</a:displayName>
+                                    <a:displayOrder>230</a:displayOrder>
+                                    <ra:nativeAttributeName>database</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>database</ra:frameworkAttributeName>
                                 </xsd:appinfo>
                             </xsd:annotation>
                         </xsd:element>
@@ -238,9 +514,22 @@
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>password</a:displayName>
-                                    <a:displayOrder>210</a:displayOrder>
+                                    <a:displayOrder>240</a:displayOrder>
                                     <ra:nativeAttributeName>password</ra:nativeAttributeName>
                                     <ra:frameworkAttributeName>password</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="secureJsonFields" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>secureJsonFields</a:displayName>
+                                    <a:displayOrder>250</a:displayOrder>
+                                    <a:access>create</a:access>
+                                    <a:access>read</a:access>
+                                    <ra:nativeAttributeName>secureJsonFields</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>secureJsonFields</ra:frameworkAttributeName>
+                                    <ra:returnedByDefault>false</ra:returnedByDefault>
                                 </xsd:appinfo>
                             </xsd:annotation>
                         </xsd:element>
@@ -248,7 +537,7 @@
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>basicAuthUser</a:displayName>
-                                    <a:displayOrder>220</a:displayOrder>
+                                    <a:displayOrder>260</a:displayOrder>
                                     <ra:nativeAttributeName>basicAuthUser</ra:nativeAttributeName>
                                     <ra:frameworkAttributeName>basicAuthUser</ra:frameworkAttributeName>
                                 </xsd:appinfo>
@@ -258,7 +547,7 @@
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>dataSourceId</a:displayName>
-                                    <a:displayOrder>230</a:displayOrder>
+                                    <a:displayOrder>270</a:displayOrder>
                                     <a:access>read</a:access>
                                     <ra:nativeAttributeName>dataSourceId</ra:nativeAttributeName>
                                     <ra:frameworkAttributeName>dataSourceId</ra:frameworkAttributeName>
@@ -278,7 +567,7 @@
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>id</a:displayName>
-                                    <a:displayOrder>240</a:displayOrder>
+                                    <a:displayOrder>280</a:displayOrder>
                                     <a:access>read</a:access>
                                     <a:access>update</a:access>
                                     <ra:nativeAttributeName>id</ra:nativeAttributeName>
@@ -290,7 +579,7 @@
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>secureJsonData</a:displayName>
-                                    <a:displayOrder>250</a:displayOrder>
+                                    <a:displayOrder>290</a:displayOrder>
                                     <a:access>create</a:access>
                                     <ra:nativeAttributeName>secureJsonData</ra:nativeAttributeName>
                                     <ra:frameworkAttributeName>secureJsonData</ra:frameworkAttributeName>
@@ -302,7 +591,7 @@
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>type</a:displayName>
-                                    <a:displayOrder>260</a:displayOrder>
+                                    <a:displayOrder>300</a:displayOrder>
                                     <a:access>create</a:access>
                                     <a:access>read</a:access>
                                     <ra:nativeAttributeName>type</ra:nativeAttributeName>
@@ -314,7 +603,7 @@
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>access</a:displayName>
-                                    <a:displayOrder>270</a:displayOrder>
+                                    <a:displayOrder>310</a:displayOrder>
                                     <ra:nativeAttributeName>access</ra:nativeAttributeName>
                                     <ra:frameworkAttributeName>access</ra:frameworkAttributeName>
                                 </xsd:appinfo>
@@ -345,52 +634,11 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                     <xsd:sequence>
-                        <xsd:element maxOccurs="unbounded" minOccurs="0" name="orgId" type="xsd:string">
-                            <xsd:annotation>
-                                <xsd:appinfo>
-                                    <a:displayName>orgId</a:displayName>
-                                    <a:displayOrder>120</a:displayOrder>
-                                    <ra:nativeAttributeName>orgId</ra:nativeAttributeName>
-                                    <ra:frameworkAttributeName>orgId</ra:frameworkAttributeName>
-                                </xsd:appinfo>
-                            </xsd:annotation>
-                        </xsd:element>
-                        <xsd:element minOccurs="0" name="email" type="xsd:string">
-                            <xsd:annotation>
-                                <xsd:appinfo>
-                                    <a:displayName>email</a:displayName>
-                                    <a:displayOrder>130</a:displayOrder>
-                                    <ra:nativeAttributeName>email</ra:nativeAttributeName>
-                                    <ra:frameworkAttributeName>email</ra:frameworkAttributeName>
-                                </xsd:appinfo>
-                            </xsd:annotation>
-                        </xsd:element>
-                        <xsd:element minOccurs="0" name="lastSeenAt" type="xsd:string">
-                            <xsd:annotation>
-                                <xsd:appinfo>
-                                    <a:displayName>lastSeenAt</a:displayName>
-                                    <a:displayOrder>140</a:displayOrder>
-                                    <a:access>read</a:access>
-                                    <ra:nativeAttributeName>lastSeenAt</ra:nativeAttributeName>
-                                    <ra:frameworkAttributeName>lastSeenAt</ra:frameworkAttributeName>
-                                </xsd:appinfo>
-                            </xsd:annotation>
-                        </xsd:element>
-                        <xsd:element minOccurs="0" name="name" type="xsd:string">
-                            <xsd:annotation>
-                                <xsd:appinfo>
-                                    <a:displayName>name</a:displayName>
-                                    <a:displayOrder>150</a:displayOrder>
-                                    <ra:nativeAttributeName>name</ra:nativeAttributeName>
-                                    <ra:frameworkAttributeName>name</ra:frameworkAttributeName>
-                                </xsd:appinfo>
-                            </xsd:annotation>
-                        </xsd:element>
                         <xsd:element minOccurs="0" name="role" type="xsd:string">
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>role</a:displayName>
-                                    <a:displayOrder>160</a:displayOrder>
+                                    <a:displayOrder>120</a:displayOrder>
                                     <ra:nativeAttributeName>role</ra:nativeAttributeName>
                                     <ra:frameworkAttributeName>role</ra:frameworkAttributeName>
                                 </xsd:appinfo>
@@ -400,9 +648,19 @@
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>disabled</a:displayName>
-                                    <a:displayOrder>170</a:displayOrder>
+                                    <a:displayOrder>130</a:displayOrder>
                                     <ra:nativeAttributeName>disabled</ra:nativeAttributeName>
                                     <ra:frameworkAttributeName>disabled</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element maxOccurs="unbounded" minOccurs="0" name="orgId" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>orgId</a:displayName>
+                                    <a:displayOrder>140</a:displayOrder>
+                                    <ra:nativeAttributeName>orgId</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>orgId</ra:frameworkAttributeName>
                                 </xsd:appinfo>
                             </xsd:annotation>
                         </xsd:element>
@@ -410,7 +668,7 @@
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>password</a:displayName>
-                                    <a:displayOrder>180</a:displayOrder>
+                                    <a:displayOrder>150</a:displayOrder>
                                     <ra:nativeAttributeName>password</ra:nativeAttributeName>
                                     <ra:frameworkAttributeName>password</ra:frameworkAttributeName>
                                 </xsd:appinfo>
@@ -420,7 +678,7 @@
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>userId</a:displayName>
-                                    <a:displayOrder>190</a:displayOrder>
+                                    <a:displayOrder>160</a:displayOrder>
                                     <a:access>create</a:access>
                                     <a:access>read</a:access>
                                     <ra:nativeAttributeName>userId</ra:nativeAttributeName>
@@ -441,9 +699,30 @@
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>login</a:displayName>
-                                    <a:displayOrder>200</a:displayOrder>
+                                    <a:displayOrder>170</a:displayOrder>
                                     <ra:nativeAttributeName>login</ra:nativeAttributeName>
                                     <ra:frameworkAttributeName>login</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="email" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>email</a:displayName>
+                                    <a:displayOrder>180</a:displayOrder>
+                                    <ra:nativeAttributeName>email</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>email</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="lastSeenAt" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>lastSeenAt</a:displayName>
+                                    <a:displayOrder>190</a:displayOrder>
+                                    <a:access>read</a:access>
+                                    <ra:nativeAttributeName>lastSeenAt</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>lastSeenAt</ra:frameworkAttributeName>
                                 </xsd:appinfo>
                             </xsd:annotation>
                         </xsd:element>
@@ -451,10 +730,20 @@
                             <xsd:annotation>
                                 <xsd:appinfo>
                                     <a:displayName>avatarUrl</a:displayName>
-                                    <a:displayOrder>210</a:displayOrder>
+                                    <a:displayOrder>200</a:displayOrder>
                                     <a:access>read</a:access>
                                     <ra:nativeAttributeName>avatarUrl</ra:nativeAttributeName>
                                     <ra:frameworkAttributeName>avatarUrl</ra:frameworkAttributeName>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element minOccurs="0" name="name" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:appinfo>
+                                    <a:displayName>name</a:displayName>
+                                    <a:displayOrder>210</a:displayOrder>
+                                    <ra:nativeAttributeName>name</ra:nativeAttributeName>
+                                    <ra:frameworkAttributeName>name</ra:frameworkAttributeName>
                                 </xsd:appinfo>
                             </xsd:annotation>
                         </xsd:element>
@@ -485,7 +774,7 @@
         </definition>
     </schema>
     <schemaHandling>
-        <objectType id="113">
+        <objectType>
             <kind>account</kind>
             <intent>viewer</intent>
             <displayName>GrafanaAccount-Viewer</displayName>
@@ -493,7 +782,7 @@
             <focus>
                 <type>c:UserType</type>
             </focus>
-            <attribute id="116">
+            <attribute>
                 <ref>ri:name</ref>
                 <outbound>
                     <strength>strong</strength>
@@ -502,10 +791,10 @@
                     </source>
                 </outbound>
             </attribute>
-            <attribute id="117">
+            <attribute>
                 <ref>ri:orgId</ref>
             </attribute>
-            <attribute id="118">
+            <attribute>
                 <ref>ri:email</ref>
                 <outbound>
                     <strength>strong</strength>
@@ -514,7 +803,7 @@
                     </source>
                 </outbound>
             </attribute>
-            <attribute id="119">
+            <attribute>
                 <ref>ri:login</ref>
                 <outbound>
                     <strength>strong</strength>
@@ -523,10 +812,10 @@
                     </source>
                 </outbound>
             </attribute>
-            <attribute id="155">
+            <attribute>
                 <ref>ri:role</ref>
             </attribute>
-            <association id="121">
+            <association>
                 <ref>ri:belongsTo</ref>
                 <tolerant>true</tolerant>
                 <exclusiveStrong>false</exclusiveStrong>
@@ -538,7 +827,7 @@
             </association>
             <credentials>
                 <password>
-                    <outbound id="160">
+                    <outbound>
                         <strength>weak</strength>
                         <expression>
                             <script>
@@ -551,26 +840,26 @@
                 </password>
             </credentials>
             <synchronization>
-                <reaction id="125">
+                <reaction>
                     <name>UserReaction1</name>
                     <situation>unlinked</situation>
                     <actions>
-                        <link id="126">
+                        <link>
                             <synchronize>true</synchronize>
                             <reconcile>true</reconcile>
                         </link>
                     </actions>
                 </reaction>
-                <reaction id="128">
+                <reaction>
                     <name>UserReaction2</name>
                     <situation>linked</situation>
                     <actions>
-                        <synchronize id="129"/>
+                        <synchronize/>
                     </actions>
                 </reaction>
             </synchronization>
         </objectType>
-        <objectType id="114">
+        <objectType>
             <kind>entitlement</kind>
             <intent>group</intent>
             <displayName>GrafanaOrg-Institution</displayName>
@@ -578,7 +867,7 @@
             <focus>
                 <type>c:OrgType</type>
             </focus>
-            <attribute id="130">
+            <attribute>
                 <ref>name</ref>
                 <tolerant>true</tolerant>
                 <exclusiveStrong>false</exclusiveStrong>
@@ -598,12 +887,19 @@
                         </script>
                     </expression>
                 </outbound>
+                <inbound>
+                    <strength>weak</strength>
+                    <target>
+                        <path>identifier</path>
+                    </target>
+                    <use>correlation</use>
+                </inbound>
             </attribute>
-            <attribute id="131">
+            <attribute>
                 <ref>orgId</ref>
                 <tolerant>true</tolerant>
                 <exclusiveStrong>false</exclusiveStrong>
-                <inbound id="132">
+                <inbound>
                     <authoritative>true</authoritative>
                     <exclusive>false</exclusive>
                     <strength>normal</strength>
@@ -612,32 +908,47 @@
                     </target>
                 </inbound>
             </attribute>
+            <correlation>
+                <correlators>
+                    <items>
+                        <name>identifier</name>
+                        <description>Match Group Name</description>
+                        <enabled>true</enabled>
+                        <item>
+                            <ref>identifier</ref>
+                        </item>
+                        <composition>
+                            <weight>1.0</weight>
+                        </composition>
+                    </items>
+                </correlators>
+            </correlation>
             <synchronization>
-                <reaction id="144">
+                <reaction>
                     <name>GroupReaction1</name>
                     <situation>unlinked</situation>
                     <actions>
-                        <link id="146"/>
+                        <link/>
                     </actions>
                 </reaction>
-                <reaction id="145">
+                <reaction>
                     <name>GroupReaction2</name>
                     <situation>linked</situation>
                     <actions>
-                        <synchronize id="147"/>
+                        <synchronize/>
                     </actions>
                 </reaction>
             </synchronization>
         </objectType>
-        <objectType id="115">
+        <objectType>
             <kind>entitlement</kind>
-            <intent>DataSource</intent>
-            <displayName>GrafanaOrg-Datasource</displayName>
+            <intent>StandardDataSource</intent>
+            <displayName>GrafanaOrg-Standard-Datasource</displayName>
             <objectClass>ri:GrafanaDatasource</objectClass>
             <focus>
                 <type>c:OrgType</type>
             </focus>
-            <attribute id="133">
+            <attribute>
                 <ref>name</ref>
                 <tolerant>true</tolerant>
                 <exclusiveStrong>false</exclusiveStrong>
@@ -655,13 +966,16 @@
                         <script>
                             <code>
                                 theWorkingName = identifier
+                                if(identifier.contains('eduroamadmin')){
+                                    theWorkingName = identifier.split(':')[0]
+                                }
                                 return grafanaOrgId + "_" + theWorkingName.replace("_",".")
                             </code>
                         </script>
                     </expression>
                 </outbound>
             </attribute>
-            <attribute id="134">
+            <attribute>
                 <ref>orgId</ref>
                 <tolerant>true</tolerant>
                 <exclusiveStrong>false</exclusiveStrong>
@@ -674,7 +988,7 @@
                     </source>
                 </outbound>
             </attribute>
-            <attribute id="135">
+            <attribute>
                 <ref>basicAuth</ref>
                 <tolerant>true</tolerant>
                 <exclusiveStrong>false</exclusiveStrong>
@@ -691,7 +1005,7 @@
                     </expression>
                 </outbound>
             </attribute>
-            <attribute id="136">
+            <attribute>
                 <ref>basicAuthPassword</ref>
                 <tolerant>true</tolerant>
                 <exclusiveStrong>false</exclusiveStrong>
@@ -708,7 +1022,7 @@
                     </expression>
                 </outbound>
             </attribute>
-            <attribute id="137">
+            <attribute>
                 <ref>jsonData</ref>
                 <tolerant>true</tolerant>
                 <exclusiveStrong>false</exclusiveStrong>
@@ -719,13 +1033,13 @@
                     <expression>
                         <script>
                             <code>
-                                return '{"httpHeaderName1": "X-Scope-OrgID"}'
+                                 return '{"httpHeaderName1": "X-Scope-OrgID"}'
                             </code>
                         </script>
                     </expression>
                 </outbound>
             </attribute>
-            <attribute id="138">
+            <attribute>
                 <ref>url</ref>
                 <tolerant>true</tolerant>
                 <exclusiveStrong>false</exclusiveStrong>
@@ -742,7 +1056,7 @@
                     </expression>
                 </outbound>
             </attribute>
-            <attribute id="139">
+            <attribute>
                 <ref>secureJsonData</ref>
                 <tolerant>true</tolerant>
                 <exclusiveStrong>false</exclusiveStrong>
@@ -757,6 +1071,9 @@
                         <script>
                             <code>
                                 theWorkingName = identifier
+                                if(identifier.contains('eduroamadmin')){
+                                    theWorkingName = identifier.split(':')[0]
+                                }
                                 return '{"httpHeaderValue1": "' + theWorkingName.replace("_",".") + '"}'
                             </code>
                         </script>
@@ -771,14 +1088,11 @@
                     </condition>
                 </outbound>
             </attribute>
-            <attribute id="140">
+            <attribute>
                 <ref>isDefault</ref>
                 <tolerant>true</tolerant>
-                <exclusiveStrong>false</exclusiveStrong>
                 <outbound>
-                    <authoritative>false</authoritative>
-                    <exclusive>false</exclusive>
-                    <strength>normal</strength>
+                    <strength>weak</strength>
                     <expression>
                         <script>
                             <code>
@@ -788,7 +1102,7 @@
                     </expression>
                 </outbound>
             </attribute>
-            <attribute id="141">
+            <attribute>
                 <ref>basicAuthUser</ref>
                 <tolerant>true</tolerant>
                 <exclusiveStrong>false</exclusiveStrong>
@@ -805,7 +1119,7 @@
                     </expression>
                 </outbound>
             </attribute>
-            <attribute id="142">
+            <attribute>
                 <ref>type</ref>
                 <tolerant>true</tolerant>
                 <exclusiveStrong>false</exclusiveStrong>
@@ -822,7 +1136,7 @@
                     </expression>
                 </outbound>
             </attribute>
-            <attribute id="143">
+            <attribute>
                 <ref>access</ref>
                 <tolerant>true</tolerant>
                 <exclusiveStrong>false</exclusiveStrong>
@@ -839,15 +1153,13 @@
                     </expression>
                 </outbound>
             </attribute>
-            <dependency id="157">
-                <resourceRef oid="75e2f666-4c07-46e5-b242-3ad66dc07d17" relation="org:default" type="c:ResourceType">
-                    <!-- Target: Grafana -->
-                </resourceRef>
+            <dependency>
+                <resourceRef oid="75e2f666-4c07-46e5-b242-3ad66dc07d17" relation="org:default" type="c:ResourceType"/>
                 <kind>entitlement</kind>
                 <intent>group</intent>
                 <strictness>lax</strictness>
             </dependency>
-            <association id="156">
+            <association>
                 <ref>ri:isTheDatasourceFor</ref>
                 <tolerant>true</tolerant>
                 <exclusiveStrong>false</exclusiveStrong>
@@ -858,18 +1170,274 @@
                 <valueAttribute>icfs:uid</valueAttribute>
             </association>
             <synchronization>
-                <reaction id="148">
+                <reaction>
                     <name>DatasourceReaction1</name>
                     <situation>unlinked</situation>
                     <actions>
-                        <link id="150"/>
+                        <link/>
                     </actions>
                 </reaction>
-                <reaction id="149">
+                <reaction>
                     <name>DatasourceReaction2</name>
                     <situation>linked</situation>
                     <actions>
-                        <synchronize id="151"/>
+                        <synchronize/>
+                    </actions>
+                </reaction>
+            </synchronization>
+        </objectType>
+        <objectType>
+            <kind>entitlement</kind>
+            <intent>eSODataSource</intent>
+            <displayName>GrafanaOrg-eSO-Datasource</displayName>
+            <objectClass>ri:GrafanaDatasource</objectClass>
+            <focus>
+                <type>c:OrgType</type>
+            </focus>
+            <attribute>
+                <ref>name</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>weak</strength>
+                    <source>
+                        <path>identifier</path>
+                    </source>
+                    <source>
+                        <path>extension/grafanaOrgId</path>
+                    </source>
+                    <expression>
+                        <script>
+                            <code>
+                                theWorkingName = identifier
+                                if(identifier.contains('eduroamadmin')){
+                                    theWorkingName = identifier.split(':')[0]
+                                }
+                                return grafanaOrgId + "_eSO_" + theWorkingName.replace("_",".")
+                            </code>
+                        </script>
+                    </expression>
+                </outbound>
+            </attribute>
+            <attribute>
+                <ref>orgId</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>normal</strength>
+                    <source>
+                        <path>extension/grafanaOrgId</path>
+                    </source>
+                </outbound>
+            </attribute>
+            <attribute>
+                <ref>basicAuth</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>normal</strength>
+                    <expression>
+                        <script>
+                            <code>
+                                return true
+                            </code>
+                        </script>
+                    </expression>
+                </outbound>
+            </attribute>
+            <attribute>
+                <ref>basicAuthPassword</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>normal</strength>
+                    <expression>
+                        <script>
+                            <code>
+                                return "foo"
+                            </code>
+                        </script>
+                    </expression>
+                </outbound>
+            </attribute>
+            <attribute>
+                <ref>jsonData</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>weak</strength>
+                    <expression>
+                        <script>
+                            <code>
+                                 return '{"httpHeaderName1": "X-Scope-OrgID"}'
+                            </code>
+                        </script>
+                    </expression>
+                </outbound>
+            </attribute>
+            <attribute>
+                <ref>url</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>normal</strength>
+                    <expression>
+                        <script>
+                            <code>
+                                return "http://loki.dev.infra.eduroam.us"
+                            </code>
+                        </script>
+                    </expression>
+                </outbound>
+            </attribute>
+            <attribute>
+                <ref>secureJsonData</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>weak</strength>
+                    <source>
+                        <path>identifier</path>
+                    </source>
+                    <expression>
+                        <script>
+                            <code>
+                                theWorkingName = identifier
+                                if(identifier.contains('eduroamadmin')){
+                                    theWorkingName = identifier.split(':')[0]
+                                }
+                                return '{"httpHeaderValue1": "' + theWorkingName.replace("_",".") + '"}'
+                            </code>
+                        </script>
+                    </expression>
+                    <condition>
+                        <script>
+                            <code>
+                               theUid = basic.getAttributeValue(shadow, 'uid')
+                                return ((null == theUid) || ("" == theUid))
+                            </code>
+                        </script>
+                    </condition>
+                </outbound>
+            </attribute>
+            <attribute>
+                <ref>isDefault</ref>
+                <tolerant>true</tolerant>
+                <outbound>
+                    <strength>weak</strength>
+                    <expression>
+                        <script>
+                            <code>
+                                return true
+                            </code>
+                        </script>
+                    </expression>
+                </outbound>
+            </attribute>
+            <attribute>
+                <ref>basicAuthUser</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>normal</strength>
+                    <expression>
+                        <script>
+                            <code>
+                                return "grafana"
+                            </code>
+                        </script>
+                    </expression>
+                </outbound>
+            </attribute>
+            <attribute>
+                <ref>type</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>normal</strength>
+                    <expression>
+                        <script>
+                            <code>
+                                return "loki"
+                            </code>
+                        </script>
+                    </expression>
+                </outbound>
+            </attribute>
+            <attribute>
+                <ref>access</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <outbound>
+                    <authoritative>false</authoritative>
+                    <exclusive>false</exclusive>
+                    <strength>normal</strength>
+                    <expression>
+                        <script>
+                            <code>
+                                return "proxy"
+                            </code>
+                        </script>
+                    </expression>
+                </outbound>
+            </attribute>
+            <attribute>
+                <ref>dashboardTemplateName</ref>
+                <outbound>
+                    <expression>
+                        <script>
+                            <code>return 'eso'</code>
+                        </script>
+                    </expression>
+                </outbound>
+            </attribute>
+            <dependency>
+                <resourceRef oid="75e2f666-4c07-46e5-b242-3ad66dc07d17" relation="org:default" type="c:ResourceType"/>
+                <kind>entitlement</kind>
+                <intent>group</intent>
+                <strictness>lax</strictness>
+            </dependency>
+            <association>
+                <ref>ri:isTheDatasourceFor</ref>
+                <tolerant>true</tolerant>
+                <exclusiveStrong>false</exclusiveStrong>
+                <kind>entitlement</kind>
+                <intent>group</intent>
+                <direction>subjectToObject</direction>
+                <associationAttribute>ri:orgId</associationAttribute>
+                <valueAttribute>icfs:uid</valueAttribute>
+            </association>
+            <synchronization>
+                <reaction>
+                    <name>DatasourceReaction1</name>
+                    <situation>unlinked</situation>
+                    <actions>
+                        <link/>
+                    </actions>
+                </reaction>
+                <reaction>
+                    <name>DatasourceReaction2</name>
+                    <situation>linked</situation>
+                    <actions>
+                        <synchronize/>
                     </actions>
                 </reaction>
             </synchronization>
@@ -877,11 +1445,12 @@
     </schemaHandling>
     <capabilities>
         <cachingMetadata>
-            <retrievalTimestamp>2023-04-27T14:48:22.037Z</retrievalTimestamp>
-            <serialNumber>16ff8bcc195b7bef-5b054aaca1f147d7</serialNumber>
+            <retrievalTimestamp>2025-02-26T15:50:27.098Z</retrievalTimestamp>
+            <serialNumber>d69c90b0ce8be65-ec23efe26308bb0e</serialNumber>
         </cachingMetadata>
         <native xmlns:cap="http://midpoint.evolveum.com/xml/ns/public/resource/capabilities-3">
             <cap:schema/>
+            <cap:discoverConfiguration/>
             <cap:create/>
             <cap:read>
                 <cap:returnDefaultAttributesOption>true</cap:returnDefaultAttributesOption>
@@ -893,70 +1462,11 @@
             <cap:delete/>
             <cap:testConnection/>
             <cap:script>
-                <cap:host id="164">
+                <cap:host>
                     <cap:type>connector</cap:type>
                 </cap:host>
             </cap:script>
             <cap:pagedSearch/>
         </native>
     </capabilities>
-    <synchronization>
-        <objectSynchronization id="127">
-            <name>account-to-user</name>
-            <objectClass>GrafanaUser</objectClass>
-            <kind>account</kind>
-            <intent>viewer</intent>
-            <focusType>c:UserType</focusType>
-            <enabled>true</enabled>
-            <correlation>
-                <q:equal>
-                    <q:path>emailAddress</q:path>
-                    <expression>
-                        <path xmlns:s="http://midpoint.evolveum.com/xml/ns/public/model/scripting-3">$shadow/attributes/icfs:name</path>
-                    </expression>
-                </q:equal>
-            </correlation>
-            <reconcile>true</reconcile>
-        </objectSynchronization>
-        <objectSynchronization id="152">
-            <name>group-to-org</name>
-            <objectClass>GrafanaOrganization</objectClass>
-            <kind>entitlement</kind>
-            <intent>group</intent>
-            <focusType>c:OrgType</focusType>
-            <enabled>true</enabled>
-            <correlation>
-                <q:equal>
-                    <q:path>identifier</q:path>
-                    <expression>
-                        <script>
-                            <code>
-                             //theWorkingName = $shadow/attributes/name
-                             def theWorkingName = basic.getAttributeValue(shadow, 'name')
-                             return theWorkingName.replace(".","_")
-                          </code>
-                        </script>
-                    </expression>
-                </q:equal>
-            </correlation>
-            <reconcile>true</reconcile>
-        </objectSynchronization>
-        <objectSynchronization id="153">
-            <name>datasource-to-org</name>
-            <objectClass>GrafanaDatasource</objectClass>
-            <kind>entitlement</kind>
-            <intent>DataSource</intent>
-            <focusType>c:OrgType</focusType>
-            <enabled>true</enabled>
-            <correlation>
-                <q:equal>
-                    <q:path>extension/grafanaOrgId</q:path>
-                    <expression>
-                        <path>$shadow/attributes/orgId</path>
-                    </expression>
-                </q:equal>
-            </correlation>
-            <reconcile>true</reconcile>
-        </objectSynchronization>
-    </synchronization>
 </resource>
