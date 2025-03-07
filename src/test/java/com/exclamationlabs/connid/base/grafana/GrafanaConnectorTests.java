@@ -292,6 +292,7 @@ public class GrafanaConnectorTests
     /**
      * Get All Dashboards
      */
+    @Test
     public void test150GetAllDashboards()
     {
         ToListResultsHandler listHandler = new ToListResultsHandler();
