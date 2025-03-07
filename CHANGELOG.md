@@ -1,6 +1,7 @@
 # connector-grafana
 
 ## Change Log
++ **2.0.3**  - Fix issue with Dashboard OrgId expecting string.
 + **2.0.2**  - Added Multiple Grafana Dashboard Support.  
 + **1.8.8**  - Fix User Updates when email or login is not specified
 + **1.8.7**  - Update to Bases connector 4.1.8

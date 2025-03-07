@@ -64,7 +64,7 @@ public class GrafanaDashboardAdapter extends BaseAdapter<GrafanaDashboard, Grafa
     {
         Set<Attribute> attributes = new HashSet<>();
         attributes.add(AttributeBuilder.build(id.name(), model.getId()));
-        attributes.add(AttributeBuilder.build(orgId.name(), model.getOrgId()));
+        attributes.add(AttributeBuilder.build(orgId.name(), String.valueOf(model.getOrgId())));
         attributes.add(AttributeBuilder.build(orgName.name(), model.getOrgName()));
         attributes.add(AttributeBuilder.build(dashboard.name(), model.getDashboard()));
         attributes.add(AttributeBuilder.build(dataSourceUid.name(), model.getDataSourceUid()));
