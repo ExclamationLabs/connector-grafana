@@ -63,7 +63,7 @@ public class GrafanaDashboardAdapter extends BaseAdapter<GrafanaDashboard, Grafa
     protected Set<Attribute> constructAttributes(GrafanaDashboard model)
     {
         Set<Attribute> attributes = new HashSet<>();
-        attributes.add(AttributeBuilder.build(id.name(), model.getId()));
+        attributes.add(AttributeBuilder.build(id.name(), String.valueOf(model.getId())));
         attributes.add(AttributeBuilder.build(orgId.name(), String.valueOf(model.getOrgId())));
         attributes.add(AttributeBuilder.build(orgName.name(), model.getOrgName()));
         attributes.add(AttributeBuilder.build(dashboard.name(), model.getDashboard()));
@@ -122,13 +122,17 @@ public class GrafanaDashboardAdapter extends BaseAdapter<GrafanaDashboard, Grafa
                     model.setUid(nameParts[1]);
                 }
             }
-            model.setOrgId(AdapterValueTypeConverter.getSingleAttributeValue(Integer.class, attributes, orgId));
-            model.setOrgName(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, orgName));
-            model.setDashboard(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, dashboard));
-            model.setDataSourceUid(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, dataSourceUid));
-            model.setTemplateName(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, templateName));
-            model.setProperties(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, properties));
         }
+        model.setId(AdapterValueTypeConverter.getSingleAttributeValue(Integer.class, attributes, id));
+        if ( model.getOrgId() == null )
+        {
+            model.setOrgId(AdapterValueTypeConverter.getSingleAttributeValue(Integer.class, attributes, orgId));
+        }
+        model.setOrgName(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, orgName));
+        model.setDashboard(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, dashboard));
+        model.setDataSourceUid(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, dataSourceUid));
+        model.setTemplateName(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, templateName));
+        model.setProperties(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, properties));
         return model;
     }
 }
