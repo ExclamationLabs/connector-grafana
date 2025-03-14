@@ -152,7 +152,7 @@ public class GrafanaDashboardInvocator implements DriverInvocator<GrafanaDriver,
                     String orgId = ids[0];
                     String uid = ids[1];
                     headers.put(ORG_HEADER, orgId);
-                    LOG.info("Lookup Dashboard with ID {0} ", uid);
+                    LOG.info("Lookup Dashboard for Org {0} with uid {0} ", orgId, uid);
                     RestResponseData<String> rd;
                     rd = driver.executeGetRequest("/dashboards/uid/" + uid.trim(),
                             String.class,
