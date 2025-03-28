@@ -112,8 +112,19 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
         RestResponseData<GrafanaDatasourceResponse> response;
         GrafanaDatasourceResponse createInfo;
         String UID = null;
+        String name = null;
         Map<String, String> headers = driver.getAdminHeaders();
 
+        name = String.format("%d_%s", dataSource.getOrgId(), dataSource.getName());
+        GrafanaDataSource existing = getOneByName(driver, name);
+        if ( existing != null )
+        {
+            String message = String.format("Grafana Datasource %s already exists. Updating...", name);
+            LOG.warn(message);
+            UID =  existing.getIdentityIdValue();
+            update(driver, UID, dataSource);
+            return UID;
+        }
         // we will not create a datasource for an unspecified organization
         if ( dataSource.getOrgId() != null && dataSource.getOrgId() > 0  && dataSource.getName() != null )
         {
@@ -338,6 +349,11 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                         dataSource.setJsonData(actual.getJsonData());
                     }
 
+                    if ( dataSource.getOrgName() != null && !dataSource.getOrgName().trim().isEmpty())
+                    {
+                        dataSource.getJsonData().put("orgName", dataSource.getOrgName());
+                    }
+
                     if ( dataSource.getDashboardTemplateName() == null || dataSource.getDashboardTemplateName().trim().isEmpty())
                     {
                         if ( dataSource.getJsonData().get(DASHBOARD_TEMPLATE_NAME) != null && !dataSource.getJsonData().get(DASHBOARD_TEMPLATE_NAME).trim().isEmpty())
@@ -348,13 +364,12 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
 
                     if ( dataSource.getSecureJsonData() == null || dataSource.getSecureJsonData().isEmpty())
                     {
-                        dataSource.setSecureJsonData(actual.getSecureJsonData());
+                        Map<String, String> secureJsonData = new HashMap<>();
+                        dataSource.setSecureJsonData(secureJsonData);
                     }
-                    else if ( actual.getSecureJsonData() != null && !actual.getSecureJsonData().isEmpty())
-                    {
-                        actual.getSecureJsonData().putAll(dataSource.getSecureJsonData());
-                        dataSource.setSecureJsonData(actual.getSecureJsonData());
-                    }
+
+                    dataSource.getSecureJsonData().put("httpHeaderValue1", dataSource.getOrgName());
+
 
                     if ( dataSource.getBasicAuth() == null )
                     {

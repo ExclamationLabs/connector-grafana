@@ -1,6 +1,7 @@
 # connector-grafana
 
 ## Change Log
++ **2.0.5**  - Fix issue with Datasource already exists by testing for existence then create or update.
 + **2.0.4**  - Fix issue with Dashboard id expecting string.
 + **2.0.3**  - Fix issue with Dashboard OrgId expecting string.
 + **2.0.2**  - Added Multiple Grafana Dashboard Support.  
