@@ -368,7 +368,7 @@ public class GrafanaDataSourceInvocator implements DriverInvocator<GrafanaDriver
                         dataSource.setSecureJsonData(secureJsonData);
                     }
 
-                    dataSource.getSecureJsonData().put("httpHeaderValue1", dataSource.getOrgName());
+                    dataSource.getSecureJsonData().putIfAbsent("httpHeaderValue1", dataSource.getOrgName());
 
 
                     if ( dataSource.getBasicAuth() == null )

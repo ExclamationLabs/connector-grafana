@@ -254,7 +254,7 @@ public class GrafanaDataSourceAdapter extends BaseAdapter<GrafanaDataSource, Gra
         result.add(new ConnectorAttribute(basicAuthUser.name(), STRING));
         result.add(new ConnectorAttribute(basicAuthPassword.name(), STRING));
         result.add(new ConnectorAttribute(jsonData.name(), STRING));
-        result.add(new ConnectorAttribute(secureJsonData.name(), STRING, NOT_READABLE, NOT_RETURNED_BY_DEFAULT, NOT_UPDATEABLE));
+        result.add(new ConnectorAttribute(secureJsonData.name(), STRING, NOT_READABLE, NOT_RETURNED_BY_DEFAULT));
         result.add(new ConnectorAttribute(user.name(), STRING));
         result.add(new ConnectorAttribute(database.name(), STRING));
         result.add(new ConnectorAttribute(password.name(), STRING));
