@@ -592,7 +592,7 @@ ConnId Name -> name
    </td>
    <td>String
    </td>
-   <td>Used to provide data which Grafana should encrypt internally. This information is not returned on read operations. In later versions Grafana returns secureJsonFields
+   <td>Used to provide data which Grafana should encrypt internally. This information is not returned on read operations. You can create or update this field with a JSON string containing the secure data as name value pairs. 
    </td>
   </tr>
   <tr>
